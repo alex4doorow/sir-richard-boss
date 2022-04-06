@@ -10,7 +10,6 @@
 	<modules>
 		<module>sir-richard-boss-lib</module>
 		<module>sir-richard-boss-web</module>
-		<module>sir-richard-boss-ystand</module>
 	</modules>
 
 </project>
