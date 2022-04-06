@@ -18,9 +18,9 @@ public class SmsApi implements AnyApi {
 	}
 	
 	public SmsApi() {
-	    this(new SmsRequestBuilder("http://api.myatompark.com/members/sms/xml.php"), 
-	    		"sir-richard@sir-richard.ru", 
-	    		"Hj@gacalypso1211");
+	    this(new SmsRequestBuilder("***"), 
+	    		"example@example.ru", 
+	    		"***");
 	}
 
 	public String getStatus(String msgId) {

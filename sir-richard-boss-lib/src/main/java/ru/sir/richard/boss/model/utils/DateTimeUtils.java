@@ -131,15 +131,6 @@ public class DateTimeUtils {
 			}
 			i++;			
 		}
-		/*
-		
-		
-		String dayOfWeek = formatDate(result, "u");
-		if (dayOfWeek.equals("6")) {
-			result = afterAnyDate(result, 2);			
-		} else if (dayOfWeek.equals("7")) {
-			result = afterAnyDate(result, 1);			
-		}*/
 	    return result;
 	}
 	
@@ -368,8 +359,7 @@ public class DateTimeUtils {
 		} else {
 			return 2;
 		}		
-	}
-	
+	}	
 	
 	public static java.util.Date calendarPeriodStart(int month, int year) {
 		Calendar calendar = Calendar.getInstance();

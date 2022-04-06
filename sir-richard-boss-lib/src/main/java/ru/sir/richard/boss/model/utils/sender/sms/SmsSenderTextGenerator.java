@@ -82,7 +82,6 @@ public class SmsSenderTextGenerator extends SenderTextGenerator {
 				messageBody = customer.getFirstName() + "! Заказ интернет-магазина " + order.getStore().getSite() + " " + order.getDelivery().getTrackCode() + " (" + order.getNo() + ") отправлен. Отследить заказ можно здесь www.pochta.ru.";	
 			}
 		}
-		//smsText = TextUtils.transliterate(smsText);
 		message.setSubject(messageSubject);
 		message.setBody(messageBody);
 		message.setFooter(messageFooter);

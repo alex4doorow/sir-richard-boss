@@ -32,33 +32,17 @@ public class EmailUtils {
 	
 	public boolean sendSSLEmail(StoreTypes store, String toEmail, String subject, String body) {
 				
-		//final String srFromEmail = "notice@sir-richard.ru"; //requires valid mail id
-		//final String srPassword = "d899ZnF69U8Y7B2"; // correct password for mail id
-		
+
 		final String pmFromEmail = "notice@pribormaster.ru"; //requires valid mail id
-		final String pmPassword = "NFm-wS3-zn5-gLu"; // correct password for mail id
+		final String pmPassword = "***"; // correct password for mail id
 		
 		String fromEmail;
 		String password;
-		/*
-		if (store.getSite().equals(StoreTypes.SR.getSite())) {
-			fromEmail = srFromEmail;
-			password = srPassword;
-		} else {
-			fromEmail = pmFromEmail;
-			password = pmPassword;
-		}
-		*/
+
 		fromEmail = pmFromEmail;
 		password = pmPassword;
 		
-				
-		//final String fromEmail = "sir-richard@sir-richard.ru"; //requires valid mail id
-		//final String password = "Cuba2017"; // correct password for mail id
-				
-		//final String fromEmail = "sir.richard.sales@yandex.ru"; //requires valid 
-		//final String password = "Dominika2021"; // correct password 
-		
+
 		logger.debug("email:{}", "start");		
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.yandex.ru"); //SMTP Host
@@ -74,39 +58,17 @@ public class EmailUtils {
                         return new PasswordAuthentication(fromEmail, password);
                     }
                 });
-		/*
-		Session session = Session.getDefaultInstance(props,
-                new javax.mail.Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(fromEmail, password);
-                    }
-                });
-		*/
+
 		boolean result;
 		try {
 			MimeMessage message = new MimeMessage(session);
 			
-			/*
-			From: =?utf-8?B?0JDQu9C10LrRgdC10Lkg0KTQtdC00L7RgNC+0LI=?= <sir-richard@sir-richard.ru>
-			To: natulya.isakova.2020 <natulya.isakova.2020@mail.ru>
-			Subject: =?utf-8?B?MyDQktCw0Ygg0LfQsNC60LDQtyDihJYgODE3MSDQvtGCIDIyLjAyLjIwMjAg0LMuINC00L7RgdGC0LA=?=
-				=?utf-8?B?0LLQu9GP0LXRgtGB0Y8=?=
-			MIME-Version: 1.0
-			X-Mailer: Yamail [ http://yandex.ru ] 5.0
-			Date: Sat, 22 Feb 2020 10:51:56 +0300
-			Message-Id: <5234251582357916@sas1-68ac888a1313.qloud-c.yandex.net>
-			Content-Transfer-Encoding: 8bit
-			Content-Type: text/plain; charset=utf-8
-			*/			
 			
 	        message.setFrom(new InternetAddress(fromEmail, store.getEmail(), "UTF-8"));	        
 	        
 	        message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
 	        message.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(store.getEmail()));
-	        
-	        // TODO
-	        //message.addRecipients(Message.RecipientType.TO, InternetAddress.parse("alex4doorow@gmail.com"));
+
 	        message.setSubject(subject, "utf-8");
 	        
 	        String replacedBody = body.replace("\"", "").replaceAll("→", "->").replaceAll("“", "\"").replaceAll("”", "\"");   
@@ -135,17 +97,12 @@ public class EmailUtils {
 	public List<String> loadMessagesFromEmail(StoreTypes shopStore, Date executorDate, String folderName) {
 				
 		List<String> result = new ArrayList<String>();		
-		String host = "imap.yandex.ru";// change accordingly
+		String host = "imap.yandex.ru";
 	    String mailStoreType = "imaps";	    
 	    String username = shopStore.getEmail();
 	    String password;
 	    Properties properties = new Properties();
-	    //properties.put("mail.imap.ssl.enable", "true");
-	    if (shopStore.getSite().equals(StoreTypes.SR.getSite())) {	    	
-		    password = "Cuba2017";
-		} else {	    	
-		    password = "rNs-N8g-gn5-YwK";		    
-		}	    	    
+	    password = "";			    	    
 		try {
 			Session emailSession = Session.getDefaultInstance(properties);
 			Store store = emailSession.getStore(mailStoreType);

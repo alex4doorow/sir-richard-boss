@@ -95,15 +95,6 @@ public class TextUtils {
 		sStart = StringUtils.replace(sStart, "8 9", "9", 1);
 		
 		s = sStart + sEnd;
-		/*
-		s = StringUtils.replace(s, "89", "9", 1);
-		s = StringUtils.replace(s, "79", "9", 1);
-		s = StringUtils.replace(s, "8(9", "9", 1);
-		s = StringUtils.replace(s, "8 (9", "9", 1);
-		s = StringUtils.replace(s, "+7", "", 1);
-		s = StringUtils.replace(s, "8-9", "9", 1);
-		s = StringUtils.replace(s, "8 9", "9", 1);
-		*/
 		s = phoneNumberDigit(s);
 		String r1 = StringUtils.substring(s, 0, 3);
 		String r2 = StringUtils.substring(s, 3, 6);

@@ -43,14 +43,11 @@ public class SmsSender implements AnySender {
 		SmsApi apiSms = new SmsApi();
 	    String phone = "7" + TextUtils.phoneNumberDigit(order.getCustomer().getViewPhoneNumber());
 	    
-	    // TODO
-	    //phone = "79161699099";
-	    
 	    logger.debug("sms text:{}", smsText);
 		logger.debug("sms recepient:{}", phone);			    
 	    List<SmsPhone> phones = new ArrayList<SmsPhone>();	    
 		phones.add(new SmsPhone("id1", "", phone));
-		String resultStatus = apiSms.sendSms("sir richard", smsText, phones);		
+		String resultStatus = apiSms.sendSms("", smsText, phones);		
 		SendingResponseStatus result;
 		if (StringUtils.indexOf(resultStatus, "<RESPONSE><status>1</status>") >= 0) {
 			// смс успешно отправлено

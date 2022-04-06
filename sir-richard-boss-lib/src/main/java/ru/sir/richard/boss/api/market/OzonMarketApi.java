@@ -49,12 +49,11 @@ import ru.sir.richard.boss.model.utils.NumberUtils;
 import ru.sir.richard.boss.model.utils.Pair;
 import ru.sir.richard.boss.model.utils.TextUtils;
 
-// https://docs.ozon.ru/api/seller/#tag/Introduction
 public class OzonMarketApi {
 	
 	private final Logger logger = LoggerFactory.getLogger(OzonMarketApi.class);
 	
-	private final String STATIC_URL_API = "https://api-seller.ozon.ru";
+	private final String STATIC_URL_API = "***";
 		
 	private final int CDEK_PROVIDER_ID = 51;
 	private final int OZON_PROVIDER_ID = 24;
@@ -64,27 +63,21 @@ public class OzonMarketApi {
 	private final int CDEK_PVZ_TYPICAL_DELIVERY_METHOD_ID = 36936;
 	private final int CDEK_PVZ_ECONOMY_DELIVERY_METHOD_ID = 36941;
 	
-	private final Long CDEK_WAREHOUSE_ID = 22067517155000L; // отгрузка СДЭК 
-	private final Long OZON_WAREHOUSE_COURIER_ID = 22067558791000L; // курьером ОЗОН 
-	private final Long OZON_WAREHOUSE_PICKUP_ID = 22294396015000L; // самостоятельно до склада ОЗОН
+	private final Long CDEK_WAREHOUSE_ID = 1L; // отгрузка СДЭК 
+	private final Long OZON_WAREHOUSE_COURIER_ID = 2L; // курьером ОЗОН 
+	private final Long OZON_WAREHOUSE_PICKUP_ID = 3L; // самостоятельно до склада ОЗОН
 
 	private HttpEntityEnclosingRequestBase postSetHeader(HttpEntityEnclosingRequestBase post) {
-		/*
-		GET / HTTP/1.1
-		Host: api-seller.ozon.ru
-		Client-Id: <Client-Id>
-		Api-Key: <Api-Key>
-		Content-Type: application/json
-		*/
-		post.setHeader("Host", "api-seller.ozon.ru");
-		post.setHeader("Client-Id", "192612");
-		post.setHeader("Api-Key", "ce712209-09e6-44e7-87bf-97028532fae7");
+
+		post.setHeader("Host", "***");
+		post.setHeader("Client-Id", "***");
+		post.setHeader("Api-Key", "***");
 		post.setHeader("Content-type", "application/json");			
 		
 		return post;
 	}
 	
-	// https://api-seller.ozon.ru/v3/posting/fbs/get
+
 	public Order getOrder(String ozonOrderId) {
 	
 		final String url = STATIC_URL_API + "/v3/posting/fbs/get";		
@@ -160,19 +153,7 @@ public class OzonMarketApi {
         order.setAdvertType(OrderAdvertTypes.OZON);      
 						
 		order.setAnnotation("");				
-		/*
-		acceptance_in_progress — идёт приёмка,
-		awaiting_approve — ожидает подтверждения,
-		awaiting_packaging — ожидает упаковки,
-		awaiting_deliver — ожидает отгрузки,
-		arbitration — арбитраж,
-		client_arbitration — клиентский арбитраж доставки,
-		delivering — доставляется,
-		driver_pickup — у водителя,
-		delivered — доставлено,
-		cancelled — отменено,
-		not_accepted — не принят на сортировочном центре.
-		*/		
+		
 		order.setStatus(OrderStatuses.BID);
 		if (!isCreate) {
 			if (postingObject.getString("status").equalsIgnoreCase("awaiting_approve")) {
@@ -203,7 +184,7 @@ public class OzonMarketApi {
 		customer.setCountry(Countries.RUSSIA);		
 		Address deliveryAddress = new Address(Countries.RUSSIA, AddressTypes.MAIN);
 		if (postingObject.getJSONObject("delivery_method").getInt("tpl_provider_id") == OZON_PROVIDER_ID) {			
-			deliveryAddressText = "МО, г. Балашиха, 1-е Мая, д.25";			
+			deliveryAddressText = "";			
 			customer.setFirstName("Озон");
 			customer.setLastName("Маркетов");			
 			customer.setPhoneNumber("(800) 234-70-00");				
@@ -232,7 +213,7 @@ public class OzonMarketApi {
         order.setOrderType(OrderTypes.ORDER);
     	order.setPaymentType(PaymentTypes.POSTPAY);
     	
-    	// posting.getJSONObject("delivery_method").getString("name");
+    	
     	if (postingObject.getJSONObject("delivery_method").getLong("id") == CDEK_COURIER_DELIVERY_METHOD_ID) { 
     		order.getDelivery().setDeliveryType(DeliveryTypes.CDEK_COURIER);	
     	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == CDEK_COURIER_ECONOMY_DELIVERY_METHOD_ID) { 
@@ -252,12 +233,7 @@ public class OzonMarketApi {
         
         order.getDelivery().setPaymentDeliveryType(PaymentDeliveryTypes.CUSTOMER);		                
         order.getDelivery().setTrackCode(postingObject.getString("tracking_number"));
-        
-        //order.setProductCategory(wikiDao.getCategoryById(0));
-        
-       
-        
-        
+                
 										
         order.setCustomer(customer);                
    		         
@@ -279,10 +255,7 @@ public class OzonMarketApi {
 		
 	}	
 	
-	
-	
-	
-	// POST https://api-seller.ozon.ru/v3/posting/fbs/list
+
 	public List<Order> getOrders(Pair<Date> period, String ozonStatus) {
 				
 		List<Order> orders = new ArrayList<Order>();
@@ -290,19 +263,7 @@ public class OzonMarketApi {
 				
 		//dateQuery = DateTimeUtils.formatDate(calculateDate, "yyyy-MM-dd") + "T" + DateTimeUtils.formatDate(calculateDate, "HH:mm:ss");
 		
-		/*
-		acceptance_in_progress — идёт приёмка,
-		awaiting_approve — ожидает подтверждения,
-		awaiting_packaging — ожидает упаковки,
-		awaiting_deliver — ожидает отгрузки,
-		arbitration — арбитраж,
-		client_arbitration — клиентский арбитраж доставки,
-		delivering — доставляется,
-		driver_pickup — у водителя,
-		delivered — доставлено,
-		cancelled — отменено,
-		not_accepted — не принят на сортировочном центре.
-		*/
+		
 		
 		String inputJson = 
 		"{" +
@@ -432,7 +393,7 @@ public class OzonMarketApi {
 		Address deliveryAddress = new Address(Countries.RUSSIA, AddressTypes.MAIN);
 		if (postingObject.getJSONObject("delivery_method").getInt("tpl_provider_id") == OZON_PROVIDER_ID) {
 			
-			deliveryAddressText = "МО, г. Балашиха, 1-е Мая, д.25";
+			deliveryAddressText = "";
 			
 			customer.setFirstName("Озон");
 			customer.setLastName("Маркетов");
@@ -533,20 +494,7 @@ public class OzonMarketApi {
 	    	
 	    }
 		
-		
-			/*	
-				
-                "products": [
-                             {
-                                 "price": "2500.0000",
-                                 "offer_id": "LS-912",
-                                 "name": "Отпугиватель крыс, мышей, тараканов ЭкоСнайпер LS-912",
-                                 "sku": 316086514,
-                                 "quantity": 2,
-                                 "mandatory_mark": []
-                             }
-                         ],
-                         */
+
 		
 		
 		crmOrder.setItems(orderItems);
@@ -554,7 +502,7 @@ public class OzonMarketApi {
 	} 
 	
 	
-	// POST https://api-seller.ozon.ru/v1/product/import/stocks	
+
 	public OzonResult offerStocks(List<Product> products) {
 		
 		
@@ -644,21 +592,7 @@ public class OzonMarketApi {
         	    	resultBean.setOfferId(myResponseResults.getJSONObject(i).getString("offer_id"));        	    	
         	    	resultBean.setUpdated(myResponseResults.getJSONObject(i).getBoolean("updated"));
         	    	
-        	    	/*
-        	    	JSONArray myResponseResultErrors = myResponseResults.getJSONObject(i).getJSONArray("errors");
-        	    	
-        	    	if (myResponseResultErrors.length() == 0) {
-        	    		resultBean.setErrors("");
-        	    		
-        	    	} else {
-        	    		
-        	    		for (int i = 0; i < myResponseResultErrors.length(); i++) {
-        	    			
-        	    		}
-        	    		
-        	    		
-        	    	}
-        	    	*/        	    	
+             	    	
         	    	resultBean.setErrors(myResponseResults.getJSONObject(i).getJSONArray("errors").toString());
         	    	ozonResult.getResponse().add(resultBean);
         	    	
@@ -706,7 +640,7 @@ public class OzonMarketApi {
 		return ozonResult;		
 	}	
 	
-	// https://api-seller.ozon.ru/v2/products/stocks
+
 	public OzonResult offerWarehouseStocks(List<Product> products) {
 		
 		if (products == null || products.size() == 0) {
@@ -859,7 +793,6 @@ public class OzonMarketApi {
 	}		
 	
 	
-	// POST https://api-seller.ozon.ru/v1/product/import/prices
 	public String offerPrices(List<Product> products) {
 		
 		if (products == null || products.size() == 0) {

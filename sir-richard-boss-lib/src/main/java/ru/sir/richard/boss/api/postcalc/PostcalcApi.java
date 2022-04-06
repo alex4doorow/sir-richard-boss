@@ -30,24 +30,15 @@ public class PostcalcApi implements AnyApi {
 			return DeliveryServiceResult.createEmpty();
 		}		
 		
-		// http://www.postcalc.ru/api/request-mandatory
-		//http://api.postcalc.ru/?Output=json&From=107241&To=308519&Weight=100&Valuation=100&key=test
-		
-		//http://api2.postcalc.ru/?o=JSON&f=107241&t=308519&w=100&v=100&key=test&Charset=UTF-8
-		
-		String url = "http://api2.postcalc.ru/?o=JSON&f=107241&w=" + weightOfG + "&v=" + totalAmount.intValue() + "&ib=" + iBase + "&pr=0&pk=50&Round=0.01&vt=1&t=" + to.getPostCode() + "&cs=UTF-8&key=test";
-		
-		//String url = "http://test.postcalc.ru/web.php?Extend=0&Output=JSON&From=107241&Weight=" + weightOfG + "&Valuation=" + totalAmount.intValue() + "&Step=0&Date=" + DateTimeUtils.defaultFormatDate(calculateDate) + "&IBase=" + iBase + "&ProcessingFee=0&PackingFee=50&Round=0.01&VAT=1&To=" + to.getPostCode() + "&Charset=UTF-8";
+		String url = "http://test.postcalc.ru/web.php?Extend=0&Output=JSON&From=107241&Weight=" + weightOfG + "&Valuation=" + totalAmount.intValue() + "&Step=0&Date=" + DateTimeUtils.defaultFormatDate(calculateDate) + "&IBase=" + iBase + "&ProcessingFee=0&PackingFee=50&Round=0.01&VAT=1&To=" + to.getPostCode() + "&Charset=UTF-8";
 	    URL obj = new URL(url);	    
 	    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 	    con.setRequestMethod("GET");
 	    con.setRequestProperty("User-Agent", "Mozilla/5.0");	    
-	    //con.setRequestProperty("Accept-Encoding", "gzip, deflate");	      
+      
 	    int responseCode = con.getResponseCode();
 	    logger.debug("postCalc() responseCode:{}", responseCode);
 	    logger.debug("postCalc() sending 'GET' request to URL:{}", url);
-	    
-	    //BufferedReader in = new BufferedReader((new InputStreamReader(con.getInputStream())));
 	    
 	    InputStream  gis = new GZIPInputStream(con.getInputStream());	    
 	    BufferedReader in2 = new BufferedReader(new InputStreamReader(gis));
@@ -59,17 +50,6 @@ public class PostcalcApi implements AnyApi {
 	    in2.close();
 	    gis.close();
 
-	   
-	    
-/*
-	    
-	    String inputLine;
-	    StringBuffer response = new StringBuffer();
-	    while ((inputLine = in.readLine()) != null) {
-	     	response.append(inputLine);
-	    }
-	    in.close();
-	    */
 
 	    JSONObject myResponse = new JSONObject(response.toString());
 	    logger.debug("postCalc() jsonResponse:{}", myResponse.toString());

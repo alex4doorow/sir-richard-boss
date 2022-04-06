@@ -58,29 +58,18 @@ import ru.sir.richard.boss.model.utils.XmlUtils;
 
 public class CdekApi implements AnyApi {
 		
-/*	
-	************* CDEK **************
-	Параметры тестовой учетной записи:
-	Account: ed432d6455d036bc1ece1305a4374d60
-	Secure_password: a79f7b09f8ae4b6275e4b75f4524d49b
-	Email: sir-richard@sir-richard.ru
 
-	Параметры боевой учетной записи:
-	Account: b11a53fc3966ecd9ed00701a9daa67e0
-	Secure_password: adf17184b274e8e1c345f9fbe5ad3608
-	Email: sir-richard@sir-richard.ru
-*/	
 	private final Logger logger = LoggerFactory.getLogger(CdekApi.class);
 	
-	//private final String TEST_CDEK_AUTH_LOGIN = "ed432d6455d036bc1ece1305a4374d60"; 
-	//private final String TEST_CDEK_SECURE = "a79f7b09f8ae4b6275e4b75f4524d49b";	
+	//private final String TEST_CDEK_AUTH_LOGIN = "***"; 
+	//private final String TEST_CDEK_SECURE = "***";	
 	
 	private final String CDEK_AUTH_LOGIN_KEY = "login";
 	private final String CDEK_AUTH_SECURE_KEY = "secure";
 	private final String CDEK_AUTH_DATE_KEY = "dateQuery";
 	
-	private final String CDEK_AUTH_LOGIN = "b11a53fc3966ecd9ed00701a9daa67e0"; 
-	private final String CDEK_SECURE = "adf17184b274e8e1c345f9fbe5ad3608";
+	private final String CDEK_AUTH_LOGIN = "***"; 
+	private final String CDEK_SECURE = "***";
 	
 	public String addOrder(CdekOrderBean cdekOrderBean, int tariffId, int weightOfG) {
 		
