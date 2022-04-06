@@ -1,0 +1,193 @@
+package ru.sir.richard.boss.model.data;
+
+import org.apache.commons.lang3.math.NumberUtils;
+
+import ru.sir.richard.boss.model.types.AddressTypes;
+import ru.sir.richard.boss.model.types.Countries;
+import ru.sir.richard.boss.model.utils.TextUtils;
+
+public class Address extends AnyId {	
+
+	private AddressTypes addressType;
+	private Countries country;	
+	private CarrierInfo carrierInfo;
+	private String address;
+	private String subwayStation;
+	private String annotation;
+
+	public Address(Countries country, AddressTypes addressTypes) {
+		super();
+		this.country = country;
+		this.addressType = addressTypes;
+		this.carrierInfo = new CarrierInfo();		
+	}
+	
+	public Address() {
+		this(Countries.RUSSIA, AddressTypes.MAIN);
+	}
+
+	public Countries getCountry() {
+		return country;
+	}
+
+	public void setCountry(Countries country) {
+		this.country = country;
+	}
+
+	public String getCity() {
+		return TextUtils.cutCityFromAddress(this.address);
+	}
+	
+	public String getStreetAddress() {
+		return TextUtils.cutStreetFromAddress(this.address);
+	}
+
+	public String getAnnotation() {
+		return annotation;
+	}
+
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
+	}
+
+	public AddressTypes getAddressType() {
+		return addressType;
+	}
+
+	public void setAddressType(AddressTypes addressType) {
+		this.addressType = addressType;
+	}
+
+	public String getPvz() {
+		return carrierInfo.getPvz();
+	}
+	
+	public CarrierInfo getCarrierInfo() {
+		return carrierInfo;
+	}
+
+	public void setCarrierInfo(CarrierInfo carrierInfo) {
+		this.carrierInfo = carrierInfo;
+	}
+
+	public String getPostCode() {
+		if (this.address == null || this.country != Countries.RUSSIA) {
+			return "000000";
+		}
+		String postCode = this.address.trim();
+		if (postCode.length() >= 6) {
+			postCode = postCode.substring(0, 6);
+		} else {
+			postCode = "";
+		}
+		return (NumberUtils.isCreatable(postCode)) ? postCode : ""; 
+	}
+	
+	public String getPostAddressText() {
+		if (this.address == null || this.country != Countries.RUSSIA) {
+			return "";
+		}
+		String text = this.address.trim();
+		if (text.length() >= 7) {
+			text = text.substring(7, text.length()).replace(" →", ",");
+		} else {
+			text = this.address;
+		}		
+		return text;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+	
+	public String getViewAddress() {
+		if (address != null) {
+			final int MAX_VIEW_LENGTH = 25;
+			int index = Math.min(address.length(), MAX_VIEW_LENGTH);
+			if (index < address.length()) {
+				return address.substring(0, index) + "...";
+			} else {
+				return address.substring(0, index);
+			}
+		}
+		return null;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getSubwayStation() {
+		return subwayStation;
+	}
+
+	public void setSubwayStation(String subwayStation) {
+		this.subwayStation = subwayStation;
+	}
+	
+	@Override
+	public Address clone() throws CloneNotSupportedException  {
+		Address clone = (Address) super.clone();		
+		clone.addressType = this.addressType;
+		clone.country = this.country;		
+		clone.carrierInfo = this.carrierInfo == null ? null : (CarrierInfo) this.getCarrierInfo().clone();
+		clone.address = this.address == null ? null : new String(this.address);
+		clone.subwayStation = this.subwayStation == null ? null : new String(this.subwayStation);
+		clone.annotation = this.annotation == null ? null : new String (this.annotation);
+		return clone;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((address == null) ? 0 : address.hashCode());
+		result = prime * result + ((addressType == null) ? 0 : addressType.hashCode());
+		result = prime * result + ((annotation == null) ? 0 : annotation.hashCode());
+		result = prime * result + ((country == null) ? 0 : country.hashCode());
+		
+		result = prime * result + ((subwayStation == null) ? 0 : subwayStation.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Address other = (Address) obj;
+		if (address == null) {
+			if (other.address != null)
+				return false;
+		} else if (!address.equals(other.address))
+			return false;		
+		if (addressType != other.addressType)
+			return false;
+		if (annotation == null) {
+			if (other.annotation != null)
+				return false;
+		} else if (!annotation.equals(other.annotation))
+			return false;
+		
+		if (country != other.country)
+			return false;		
+		
+		if (subwayStation == null) {
+			if (other.subwayStation != null)
+				return false;
+		} else if (!subwayStation.equals(other.subwayStation))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Address [id=" + getId() + ", addressType=" + addressType + ", country=" + country
+				+ ", address=" + address
+				+ ", cdekInfo=" + carrierInfo
+				+ "]";
+	}	
+}
