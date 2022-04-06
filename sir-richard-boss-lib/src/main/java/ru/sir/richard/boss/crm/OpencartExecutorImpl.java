@@ -82,18 +82,15 @@ public class OpencartExecutorImpl extends AnyDaoImpl implements CrmExecutable, O
 	@Override
 	public void run() {
 		logger.debug("run(): start");
-		importFromCrmOrders(StoreTypes.SR);
+		//importFromCrmOrders(StoreTypes.SR);
 		importFromCrmOrders(StoreTypes.PM);		
 		logger.debug("run(): end");
 	}	
 	
 	private List<Order> importFromCrmOrders(StoreTypes store) {		
 		List<Order> crmOrders;
-		if (store == StoreTypes.SR) {
-			crmOrders = importFromSrCrm();
-		} else {
-			crmOrders = importFromPmCrm();
-		}		
+		crmOrders = importFromPmCrm();
+				
 		// addOrder
 		for (Order crmOrder : crmOrders) {
 			// проверка на существующего клиента
@@ -551,9 +548,11 @@ public class OpencartExecutorImpl extends AnyDaoImpl implements CrmExecutable, O
 		return crmOrder;
 	} 
 	
+	/*
 	private List<Order> importFromSrCrm() {
 		return new ArrayList<Order>();				
-	}	
+	}
+	*/	
 	
 	private void changeCrmOrderImportStatus(StoreTypes store, int orderId, Order crmOrder) {
 		orderDao.addCrmOrderImport(orderId, crmOrder);
@@ -570,11 +569,7 @@ public class OpencartExecutorImpl extends AnyDaoImpl implements CrmExecutable, O
 				
 				try {
 					Class.forName(DbConfig.JDBC_DRIVER);
-					if (store == StoreTypes.PM) {
-						conn = DriverManager.getConnection(DbConfig.DB_PM_PRODUCTION_URL);
-					} else {
-						conn = DriverManager.getConnection(DbConfig.DB_SR_PRODUCTION_URL);				
-					}			
+					conn = DriverManager.getConnection(DbConfig.DB_PM_PRODUCTION_URL);							
 					pstmt = conn.prepareStatement(sqUpdateParentCrmStatus);
 					pstmt.setInt(1, externalCrm.getParentId());
 					pstmt.executeUpdate();
