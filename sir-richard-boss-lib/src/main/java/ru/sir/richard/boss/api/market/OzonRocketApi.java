@@ -1,8 +1,10 @@
 package ru.sir.richard.boss.api.market;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.PropertyResolver;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -33,10 +36,15 @@ import ru.sir.richard.boss.model.utils.TextUtils;
 public class OzonRocketApi {
 
 	private final Logger logger = LoggerFactory.getLogger(OzonRocketApi.class);
-	private final String STATIC_URL_API = "";
-
-	public OzonRocketApi() {
+	
+	/**
+	 * application.properties
+	 */	
+	private final PropertyResolver environment;
+	
+	public OzonRocketApi(PropertyResolver environment) {
 		super();
+		this.environment = environment;
 	}
 
 	public String getToken() {
@@ -46,8 +54,8 @@ public class OzonRocketApi {
 
 		Map<String, Object> fields = new HashMap<>();
 		fields.put("grant_type", "client_credentials");
-		fields.put("client_id", "***");
-		fields.put("client_secret", "***");
+		fields.put("client_id", environment.getProperty("ozon.rocket.client.id"));
+		fields.put("client_secret", environment.getProperty("ozon.rocket.client.key"));
 
 		try {
 			HttpResponse<JsonNode> jsonResponseConnectToken = Unirest.post("https://xapi.ozon.ru/principal-auth-api/connect/token")
@@ -81,7 +89,7 @@ public class OzonRocketApi {
 	public Long getFromPlaceId() {
 		try {
 
-			HttpResponse<JsonNode> jsonResponseDeliveryFromPlaces = Unirest.get(STATIC_URL_API + "/v1/delivery/from_places")
+			HttpResponse<JsonNode> jsonResponseDeliveryFromPlaces = Unirest.get(environment.getProperty("ozon.rocket.url") + "/v1/delivery/from_places")
 					.headers(getHeaders())
 					.asJson();
 			if (jsonResponseDeliveryFromPlaces.getStatus() != 200) {
@@ -92,10 +100,12 @@ public class OzonRocketApi {
 			JSONArray jsonResponseDeliveryFromPlacesBodyArray = jsonResponseDeliveryFromPlacesBody.getJSONArray("places");
 
 			Long result = null;
+			String ourDeliveryPoint = new String(environment.getProperty("ozon.rocket.from.address.ru").getBytes("ISO-8859-1"), "UTF-8");
 			for (int i = 0; i <= jsonResponseDeliveryFromPlacesBodyArray.length() - 1; i++) {
 				JSONObject resultFromPlace = jsonResponseDeliveryFromPlacesBodyArray.getJSONObject(i);
 				logger.debug("resultFromPlace: {}, {}, {}", resultFromPlace.getLong("id"), resultFromPlace.getString("name"), resultFromPlace.getString("address"));
-				if (StringUtils.equals("", resultFromPlace.getString("address"))) {
+				
+				if (StringUtils.equals(ourDeliveryPoint, resultFromPlace.getString("address"))) {
 					result = resultFromPlace.getLong("id");
 					break;
 				}
@@ -106,7 +116,9 @@ public class OzonRocketApi {
 			return result;
 		} catch (UnirestException e) {
 			logger.error("UnirestException:", e);
-		}
+		} catch (UnsupportedEncodingException e) {
+			logger.error("UnsupportedEncodingException:", e);
+		}  
 		return null;
 	}
 
@@ -155,7 +167,7 @@ public class OzonRocketApi {
 		queryStrings.put("pagination.size", "100");
 
 		try {
-			HttpResponse<JsonNode> jsonResponseVariants = Unirest.get(STATIC_URL_API + "/v1/delivery/variants")
+			HttpResponse<JsonNode> jsonResponseVariants = Unirest.get(environment.getProperty("ozon.rocket.url") + "/v1/delivery/variants")
 					.headers(getHeaders())
 					.queryString(queryStrings)
 					.asJson();
@@ -216,6 +228,7 @@ public class OzonRocketApi {
 					break;
 				}
 
+//		    	{"objectTypeId":52895552000,"code":"22211793158000","wifiAvailable":false,"streets":"Агрономическая","contractorId":0,"postalCode":603105,"objectTypeName":"Самовывоз","fittingClothesAvailable":true,"isRestrictionAccess":false,"cityId":0,"enabled":true,"long":"44.027205","settlement":"Нижний Новгород","fiasGuidControl":"00000000-0000-0000-0000-000000000000","legalEntityNotAvailable":false,"stateName":"Active","restrictionLength":5000,"utcOffsetStr":"UTC+3","howToGet":"Трамвайная остановка рыбинская , тр 18 и 27. \n\nОт остановки пройти 100 м  по направлению к ул Агрономическая. Справа будет магазин Магнит, чуть дальше, в этом же здании с торца у дороги, аптека и тот же вход в пвз, ориентир — вывеска Ozon.\n\nДо встречи на Ozon!","id":1011000000006877,"lat":"56.300999","isCashForbidden":true,"isPartialPrepaymentForbidden":true,"address":"Россия, Нижний Новгород, Агрономическая улица, 132\/35","returnAvailable":false,"isGeozoneAvailable":false,"maxWeight":40000,"restrictionWidth":5000,"cardPaymentAvailable":false,"addressElementId":0,"phone":"+7(962)505-19-42","name":"Пункт выдачи Россия, Нижний Новгород, Агрономическая улица, 132\/35","fittingShoesAvailable":true,"partialGiveOutAvailable":true,"dangerousAvailable":false,"placement":"ул. Агрономическая, д. 132\/35","maxPrice":500000,"region":"Нижегородская","fiasGuid":"555e7d61-d9a7-4ba6-9770-6caa8198c483","restrictionHeight":5000}
 
 			}
 			if (result == null && StringUtils.isNotEmpty(nextPageToken)) {
@@ -238,7 +251,7 @@ public class OzonRocketApi {
 		
 		try {
 	
-			HttpResponse<JsonNode> jsonResponseVariantsByids = Unirest.post(STATIC_URL_API + "/v1/delivery/variants/byids")
+			HttpResponse<JsonNode> jsonResponseVariantsByids = Unirest.post(environment.getProperty("ozon.rocket.url") + "/v1/delivery/variants/byids")
 					.headers(getHeaders())
 					.body("{\"ids\": [" + deliveryVariantId + "]}")
 					.asJson();			
@@ -337,7 +350,7 @@ public class OzonRocketApi {
 		queryDeliveryCalculateStrings.put("fromPlaceId", getFromPlaceId());
 
 		try {
-			HttpResponse<JsonNode> jsonResponseDeliveryCalculate = Unirest.get(STATIC_URL_API + "/v1/delivery/calculate")
+			HttpResponse<JsonNode> jsonResponseDeliveryCalculate = Unirest.get(environment.getProperty("ozon.rocket.url") + "/v1/delivery/calculate")
 					.headers(getHeaders())
 					.queryString(queryDeliveryCalculateStrings)
 					.asJson();
@@ -354,7 +367,7 @@ public class OzonRocketApi {
 			Map<String, Object> queryDeliveryTimeStrings = new HashMap<>();
 			queryDeliveryTimeStrings.put("deliveryVariantId", String.valueOf(deliveryVariantId));
 			queryDeliveryTimeStrings.put("fromPlaceId", getFromPlaceId());
-			HttpResponse<JsonNode> jsonResponseDeliveryTime = Unirest.get(STATIC_URL_API + "/v1/delivery/time")
+			HttpResponse<JsonNode> jsonResponseDeliveryTime = Unirest.get(environment.getProperty("ozon.rocket.url") + "/v1/delivery/time")
 					.headers(getHeaders()).queryString(queryDeliveryTimeStrings).asJson();
 			deliveryPeriodMin = jsonResponseDeliveryTime.getBody().getObject().getInt("days");
 			deliveryPeriodMax = deliveryPeriodMin;
@@ -428,7 +441,7 @@ public class OzonRocketApi {
 		
 		JSONObject resultCalculateInformation = null;
 		try {
-			HttpResponse<JsonNode> jsonResponseCalculateInformation = Unirest.post(STATIC_URL_API + "/v1/delivery/calculate/information")
+			HttpResponse<JsonNode> jsonResponseCalculateInformation = Unirest.post(environment.getProperty("ozon.rocket.url") + "/v1/delivery/calculate/information")
 					.headers(getHeaders())
 					.body("{\"fromPlaceId\":" + getFromPlaceId() + ", \"destinationAddress\": \"" + address + "\", \"packages\": [{\"count\": 1,\"dimensions\": {\"weight\": 10,\"length\": 10,\"height\": 10,\"width\": 10}, \"price\": 10, \"estimatedPrice\": 10}]}")
 					.asJson();			
@@ -604,6 +617,16 @@ public class OzonRocketApi {
 			
 			sellingPrice = order.getItems().get(i).getPrice().doubleValue();
 			estimatedPrice = order.getItems().get(i).getPrice().doubleValue();
+			/*
+			if (order.getPaymentType() == PaymentTypes.POSTPAY) {
+				sellingPrice = order.getItems().get(i).getAmount().doubleValue();
+				estimatedPrice = order.getItems().get(i).getAmount().doubleValue();
+			} else {
+				sellingPrice = order.getItems().get(i).getAmount().doubleValue();
+				estimatedPrice = order.getItems().get(i).getAmount().doubleValue();				
+			}
+			*/
+			
 			
 			String productName;
 			if (StringUtils.isNoneEmpty(order.getItems().get(i).getProduct().getDeliveryName())) {
@@ -647,7 +670,7 @@ public class OzonRocketApi {
 				"}";		
 			
 		try {
-			HttpResponse<JsonNode> jsonResponseOrder = Unirest.post(STATIC_URL_API + "/v1/order")
+			HttpResponse<JsonNode> jsonResponseOrder = Unirest.post(environment.getProperty("ozon.rocket.url") + "/v1/order")
 					.headers(getHeaders())
 					.body(bodyRequest)
 					.asJson();			
@@ -664,7 +687,8 @@ public class OzonRocketApi {
 			logger.error("UnirestException:", e);
 		}
 		
-		return result;		
+		return result;
+		
 	}
 	
 	public CarrierStatuses getStatus(Order order) {
@@ -674,7 +698,7 @@ public class OzonRocketApi {
 		Map<String, Object> queryStrings = new HashMap<>();
 		queryStrings.put("orderNumber", order.getNo());
 		try {
-			HttpResponse<JsonNode> jsonResponseStatusByOrderNumber = Unirest.get(STATIC_URL_API + "/v1/tracking/byordernumber")
+			HttpResponse<JsonNode> jsonResponseStatusByOrderNumber = Unirest.get(environment.getProperty("ozon.rocket.url") + "/v1/tracking/byordernumber")
 					.headers(getHeaders())
 					.queryString(queryStrings)
 					.asJson();
@@ -691,6 +715,17 @@ public class OzonRocketApi {
 			}			
 			result = CarrierStatuses.getValueByCode(orderStatusCode, CrmTypes.OZON);
 						
+			/*
+			JSONArray jsonResponseStatusByOrderNumberBodyArray = jsonResponseStatusByOrderNumberBody.getJSONArray("postingInfos");
+			for (int i = 0; i <= jsonResponseStatusByOrderNumberBodyArray.length() - 1; i++) {
+				JSONObject postingInfo = jsonResponseStatusByOrderNumberBodyArray.getJSONObject(i);
+				String postingInfoStatus = postingInfo.getString(key)
+				CarrierStatuses.getValueByCode(CrmTypes.OZON, )
+				
+				
+			}
+			*/			
+			//{"postingInfos":[{"actualStatusCode":"Registered","postingNumber":"pl-054726-11932-11932","postingCode":"22973503811000","actualStatus":"Заказ зарегистрирован","trackingEvents":[{"eventId":5,"action":"Отправление зарегистрировано","moment":"2022-02-02T18:16:33.64"}],"items":[]}],"orderStatusCode":"Registered","orderStatus":"Заказ зарегистрирован","orderActualTimeslot":"2022.02.06 17:01 - 20:00"}
 			
 		} catch (UnirestException e) {
 			logger.error("UnirestException:", e);

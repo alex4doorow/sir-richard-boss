@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +65,9 @@ import ru.sir.richard.boss.model.utils.TextUtils;
 public class OrderDaoImpl extends AnyDaoImpl implements OrderDao {
 		
 	private final Logger logger = LoggerFactory.getLogger(OrderDaoImpl.class);
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private CustomerDao customerDao;
@@ -1362,7 +1366,7 @@ public class OrderDaoImpl extends AnyDaoImpl implements OrderDao {
 			
 			if (countYandexMarket > 0) {
 				
-				YandexMarketApi yandexMarketApi = new YandexMarketApi();
+				YandexMarketApi yandexMarketApi = new YandexMarketApi(this.environment);
 				
 				// поставим в адрес доставки данные из ЯМа 
 				Order ymOrder = yandexMarketApi.order(order);
@@ -1378,7 +1382,7 @@ public class OrderDaoImpl extends AnyDaoImpl implements OrderDao {
 			}
 			
 			if (countOzonMarket > 0) {				
-				OzonMarketApi ozonMarketApi = new OzonMarketApi();				
+				OzonMarketApi ozonMarketApi = new OzonMarketApi(this.environment);				
 				// поставим в адрес доставки данные из OZON 
 				OrderExternalCrm ozonCrm = order.getExternalCrmByCode(CrmTypes.OZON);
 				Order ozonOrder = ozonMarketApi.getOrder(ozonCrm.getParentCode());
@@ -1402,7 +1406,7 @@ public class OrderDaoImpl extends AnyDaoImpl implements OrderDao {
 					&& DateTimeUtils.truncateDate(order.getDelivery().getAddress().getCarrierInfo().getCourierInfo().getDeliveryDate()).compareTo(DateTimeUtils.sysDate()) == 0
 					) {				
 				// если запись яма есть, и "сегодня" равно планируемой дате отгрузки, то меняем статус в яме на status = "PROCESSING", subStatus = "SHIPPED"				
-				YandexMarketApi yandexMarketApi = new YandexMarketApi();
+				YandexMarketApi yandexMarketApi = new YandexMarketApi(this.environment);
 				yandexMarketApi.status(order);	
 			} else {
 				logger.error("Yandex.Market status not changed: sysDate != deliveryDate! sysDate:{}, deliveryDate:{}", DateTimeUtils.sysDate(), order.getDelivery().getAddress().getCarrierInfo().getCourierInfo().getDeliveryDate());

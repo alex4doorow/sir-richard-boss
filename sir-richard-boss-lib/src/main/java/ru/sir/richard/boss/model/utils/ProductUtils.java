@@ -24,7 +24,14 @@ public class ProductUtils {
 		if (StringUtils.isEmpty(searchText)) {
 			return false;
 		}
-
+		
+		/*
+		searchText = "iSocket 707";	
+		product4Check.setId(45);
+		product4Check.setName("GSM Розетка iSocket 707");
+		product4Check.setModel("ISGSM707EU Умная розетка iSocket 707");
+		product4Check.setSKU("ISGSM707EU");
+		*/
 		String[] splitSearchTexts = searchText.split("[+]");
 		String localSearchText;
 		if (splitSearchTexts.length > 0) {

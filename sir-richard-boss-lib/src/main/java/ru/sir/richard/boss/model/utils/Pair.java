@@ -48,7 +48,10 @@ public class Pair<T extends Cloneable> {
 		Pair<T> clone = new Pair<T>();
 		clone.start = this.start == null ? null : this.start;
 		clone.end = this.end == null ? null : this.end;		
-				
+				 
+//		clone.start = this.start == null ? null : (T) cloneableStart.clone();
+//		clone.deliveryDate = this.deliveryDate == null ? null : (Date) deliveryDate.clone();
+						
 		return clone;
 	}
 

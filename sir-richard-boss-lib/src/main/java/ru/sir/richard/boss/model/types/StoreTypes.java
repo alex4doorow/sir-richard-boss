@@ -71,7 +71,7 @@ public enum StoreTypes {
 		} else if (value == 2) {
 			return StoreTypes.PM;			
 		} else {
-			return StoreTypes.SR;
+			return StoreTypes.PM;
 		} 	
 	}
 	

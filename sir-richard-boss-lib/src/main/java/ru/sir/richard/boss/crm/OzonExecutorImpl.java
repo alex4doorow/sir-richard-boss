@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -37,6 +38,9 @@ public class OzonExecutorImpl extends AnyDaoImpl implements CrmExecutable, OzonE
 private final Logger logger = LoggerFactory.getLogger(OzonExecutorImpl.class);
 	
 	private Date executorDate;
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private WikiDao wikiDao;
@@ -82,7 +86,7 @@ private final Logger logger = LoggerFactory.getLogger(OzonExecutorImpl.class);
 	
 	private List<Order> importFromCrm() {
 		
-		OzonMarketApi ozonMarketApi = new OzonMarketApi();		
+		OzonMarketApi ozonMarketApi = new OzonMarketApi(this.environment);		
 		Pair<Date> period = new Pair<Date>(DateTimeUtils.beforeAnyDate(executorDate, 1), DateTimeUtils.afterAnyDate(executorDate, 1));		
 		List<Order> crmOrders = ozonMarketApi.getOrders(period, "awaiting_deliver"); // awaiting_deliver
 		

@@ -42,7 +42,7 @@ public class ConfigDaoImpl extends AnyDaoImpl implements ConfigDao {
 	
 	@Autowired
 	private WikiDao wikiDao;
-	
+		
 	@PostConstruct
 	public void init() {
 		logger.debug("ConfigDaoImpl.int()");
@@ -265,9 +265,6 @@ public class ConfigDaoImpl extends AnyDaoImpl implements ConfigDao {
 		String strSuppliers = SupplierTypes.getArrayByStatuses(conditions.getSuppliers());
 		saveFormStringValue(userId, "ozonProductConditionsForm", "suppliers", strSuppliers);
 	}
-		
-	
-	
 	
 	@Override
 	public OrderConditions loadOrderConditions(int userId) {
@@ -417,7 +414,6 @@ public class ConfigDaoImpl extends AnyDaoImpl implements ConfigDao {
 		
 		String strAdvertTypes = TextUtils.getArrayByStatuses(conditions.getDirtyAdvertTypes(), OrderAdvertTypes.class);
 		saveFormStringValue(userId, "productSalesReportByQueryForm", "advertTypes", strAdvertTypes);	
-		
-		
+				
 	}
 }

@@ -3,6 +3,7 @@ package ru.sir.richard.boss.model.utils.sender.email;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.PropertyResolver;
 
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.types.OrderEmailStatuses;
@@ -15,11 +16,13 @@ public class EmailSender implements AnySender {
 	
 	private final Logger logger = LoggerFactory.getLogger(EmailSender.class);
 	
+	private final PropertyResolver environment;
 	private final SenderTextGenerator textGenerator;
 	
-	public EmailSender() {
+	public EmailSender(PropertyResolver environment) {
 		super();
-		this.textGenerator = new EmailSenderTextGenerator();		
+		this.textGenerator = new EmailSenderTextGenerator();
+		this.environment = environment;
 	}
 
 	@Override
@@ -30,10 +33,10 @@ public class EmailSender implements AnySender {
 	}
 	
 	@Override
-	public SendingResponseStatus sendManualOrder(Order order, String textMessage) {
+	public SendingResponseStatus sendManualOrder(Order order, String textMessage) {	
 		
 		Message message = textGenerator.createManualOrderMessage(order, textMessage);
-		return sendOrderMessage(order, message);		
+		return sendOrderMessage(order, message);	
 		
 	}
 	
@@ -59,7 +62,7 @@ public class EmailSender implements AnySender {
 		logger.debug("email text:{}", emailText);
 		logger.debug("email recepient:{}", toEmail);
 		SendingResponseStatus result;
-		boolean emailResult = EmailUtils.sendEmail(order.getStore(), toEmail, subject, emailText + message.getFooter());
+		boolean emailResult = EmailUtils.sendEmail(environment, order.getStore(), toEmail, subject, emailText + message.getFooter());
 		if (emailResult) {
 			// email успешно отправлен
 			result = new EmailSendingResponseStatus(true, true, toEmail, emailText, "success");

@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.PropertyResolver;
 
 import ru.sir.richard.boss.model.data.Address;
 import ru.sir.richard.boss.model.data.Customer;
@@ -49,38 +50,46 @@ import ru.sir.richard.boss.model.utils.NumberUtils;
 import ru.sir.richard.boss.model.utils.Pair;
 import ru.sir.richard.boss.model.utils.TextUtils;
 
+// https://docs.ozon.ru/api/seller/#tag/Introduction
 public class OzonMarketApi {
 	
 	private final Logger logger = LoggerFactory.getLogger(OzonMarketApi.class);
 	
-	private final String STATIC_URL_API = "***";
+	/**
+	 * application.properties
+	 */	
+	private final PropertyResolver environment;
+
 		
-	private final int CDEK_PROVIDER_ID = 51;
-	private final int OZON_PROVIDER_ID = 24;
+	//private final int CDEK_PROVIDER_ID = 51;
+	//private final int OZON_PROVIDER_ID = 24;
 	
-	private final int CDEK_COURIER_DELIVERY_METHOD_ID = 53597;
-	private final int CDEK_COURIER_ECONOMY_DELIVERY_METHOD_ID = 56440;
-	private final int CDEK_PVZ_TYPICAL_DELIVERY_METHOD_ID = 36936;
-	private final int CDEK_PVZ_ECONOMY_DELIVERY_METHOD_ID = 36941;
+	//private final int CDEK_COURIER_DELIVERY_METHOD_ID = 53597;
+	//private final int CDEK_COURIER_ECONOMY_DELIVERY_METHOD_ID = 56440;
+	//private final int CDEK_PVZ_TYPICAL_DELIVERY_METHOD_ID = 36936;
+	//private final int CDEK_PVZ_ECONOMY_DELIVERY_METHOD_ID = 36941;
 	
-	private final Long CDEK_WAREHOUSE_ID = 1L; // отгрузка СДЭК 
-	private final Long OZON_WAREHOUSE_COURIER_ID = 2L; // курьером ОЗОН 
-	private final Long OZON_WAREHOUSE_PICKUP_ID = 3L; // самостоятельно до склада ОЗОН
+	//private final Long CDEK_WAREHOUSE_ID = 22067517155000L; // отгрузка СДЭК 
+	//private final Long OZON_WAREHOUSE_COURIER_ID = 22067558791000L; // курьером ОЗОН 
+	//private final Long OZON_WAREHOUSE_PICKUP_ID = 22294396015000L; // самостоятельно до склада ОЗОН
+	
+	public OzonMarketApi(PropertyResolver environment) {
+		super();
+		this.environment = environment;
+	}
 
 	private HttpEntityEnclosingRequestBase postSetHeader(HttpEntityEnclosingRequestBase post) {
-
-		post.setHeader("Host", "***");
-		post.setHeader("Client-Id", "***");
-		post.setHeader("Api-Key", "***");
-		post.setHeader("Content-type", "application/json");			
-		
+		post.setHeader("Host", environment.getProperty("ozon.market.host"));
+		post.setHeader("Client-Id", environment.getProperty("ozon.market.client.id"));
+		post.setHeader("Api-Key", environment.getProperty("ozon.market.client.key"));
+		post.setHeader("Content-type", "application/json");	
 		return post;
 	}
 	
-
+	// https://api-seller.ozon.ru/v3/posting/fbs/get
 	public Order getOrder(String ozonOrderId) {
 	
-		final String url = STATIC_URL_API + "/v3/posting/fbs/get";		
+		final String url = environment.getProperty("ozon.market.url") + "/v3/posting/fbs/get";		
 		
 		String inputJson = 
 		"{" +
@@ -119,10 +128,8 @@ public class OzonMarketApi {
         	    
         	    myResponse = new JSONObject(responseB.toString());
         	    logger.debug("getOrder() jsonResponse:{}", myResponse.toString());
-        	           	 
-        	    
-        	    JSONObject myResponseResults = myResponse.getJSONObject("result");
-        	            	    	
+        	           	         	    
+        	    JSONObject myResponseResults = myResponse.getJSONObject("result");        	            	    	
         	    order = createOrderByOzonPosting1(myResponseResults, false);
             }
 
@@ -153,7 +160,19 @@ public class OzonMarketApi {
         order.setAdvertType(OrderAdvertTypes.OZON);      
 						
 		order.setAnnotation("");				
-		
+		/*
+		acceptance_in_progress — идёт приёмка,
+		awaiting_approve — ожидает подтверждения,
+		awaiting_packaging — ожидает упаковки,
+		awaiting_deliver — ожидает отгрузки,
+		arbitration — арбитраж,
+		client_arbitration — клиентский арбитраж доставки,
+		delivering — доставляется,
+		driver_pickup — у водителя,
+		delivered — доставлено,
+		cancelled — отменено,
+		not_accepted — не принят на сортировочном центре.
+		*/		
 		order.setStatus(OrderStatuses.BID);
 		if (!isCreate) {
 			if (postingObject.getString("status").equalsIgnoreCase("awaiting_approve")) {
@@ -183,8 +202,8 @@ public class OzonMarketApi {
 		Customer customer = new Customer();
 		customer.setCountry(Countries.RUSSIA);		
 		Address deliveryAddress = new Address(Countries.RUSSIA, AddressTypes.MAIN);
-		if (postingObject.getJSONObject("delivery_method").getInt("tpl_provider_id") == OZON_PROVIDER_ID) {			
-			deliveryAddressText = "";			
+		if (postingObject.getJSONObject("delivery_method").getInt("tpl_provider_id") == environment.getProperty("ozon.market.ozon.provider", Long.class)) {			
+			deliveryAddressText = "МО, г. Балашиха, 1-е Мая, д.25";			
 			customer.setFirstName("Озон");
 			customer.setLastName("Маркетов");			
 			customer.setPhoneNumber("(800) 234-70-00");				
@@ -213,16 +232,16 @@ public class OzonMarketApi {
         order.setOrderType(OrderTypes.ORDER);
     	order.setPaymentType(PaymentTypes.POSTPAY);
     	
-    	
-    	if (postingObject.getJSONObject("delivery_method").getLong("id") == CDEK_COURIER_DELIVERY_METHOD_ID) { 
+    	// posting.getJSONObject("delivery_method").getString("name");
+    	if (postingObject.getJSONObject("delivery_method").getLong("id") == environment.getProperty("ozon.market.cdek.delivery.courier.main", Long.class)) { 
     		order.getDelivery().setDeliveryType(DeliveryTypes.CDEK_COURIER);	
-    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == CDEK_COURIER_ECONOMY_DELIVERY_METHOD_ID) { 
+    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == environment.getProperty("ozon.market.cdek.delivery.courier.economy", Long.class)) { 
     		order.getDelivery().setDeliveryType(DeliveryTypes.CDEK_COURIER_ECONOMY);	
-    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == CDEK_PVZ_TYPICAL_DELIVERY_METHOD_ID) { 
+    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == environment.getProperty("ozon.market.cdek.delivery.pvz.main", Long.class)) { 
     		order.getDelivery().setDeliveryType(DeliveryTypes.CDEK_PVZ_TYPICAL);	
-    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == CDEK_PVZ_ECONOMY_DELIVERY_METHOD_ID) { 
+    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == environment.getProperty("ozon.market.cdek.delivery.pvz.economy", Long.class)) { 
     		order.getDelivery().setDeliveryType(DeliveryTypes.CDEK_PVZ_ECONOMY);	
-    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == OZON_WAREHOUSE_PICKUP_ID) { 
+    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == environment.getProperty("ozon.market.ozon.warehouse.pickup", Long.class)) { 
     		order.getDelivery().setDeliveryType(DeliveryTypes.OZON_FBS);	
     	}
     	   	
@@ -233,10 +252,9 @@ public class OzonMarketApi {
         
         order.getDelivery().setPaymentDeliveryType(PaymentDeliveryTypes.CUSTOMER);		                
         order.getDelivery().setTrackCode(postingObject.getString("tracking_number"));
-                
-										
-        order.setCustomer(customer);                
-   		         
+        
+        //order.setProductCategory(wikiDao.getCategoryById(0));            										
+        order.setCustomer(customer);   
         
 		OrderExternalCrm crmOzon = new OrderExternalCrm(order);
 		crmOzon.setCrm(CrmTypes.OZON);
@@ -245,25 +263,31 @@ public class OzonMarketApi {
 		crmOzon.setParentId(postingObject.getInt("order_id"));
        	order.getExternalCrms().add(crmOzon);       	
         order = setPmCrmOrderItems(postingObject, order);
-       	/*
-       	order = setPmCrmOrderAmount(order);
-       
-        order = setPmCrmOrderOptions(order);
-        */
-    		
+   		
 		return order;
-		
 	}	
 	
-
+	// POST https://api-seller.ozon.ru/v3/posting/fbs/list
 	public List<Order> getOrders(Pair<Date> period, String ozonStatus) {
 				
 		List<Order> orders = new ArrayList<Order>();
-		final String url = STATIC_URL_API + "/v3/posting/fbs/list";	
+		final String url = environment.getProperty("ozon.market.url") + "/v3/posting/fbs/list";	
 				
 		//dateQuery = DateTimeUtils.formatDate(calculateDate, "yyyy-MM-dd") + "T" + DateTimeUtils.formatDate(calculateDate, "HH:mm:ss");
 		
-		
+		/*
+		acceptance_in_progress — идёт приёмка,
+		awaiting_approve — ожидает подтверждения,
+		awaiting_packaging — ожидает упаковки,
+		awaiting_deliver — ожидает отгрузки,
+		arbitration — арбитраж,
+		client_arbitration — клиентский арбитраж доставки,
+		delivering — доставляется,
+		driver_pickup — у водителя,
+		delivered — доставлено,
+		cancelled — отменено,
+		not_accepted — не принят на сортировочном центре.
+		*/
 		
 		String inputJson = 
 		"{" +
@@ -271,21 +295,21 @@ public class OzonMarketApi {
 		    "\"filter\": {" +
 		        "\"delivery_method_id\": [" +
 		    
-		        	CDEK_COURIER_DELIVERY_METHOD_ID + ", " + 
-		        	CDEK_COURIER_ECONOMY_DELIVERY_METHOD_ID + ", " +
-		        	CDEK_PVZ_TYPICAL_DELIVERY_METHOD_ID + ", " +
-		        	CDEK_PVZ_ECONOMY_DELIVERY_METHOD_ID + ", " +
-		        	OZON_WAREHOUSE_PICKUP_ID + 		        	
+					environment.getProperty("ozon.market.cdek.delivery.courier.main") + ", " + 
+					environment.getProperty("ozon.market.cdek.delivery.courier.economy") + ", " +
+					environment.getProperty("ozon.market.cdek.delivery.pvz.main") + ", " +
+					environment.getProperty("ozon.market.cdek.delivery.pvz.economy") + ", " +
+					environment.getProperty("ozon.market.ozon.warehouse.pickup") + ", " + 		        	
 		        	
 		        "]," +
 		        "\"order_id\": 0," +
-		        "\"provider_id\": [" + CDEK_PROVIDER_ID + "," + OZON_PROVIDER_ID + "]," +
+		        "\"provider_id\": [" + environment.getProperty("ozon.market.ozon.provider") + "," + environment.getProperty("ozon.market.cdek.provider") + "]," +
 		        "\"since\": \"" + ozonDateToString(period.getStart()) + "\"," +
 		        "\"to\": \"" + ozonDateToString(period.getEnd()) + "\"," +
 		        "\"status\": \"" + ozonStatus + "\"," +
 		        "\"warehouse_id\": [" + 
-		        	CDEK_WAREHOUSE_ID + "," +
-		        	OZON_WAREHOUSE_PICKUP_ID+
+		        	environment.getProperty("ozon.market.cdek.warehouse") + "," +
+		        	environment.getProperty("ozon.market.ozon.warehouse.pickup") +
 		        	"]" +
 		    "}," +
 		    "\"limit\": 50," +
@@ -322,8 +346,7 @@ public class OzonMarketApi {
         	    
         	    myResponse = new JSONObject(responseB.toString());
         	    logger.debug("getOrders() jsonResponse:{}", myResponse.toString());
-        	           	    
-        	    
+        	           	            	    
         	    //JSONArray myResponseResults = myResponse.getJSONArray("result");
         	    
         	    if (myResponse.getJSONObject("result").get("postings") == null) {
@@ -371,99 +394,7 @@ public class OzonMarketApi {
 		
 		return DateTimeUtils.formatDate(date, "yyyy-MM-dd") + 'T' + DateTimeUtils.formatDate(date,"hh:mm:SS") + 'Z';		
 	}
-	
-	/*
-	private Order createOrderByOzonPosting(JSONObject postingObject) {
-		
-		logger.debug(postingObject.getString("posting_number"));
-		
-		Order order = new Order();
-		order.setId(postingObject.getInt("order_id"));
-		order.setOrderDate(ozonStringToDate(postingObject.getString("in_process_at")));			
-		
-		order.setSourceType(OrderSourceTypes.LID);                
-        order.setStore(StoreTypes.PM);
-        order.setAdvertType(OrderAdvertTypes.OZON);       
-						
-		order.setAnnotation("");
-		
-		String deliveryAddressText = "";
-		Customer customer = new Customer();
-		customer.setCountry(Countries.RUSSIA);		
-		Address deliveryAddress = new Address(Countries.RUSSIA, AddressTypes.MAIN);
-		if (postingObject.getJSONObject("delivery_method").getInt("tpl_provider_id") == OZON_PROVIDER_ID) {
-			
-			deliveryAddressText = "";
-			
-			customer.setFirstName("Озон");
-			customer.setLastName("Маркетов");
-			
-			customer.setPhoneNumber("(800) 234-70-00");				
-			customer.setEmail("help@ozon.ru");
-			
-			Address customerAddress = customer.getMainAddress();
-			customerAddress.setAddress(deliveryAddress.getAddress());			
-			
-			
-		} else {
-			JSONObject customerObject = postingObject.getJSONObject("customer");
-			deliveryAddressText = StringUtils.trim(StringUtils.defaultString(customerObject.getJSONObject("address").getString("address_tail")));		        
-		    order.getDelivery().getAddress().getCdekInfo().setCityContext(customerObject.getJSONObject("address").getString("city"));
-		    order.getDelivery().getAddress().getCdekInfo().setRegion(customerObject.getJSONObject("address").getString("region"));
-		    order.getDelivery().getAddress().getCdekInfo().setPvz(customerObject.getJSONObject("address").getString("provider_pvz_code"));
-		         					
-			customer.setFirstName(customerObject.getString("name"));			
-			customer.setPhoneNumber(TextUtils.formatPhoneNumber(customerObject.getString("phone")));				
-			customer.setEmail(customerObject.getString("customer_email"));
-			
-			Address customerAddress = customer.getMainAddress();
-			customerAddress.setAddress(deliveryAddress.getAddress());			
-		}
-                  
-        order.setOrderType(OrderTypes.ORDER);
-    	order.setPaymentType(PaymentTypes.POSTPAY);
-    	
-    	// posting.getJSONObject("delivery_method").getString("name");
-    	if (postingObject.getJSONObject("delivery_method").getLong("id") == CDEK_COURIER_DELIVERY_METHOD_ID) { 
-    		order.getDelivery().setDeliveryType(DeliveryTypes.CDEK_COURIER);	
-    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == CDEK_COURIER_ECONOMY_DELIVERY_METHOD_ID) { 
-    		order.getDelivery().setDeliveryType(DeliveryTypes.CDEK_COURIER_ECONOMY);	
-    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == CDEK_PVZ_TYPICAL_DELIVERY_METHOD_ID) { 
-    		order.getDelivery().setDeliveryType(DeliveryTypes.CDEK_PVZ_TYPICAL);	
-    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == CDEK_PVZ_ECONOMY_DELIVERY_METHOD_ID) { 
-    		order.getDelivery().setDeliveryType(DeliveryTypes.CDEK_PVZ_ECONOMY);	
-    	} else if (postingObject.getJSONObject("delivery_method").getLong("id") == OZON_WAREHOUSE_PICKUP_ID) { 
-    		order.getDelivery().setDeliveryType(DeliveryTypes.OZON_FBS);	
-    	}
-    	order.getDelivery().getCourierInfo().setDeliveryDate(ozonStringToDate(postingObject.getString("shipment_date")));
-    	    	       	
-    	    	
-        deliveryAddress.setAddress(deliveryAddressText);
-        order.getDelivery().setAddress(deliveryAddress);
-        
-        order.getDelivery().setPaymentDeliveryType(PaymentDeliveryTypes.CUSTOMER);		                
-        order.getDelivery().setTrackCode(postingObject.getString("tracking_number"));
-        
-        //order.setProductCategory(wikiDao.getCategoryById(0));
-        
-        order.setStatus(OrderStatuses.BID); 
-              		
-        order.setCustomer(customer);   
-        
-		OrderExternalCrm crmOzon = new OrderExternalCrm(order);
-		crmOzon.setCrm(CrmTypes.OZON);
-		crmOzon.setId(postingObject.getInt("order_id"));
-		crmOzon.setParentCode(postingObject.getString("posting_number"));		
-		crmOzon.setParentId(postingObject.getInt("order_id"));
-       	order.getExternalCrms().add(crmOzon);       	
-        order = setPmCrmOrderItems(postingObject, order);
-    		
-		return order;
-		
-	}
-	*/
-	
-	
+
 	private Order setPmCrmOrderItems(JSONObject posting, Order crmOrder) {
 		
 		List<OrderItem> orderItems = new ArrayList<OrderItem>();
@@ -493,16 +424,12 @@ public class OzonMarketApi {
 			orderItems.add(orderItem);
 	    	
 	    }
-		
-
-		
-		
 		crmOrder.setItems(orderItems);
 		return crmOrder;
 	} 
 	
 	
-
+	// POST https://api-seller.ozon.ru/v1/product/import/stocks	
 	public OzonResult offerStocks(List<Product> products) {
 		
 		
@@ -510,7 +437,7 @@ public class OzonMarketApi {
 			return new OzonResult();
 		}
 
-		final String url = STATIC_URL_API + "/v1/product/import/stocks";	
+		final String url = environment.getProperty("ozon.market.url") + "/v1/product/import/stocks";	
 
 		OzonResult ozonResult = new OzonResult();
 		String inputJson = 
@@ -592,7 +519,6 @@ public class OzonMarketApi {
         	    	resultBean.setOfferId(myResponseResults.getJSONObject(i).getString("offer_id"));        	    	
         	    	resultBean.setUpdated(myResponseResults.getJSONObject(i).getBoolean("updated"));
         	    	
-             	    	
         	    	resultBean.setErrors(myResponseResults.getJSONObject(i).getJSONArray("errors").toString());
         	    	ozonResult.getResponse().add(resultBean);
         	    	
@@ -640,14 +566,14 @@ public class OzonMarketApi {
 		return ozonResult;		
 	}	
 	
-
+	// https://api-seller.ozon.ru/v2/products/stocks
 	public OzonResult offerWarehouseStocks(List<Product> products) {
 		
 		if (products == null || products.size() == 0) {
 			return new OzonResult();
 		}
 
-		final String url = STATIC_URL_API + "/v2/products/stocks";	
+		final String url = environment.getProperty("ozon.market.url") + "/v2/products/stocks";	
 
 		OzonResult ozonResult = new OzonResult();
 		String inputJson = 
@@ -681,19 +607,19 @@ public class OzonMarketApi {
 						            "\"offer_id\": \"" + product.getSku() + "\"," + "\r\n" +
 						            "\"product_id\": " +  product.getMarket(CrmTypes.OZON).getMarketSku() + "," + "\r\n" +
 						            "\"stock\": "+  cdekQuantity + "," + "\r\n" +
-						            "\"warehouse_id\": "+  CDEK_WAREHOUSE_ID + "\r\n" +
+						            "\"warehouse_id\": "+ environment.getProperty("ozon.market.cdek.warehouse") + "\r\n" +
 						        "},\r\n" +
 							        "{\r\n" +
 						            "\"offer_id\": \"" + product.getSku() + "\"," + "\r\n" +
 						            "\"product_id\": " +  product.getMarket(CrmTypes.OZON).getMarketSku() + "," + "\r\n" +
 						            "\"stock\": "+  ozonPickupQuantity + "," + "\r\n" +
-						            "\"warehouse_id\": "+  OZON_WAREHOUSE_PICKUP_ID + "\r\n" +
+						            "\"warehouse_id\": "+  environment.getProperty("ozon.market.ozon.warehouse.pickup") + "\r\n" +
 						        "},\r\n" +
 							        "{\r\n" +
 						            "\"offer_id\": \"" + product.getSku() + "\"," + "\r\n" +
 						            "\"product_id\": " +  product.getMarket(CrmTypes.OZON).getMarketSku() + "," + "\r\n" +
 						            "\"stock\": "+  ozonCourierQuantity + "," + "\r\n" +
-						            "\"warehouse_id\": "+  OZON_WAREHOUSE_COURIER_ID + "\r\n" +
+						            "\"warehouse_id\": "+  environment.getProperty("ozon.market.ozon.warehouse.courier") + "\r\n" +
 						        "}";
 					
 			inputJson += item + ",";			
@@ -734,48 +660,6 @@ public class OzonMarketApi {
         	    logger.debug("offerStocks() jsonResponse:{}", myResponse.toString());   
         	    ozonResult.setDirtyResponce(myResponse.toString());
         	    ozonResult.setResponseSuccess(true);
-        	    
-        	    
-        	    /*      
-        	    JSONArray myResponseResults = myResponse.getJSONArray("result");  	   
-        	    ozonResult.setResponseSuccess(true);
-        	    for (int i = 0; i < myResponseResults.length(); i++) {
-        	    	OzonResultBean resultBean = new OzonResultBean();
-        	    	
-        	    	resultBean.setProductId(myResponseResults.getJSONObject(i).getString("product_id"));
-        	    	resultBean.setOfferId(myResponseResults.getJSONObject(i).getString("offer_id"));        	    	
-        	    	resultBean.setUpdated(myResponseResults.getJSONObject(i).getBoolean("updated"));
-        	    	resultBean.setErrors(myResponseResults.getJSONObject(i).getString("errors"));
-        	    	ozonResult.getResponse().add(resultBean);
-        	    	
-        	    	boolean isBeanError = false;
-        	    	if (!resultBean.isUpdated()) {
-        	    		
-        	    		JSONArray myResponseResultsErrors = myResponseResults.getJSONObject(i).getJSONArray("errors");
-        	    		
-        	    		for (int ii = 0; ii < myResponseResultsErrors.length(); ii++) {
-        	    			String code = myResponseResultsErrors.getJSONObject(i).getString("code");
-        	    			
-        	    			if (!isBeanError) {
-        	    				
-        	    				if (StringUtils.equalsIgnoreCase(code, "SKU_STOCK_NOT_CHANGE")) {
-            	    				isBeanError = false;
-            	    			} else {
-            	    				isBeanError = true;
-            	    				break;
-            	    			}
-        	    			}
-        	    		}
-        	    		
-        	    		if (ozonResult.isResponseSuccess() && isBeanError) {
-            	    		ozonResult.setResponseSuccess(false);
-            	    	}
-        	    		
-        	    	}
-        	    	
-        	    	
-        	    }
-        	    */
             }
 
 		} catch (Exception ex) {
@@ -793,13 +677,14 @@ public class OzonMarketApi {
 	}		
 	
 	
+	// POST https://api-seller.ozon.ru/v1/product/import/prices
 	public String offerPrices(List<Product> products) {
 		
 		if (products == null || products.size() == 0) {
 			return "";
 		}
 				
-		final String url = STATIC_URL_API + "/v1/product/import/prices"; 
+		final String url = environment.getProperty("ozon.market.url") + "/v1/product/import/prices"; 
 		
 		String result = "";
 		
@@ -839,8 +724,7 @@ public class OzonMarketApi {
 		
 		inputJson = StringUtils.substring(inputJson, 0, inputJson.length() - 1); 
 		inputJson += "\r\n  ]\r\n" + 
-				"}";
-				
+				"}";			
 		
 		
 		logger.debug("offerPrices() inputJson:{}", inputJson);        

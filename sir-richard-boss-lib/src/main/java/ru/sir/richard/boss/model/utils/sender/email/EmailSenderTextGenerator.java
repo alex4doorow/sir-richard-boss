@@ -54,9 +54,9 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 		Message message = new Message();
 		String messageSubject = customer.getFirstName() + ", оставьте отзыв на товары из Вашего заказа на \""+ order.getStore().getAnnotation() + "\""; 
 		String messageBody = "";
-
-		String priborMasterUrl = "***";
-		priborMasterUrl = "***";
+		//String bonusSumma = "200";
+		String priborMasterUrl = "https://yandex.ru/maps/org/pribormaster/115889592463/?ll=37.794828%2C55.816490&z=14";
+		priborMasterUrl = "https://yandex.ru/profile/115889592463";
 		
 		
 		if (orderEmailStatuses.equals(OrderEmailStatuses.FEEDBACK)) {			

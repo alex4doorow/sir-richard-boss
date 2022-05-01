@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -34,6 +35,9 @@ public class EmailFastOrderExecutorImpl extends AnyDaoImpl implements CrmExecuta
 private final Logger logger = LoggerFactory.getLogger(OpencartExecutorImpl.class);
 	
 	private Date executorDate;
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private WikiDao wikiDao;
@@ -63,7 +67,7 @@ private final Logger logger = LoggerFactory.getLogger(OpencartExecutorImpl.class
 	
     private List<Order> importStoreOrders(StoreTypes store) {
 		
-		EmailUtils emailManager = new EmailUtils();		
+		EmailUtils emailManager = new EmailUtils(environment);		
 	    List<Order> crmOrders = new ArrayList<Order>();    
 	    
 	    List<String> textMessages = emailManager.loadMessagesFromEmail(store, executorDate, "lead");

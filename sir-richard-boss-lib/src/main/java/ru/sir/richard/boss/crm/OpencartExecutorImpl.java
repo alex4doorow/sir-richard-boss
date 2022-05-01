@@ -16,10 +16,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 
 import ru.sir.richard.boss.api.market.YandexMarketApi;
-import ru.sir.richard.boss.config.DbConfig;
 import ru.sir.richard.boss.dao.AnyDaoImpl;
 import ru.sir.richard.boss.dao.CustomerDao;
 import ru.sir.richard.boss.dao.OrderDao;
@@ -57,6 +57,9 @@ public class OpencartExecutorImpl extends AnyDaoImpl implements CrmExecutable, O
 	private final Logger logger = LoggerFactory.getLogger(OpencartExecutorImpl.class);
 	
 	private Date executorDate;
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private WikiDao wikiDao;
@@ -125,7 +128,7 @@ public class OpencartExecutorImpl extends AnyDaoImpl implements CrmExecutable, O
 				
 				OrderExternalCrm orderExternalCrm = crmOrder.getExternalCrmByCode(CrmTypes.YANDEX_MARKET);
 												
-				YandexMarketApi yandexMarketApi = new YandexMarketApi();
+				YandexMarketApi yandexMarketApi = new YandexMarketApi(this.environment);
 				
 				// поставим в адрес доставки данные из ЯМа 
 				Order ymOrder = yandexMarketApi.order(orderExternalCrm.getParentId(), crmOrder); 
@@ -159,8 +162,8 @@ public class OpencartExecutorImpl extends AnyDaoImpl implements CrmExecutable, O
 		PreparedStatement pstmt = null;
 		try {
 			
-			Class.forName(DbConfig.JDBC_DRIVER);
-			conn = DriverManager.getConnection(DbConfig.DB_PM_PRODUCTION_URL);
+			Class.forName(environment.getProperty("jdbc.driver"));
+			conn = DriverManager.getConnection(environment.getProperty("jdbc.pm.url"));		
 			
 			pstmt = conn.prepareStatement(sqlSelectCrmOrders);
 			pstmt.setDate(1,  new java.sql.Date(dateExecute.getTime()));
@@ -376,8 +379,8 @@ public class OpencartExecutorImpl extends AnyDaoImpl implements CrmExecutable, O
 		PreparedStatement pstmt = null;	
 		String options = "";
 		try {			
-			Class.forName(DbConfig.JDBC_DRIVER);
-			conn = DriverManager.getConnection(DbConfig.DB_PM_PRODUCTION_URL);
+			Class.forName(environment.getProperty("jdbc.driver"));
+			conn = DriverManager.getConnection(environment.getProperty("jdbc.pm.url"));		
 
 			pstmt = conn.prepareStatement(sqlSelectCrmOrderOptions);
 			pstmt.setInt(1, crmOrder.getExternalCrms().get(0).getParentId());
@@ -425,8 +428,8 @@ public class OpencartExecutorImpl extends AnyDaoImpl implements CrmExecutable, O
 		PreparedStatement pstmt = null;
 		List<Map<String, BigDecimal>> crmOrderAmounts = new ArrayList<Map<String, BigDecimal>>();
 		try {			
-			Class.forName(DbConfig.JDBC_DRIVER);
-			conn = DriverManager.getConnection(DbConfig.DB_PM_PRODUCTION_URL);
+			Class.forName(environment.getProperty("jdbc.driver"));
+			conn = DriverManager.getConnection(environment.getProperty("jdbc.pm.url"));		
 
 			pstmt = conn.prepareStatement(sqlSelectCrmAmounts);
 			pstmt.setInt(1,  crmOrder.getExternalCrms().get(0).getParentId());
@@ -498,8 +501,8 @@ public class OpencartExecutorImpl extends AnyDaoImpl implements CrmExecutable, O
 		List<OrderItem> orderItems = new ArrayList<OrderItem>();
 		
 		try {			
-			Class.forName(DbConfig.JDBC_DRIVER);
-			conn = DriverManager.getConnection(DbConfig.DB_PM_PRODUCTION_URL);
+			Class.forName(environment.getProperty("jdbc.driver"));
+			conn = DriverManager.getConnection(environment.getProperty("jdbc.pm.url"));		
 
 			pstmt = conn.prepareStatement(sqlSelectCrmOrderProduct);
 			pstmt.setInt(1,  crmOrder.getExternalCrms().get(0).getParentId());
@@ -568,8 +571,8 @@ public class OpencartExecutorImpl extends AnyDaoImpl implements CrmExecutable, O
 			if (externalCrm.getCrm() == CrmTypes.OPENCART) {
 				
 				try {
-					Class.forName(DbConfig.JDBC_DRIVER);
-					conn = DriverManager.getConnection(DbConfig.DB_PM_PRODUCTION_URL);							
+					Class.forName(environment.getProperty("jdbc.driver"));
+					conn = DriverManager.getConnection(environment.getProperty("jdbc.pm.url"));							
 					pstmt = conn.prepareStatement(sqUpdateParentCrmStatus);
 					pstmt.setInt(1, externalCrm.getParentId());
 					pstmt.executeUpdate();

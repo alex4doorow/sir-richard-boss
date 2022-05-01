@@ -86,16 +86,18 @@ public class TextUtils {
 		String sStart = StringUtils.substring(s, 0, 3);
 		String sEnd = StringUtils.substring(s, 3, s.length());
 		
-		sStart = StringUtils.replace(sStart, "+7", "", 1);
-		sStart = StringUtils.replace(sStart, "89", "9", 1);
-		sStart = StringUtils.replace(sStart, "79", "9", 1);
-		sStart = StringUtils.replace(sStart, "8(9", "9", 1);
-		sStart = StringUtils.replace(sStart, "8 (9", "9", 1);		
-		sStart = StringUtils.replace(sStart, "8-9", "9", 1);
-		sStart = StringUtils.replace(sStart, "8 9", "9", 1);
-		
+		if (StringUtils.startsWith(s, "+") || StringUtils.startsWith(s, "7") || StringUtils.startsWith(s, "8")) {
+			sStart = StringUtils.replace(sStart, "+7", "", 1);
+			sStart = StringUtils.replace(sStart, "89", "9", 1);
+			sStart = StringUtils.replace(sStart, "79", "9", 1);
+			sStart = StringUtils.replace(sStart, "8(9", "9", 1);
+			sStart = StringUtils.replace(sStart, "8 (9", "9", 1);		
+			sStart = StringUtils.replace(sStart, "8-9", "9", 1);
+			sStart = StringUtils.replace(sStart, "8 9", "9", 1);
+		}		
 		s = sStart + sEnd;
 		s = phoneNumberDigit(s);
+		
 		String r1 = StringUtils.substring(s, 0, 3);
 		String r2 = StringUtils.substring(s, 3, 6);
 		String r3 = StringUtils.substring(s, 6, 8);

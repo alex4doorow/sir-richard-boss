@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.PropertyResolver;
 
 import ru.sir.richard.boss.api.epochta.v2.SmsApi;
 import ru.sir.richard.boss.api.epochta.v2.SmsPhone;
@@ -19,12 +20,14 @@ import ru.sir.richard.boss.model.utils.sender.SendingResponseStatus;
 public class SmsSender implements AnySender {
 	
 	private final Logger logger = LoggerFactory.getLogger(SmsSender.class);
-	
+
+	private final PropertyResolver environment;
 	private final SenderTextGenerator textGenerator;
 	
-	public SmsSender() {
+	public SmsSender(PropertyResolver environment) {
 		super();
 		this.textGenerator = new SmsSenderTextGenerator();
+		this.environment = environment;
 	}
 	
 	@Override
@@ -40,14 +43,17 @@ public class SmsSender implements AnySender {
 		if (StringUtils.isEmpty(order.getCustomer().getViewPhoneNumber())) {
 			return SmsSendingResponseStatus.createEmpty();
 		}		
-		SmsApi apiSms = new SmsApi();
+		SmsApi apiSms = new SmsApi(environment);
 	    String phone = "7" + TextUtils.phoneNumberDigit(order.getCustomer().getViewPhoneNumber());
+	    
+	    // TODO
+	    //phone = "79161699099";
 	    
 	    logger.debug("sms text:{}", smsText);
 		logger.debug("sms recepient:{}", phone);			    
 	    List<SmsPhone> phones = new ArrayList<SmsPhone>();	    
 		phones.add(new SmsPhone("id1", "", phone));
-		String resultStatus = apiSms.sendSms("", smsText, phones);		
+		String resultStatus = apiSms.sendSms("sir richard", smsText, phones);		
 		SendingResponseStatus result;
 		if (StringUtils.indexOf(resultStatus, "<RESPONSE><status>1</status>") >= 0) {
 			// смс успешно отправлено

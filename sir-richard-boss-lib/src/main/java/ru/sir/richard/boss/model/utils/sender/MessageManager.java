@@ -3,6 +3,8 @@ package ru.sir.richard.boss.model.utils.sender;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.core.env.PropertyResolver;
+
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.types.OrderAdvertTypes;
 import ru.sir.richard.boss.model.types.OrderEmailStatuses;
@@ -13,9 +15,9 @@ public class MessageManager {
 	
 	private List<AnySender> senders = new ArrayList<AnySender>();
 	
-	public MessageManager() {
-		senders.add(new SmsSender());
-		senders.add(new EmailSender());
+	public MessageManager(PropertyResolver environment) {
+		senders.add(new SmsSender(environment));
+		senders.add(new EmailSender(environment));
 	}
 	
 	public MessageSendingStatus sendOrderMessage(Order order, boolean isSendMessage) {

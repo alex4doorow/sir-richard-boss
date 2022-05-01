@@ -23,6 +23,7 @@ public enum SupplierTypes {
 	HOONT(14, "HOONT"),
 	CARKU(15, "CARKU"),
 	TORNADO(16, "ТОРНАДО"),
+	RUSONAR(17, "ПРАКТИК"),
 	SLEDOPYT_YANDEX_MARKET_FISHING(21, "СЛЕДОПЫТ ЯМ-РЫБАЛКА");
 				
 	private int id;
@@ -72,6 +73,8 @@ public enum SupplierTypes {
 			return SupplierTypes.CARKU;
 		} else if (value == 16) {
 			return SupplierTypes.TORNADO;
+		} else if (value == 17) {
+			return SupplierTypes.RUSONAR;
 		} else if (value == 21) {
 			return SupplierTypes.SLEDOPYT_YANDEX_MARKET_FISHING;
 		} else {
@@ -110,6 +113,8 @@ public enum SupplierTypes {
 			return SupplierTypes.CARKU;
 		} else if (value.equals(SupplierTypes.TORNADO.getAnnotation())) {
 			return SupplierTypes.TORNADO;
+		} else if (value.equals(SupplierTypes.RUSONAR.getAnnotation())) {
+			return SupplierTypes.RUSONAR;
 		} else if (value.equals(SupplierTypes.SLEDOPYT_YANDEX_MARKET_FISHING.getAnnotation())) {
 			return SupplierTypes.SLEDOPYT_YANDEX_MARKET_FISHING;
 		} else {
@@ -134,8 +139,7 @@ public enum SupplierTypes {
 	public static String getArrayByStatuses(Set<SupplierTypes> suppliers) {
 		if (suppliers == null || suppliers.size() == 0) {
 			return "";
-		}
-		
+		}		
 		final String spliter = ",";
 		String result = "";
 		for (SupplierTypes supplier : suppliers) {			

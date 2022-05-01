@@ -17,10 +17,8 @@ public class SmsConnector {
 	 
     private static HttpURLConnection httpConn;
  
-    //private final String URL;
- 
     public SmsConnector(String URL) {
-        //this.URL = URL;
+    	super();
     }
  
     /**
@@ -54,8 +52,7 @@ public class SmsConnector {
             //URLEncoder.encode(requestParams.toString(),"UTF-8")
             writer.write(requestParams.toString());
             writer.flush();
-        }
- 
+        } 
         return httpConn;
     }
  

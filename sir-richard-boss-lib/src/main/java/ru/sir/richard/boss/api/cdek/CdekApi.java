@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.PropertyResolver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -57,26 +58,32 @@ import ru.sir.richard.boss.model.utils.TextUtils;
 import ru.sir.richard.boss.model.utils.XmlUtils;
 
 public class CdekApi implements AnyApi {
-		
-
+	
+	/**
+	 * application.properties
+	 */	
+	private final PropertyResolver environment;
+	
 	private final Logger logger = LoggerFactory.getLogger(CdekApi.class);
+
+	//private final String CDEK_AUTH_LOGIN_KEY = "login";
+	//private final String CDEK_AUTH_SECURE_KEY = "secure";
+	//private final String CDEK_AUTH_DATE_KEY = "dateQuery";
 	
-	//private final String TEST_CDEK_AUTH_LOGIN = "***"; 
-	//private final String TEST_CDEK_SECURE = "***";	
+	//private final String CDEK_AUTH_LOGIN = "b11a53fc3966ecd9ed00701a9daa67e0"; 
+	//private final String CDEK_SECURE = "adf17184b274e8e1c345f9fbe5ad3608";
 	
-	private final String CDEK_AUTH_LOGIN_KEY = "login";
-	private final String CDEK_AUTH_SECURE_KEY = "secure";
-	private final String CDEK_AUTH_DATE_KEY = "dateQuery";
-	
-	private final String CDEK_AUTH_LOGIN = "***"; 
-	private final String CDEK_SECURE = "***";
+	public CdekApi(PropertyResolver environment) {
+		super();
+		this.environment = environment;
+	}
 	
 	public String addOrder(CdekOrderBean cdekOrderBean, int tariffId, int weightOfG) {
 		
 		String trackCode = "";
 		
 		Map<String, String> auth = getAuth(DateTimeUtils.sysDate(), true);
-		String url = "https://integration.cdek.ru/new_orders.php";	
+		String url = environment.getProperty("cdek.url");	
 				
 		BigDecimal deliveryAmount = cdekOrderBean.getDeliveryPay();				
 		String recipientName = TextUtils.repaceToHTMLTag(cdekOrderBean.getRecipient());
@@ -102,16 +109,14 @@ public class CdekApi implements AnyApi {
 		}			
 		
 		String inputXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" + 
-				"<deliveryrequest account=\"" + auth.get(CDEK_AUTH_LOGIN_KEY) + "\"\r\n" + 
-				"    date=\"" + auth.get(CDEK_AUTH_DATE_KEY) + "\" number=\"0\" ordercount=\"1\" secure=\"" + auth.get(CDEK_AUTH_SECURE_KEY) + "\">\r\n" + 
+				"<deliveryrequest account=\"" + auth.get("login") + "\"\r\n" + 
+				"    date=\"" + auth.get("dateQuery") + "\" number=\"0\" ordercount=\"1\" secure=\"" + auth.get("secure") + "\">\r\n" + 
 				"    <order comment=\"" + comment + "\" deliveryrecipientcost=\"" + cdekFormatNumber(deliveryAmount) + "\"\r\n" + 
 				
 				"        number=\"" + cdekOrderBean.getNo() + "\" phone=\"" + cdekOrderBean.getRecipientPhone() + "\" reccitycode=\"" + cdekOrderBean.getCityId() + "\"\r\n" + 
 				"        recipientEmail=\"" + cdekOrderBean.getRecipientEmail() + "\" recipientCompany=\"" + recipientCompany + "\" recipientName=\"" + recipientName + "\"\r\n" + 
-				"        sellername=\"" + cdekOrderBean.getOrder().getStore().getSite() + "\" sendcitycode=\"44\" tarifftypecode=\"" + tariffId + "\">\r\n" +
-				
-				recipientAddressString +
-				 
+				"        sellername=\"" + cdekOrderBean.getOrder().getStore().getSite() + "\" sendcitycode=\"44\" tarifftypecode=\"" + tariffId + "\">\r\n" +				
+				recipientAddressString +				 
 				"        <package description=\"оборудование\" barCode=\"1\" number=\"1\" sizea=\"10\"\r\n" +				
 				"            sizeb=\"10\" sizec=\"10\" weight=\"" + weightOfG + "\">\r\n" +
 				
@@ -182,7 +187,7 @@ public class CdekApi implements AnyApi {
 			}
 		}		
 		String inputXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-				+ "<StatusReport Account=\"" + auth.get(CDEK_AUTH_LOGIN_KEY) + "\" Date=\"" + auth.get(CDEK_AUTH_DATE_KEY) + "\" Secure=\"" + auth.get(CDEK_AUTH_SECURE_KEY) + "\" ShowHistory=\"0\">"
+				+ "<StatusReport Account=\"" + auth.get("login") + "\" Date=\"" + auth.get("dateQuery") + "\" Secure=\"" + auth.get("secure") + "\" ShowHistory=\"0\">"
 				+ stringDispatchNumbers
 				+ "</StatusReport>";
 		logger.debug("test input.xml:{}", inputXml);			
@@ -329,7 +334,7 @@ public class CdekApi implements AnyApi {
 		Map<String, String> auth = getAuth(calculateDate, false);
 		final String url = "http://api.cdek.ru/calculator/calculate_price_by_json.php";				
 		String inputJsonService = "\"services\": [{\"id\": 2, \"param\": 1}, {\"id\": 37}]";
-		String inputJson = "{\"version\":\"1.0\", \"authLogin\":\"" + auth.get(CDEK_AUTH_LOGIN_KEY) + "\", \"secure\":\"" + auth.get(CDEK_AUTH_SECURE_KEY) 
+		String inputJson = "{\"version\":\"1.0\", \"authLogin\":\"" + auth.get("login") + "\", \"secure\":\"" + auth.get("secure") 
 				+ "\", \"dateExecute\":\"" + DateTimeUtils.formatDate(calculateDate, "yyyy-MM-dd") 
 				+ "\", \"senderCityId\":\"44\", \"receiverCityId\":\"" + receiverCityId 
 				+ "\", \"tariffId\":\""+ tariffId + "\", \"goods\": [{\"weight\":\"" + weightOfKg.toPlainString() 
@@ -617,18 +622,16 @@ public class CdekApi implements AnyApi {
 		String dateQuery = null;
 		if (isMd5) {
 			dateQuery = DateTimeUtils.formatDate(calculateDate, "yyyy-MM-dd") + "T" + DateTimeUtils.formatDate(calculateDate, "HH:mm:ss");
-			secure = DigestUtils.md5Hex(dateQuery + "&" + CDEK_SECURE);
+			secure = DigestUtils.md5Hex(dateQuery + "&" + environment.getProperty("cdek.auth.secure"));
 			
 		} else {
-			secure = CDEK_SECURE;
+			secure = environment.getProperty("cdek.auth.secure");
 			dateQuery = "";
 		}
-		result.put(CDEK_AUTH_LOGIN_KEY, CDEK_AUTH_LOGIN);
-		result.put(CDEK_AUTH_SECURE_KEY, secure);
-		result.put(CDEK_AUTH_DATE_KEY, dateQuery);
-
-//		logger.debug("test dateQuery:{}", dateQuery); // 9e38e10f9d5394a033a5609c359ecaf2
-//		logger.debug("test secure.md5:{}", secure); // 9e38e10f9d5394a033a5609c359ecaf2		
+		result.put("login", environment.getProperty("cdek.auth.login"));
+		result.put("secure", secure);
+		result.put("dateQuery", dateQuery);
+	
 		return result;
 	}
 	

@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.PropertyResolver;
 
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.data.OrderDeliveryShipment;
@@ -32,38 +33,46 @@ import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.utils.NumberUtils;
 
+/**
+ * doc https://yandex.ru/dev/market/partner-marketplace-cd/doc/dg/reference/put-campaigns-id-orders-id-status.html 
+ * @author alex4doorow
+ *
+ */
 public class YandexMarketApi {
 	
 	private final Logger logger = LoggerFactory.getLogger(YandexMarketApi.class);
-		
-	private final String STATIC_URL_API = "***";
 	
 	/**
-	 *  first warehouse (main warehouse)
-	 */
-	private final int FIRST_WAREHOUSE_CAMPAIGN_ID = 0; // идентификатор кампании ЯМ
-	/**
-	 *  second warehouse (additional warehouse for heavy)
-	 */
-	private final int SECOND_WAREHOUSE_CAMPAIGN_ID = 1; // идентификатор кампании ЯМ
-	/**
-	 *  third warehouse (экспресс доставка)
-	 */
-	private final int THIRD_WAREHOUSE_CAMPAIGN_ID = 2; // идентификатор кампании ЯМ
+	 * application.properties
+	 */	
+	private final PropertyResolver environment;
 		
-	private final String OAUTH_TOKEN = "***";
-	private final String OAUTH_CLIENT_ID = "***";
+	private YandexMarketApi() {
+		super();
+		this.environment = null;
+	}
+
+	public YandexMarketApi(PropertyResolver environment) {
+		super();
+		this.environment = environment;		
+	}
+	
+	public YandexMarketApi(String staticUrlApi, 
+			int firstWarehouseCompaignId, int secondWarehouseCompaignId, int thirdWarehouseCompaignId,
+			String oauthToken, String oauthClientId) {		
+		this();	
+	}
 	
 	private HttpEntityEnclosingRequestBase postSetHeader(HttpEntityEnclosingRequestBase post) {
 		post.setHeader("Content-type", "application/json");			
-		post.setHeader("Authorization", "OAuth oauth_token=\"" + OAUTH_TOKEN + "\", oauth_client_id=\"" + OAUTH_CLIENT_ID + "\"");
+		post.setHeader("Authorization", "OAuth oauth_token=\"" + environment.getProperty("yandex.market.oauth.token") + "\", oauth_client_id=\"" + environment.getProperty("yandex.market.oauth.client") + "\"");
 		return post;
 	}
 	
 	// POST /campaigns/{campaignId}/offer-prices/updates
 	public String offerPricesUpdatesV1(List<Product> products) {
 				
-		final String url = STATIC_URL_API + FIRST_WAREHOUSE_CAMPAIGN_ID + "/offer-prices/updates.json";
+		final String url = environment.getProperty("yandex.market.url") + environment.getProperty("yandex.market.warehouse.compaign.first") + "/offer-prices/updates.json";
 		
 		String result = "";
 		String inputJson = "{\"offers\": \r\n" + 
@@ -150,7 +159,7 @@ public class YandexMarketApi {
 	// POST /campaigns/{campaignId}/offer-prices/updates
 	public String offerPricesUpdatesV2(int warehouseCompainId, List<Product> products) {
 				
-		final String url = STATIC_URL_API + warehouseCompainId + "/offer-prices/updates.json";
+		final String url = environment.getProperty("yandex.market.url") + warehouseCompainId + "/offer-prices/updates.json";
 		
 		String result = "";
 		String inputJson = "{\"offers\": \r\n" + 
@@ -237,18 +246,19 @@ public class YandexMarketApi {
 	
 	public String offerPricesUpdatesByAllWarehouses(List<Product> products) {
 		String result = "";
-		result += "FIRST: " + offerPricesUpdatesV2(FIRST_WAREHOUSE_CAMPAIGN_ID, products);
-		result += ", SECOND: " + offerPricesUpdatesV2(SECOND_WAREHOUSE_CAMPAIGN_ID, products);
-		result += ", THIRD: " + offerPricesUpdatesV2(THIRD_WAREHOUSE_CAMPAIGN_ID, products);		
+		result += "FIRST: " + offerPricesUpdatesV2(environment.getProperty("yandex.market.warehouse.compaign.first", Integer.class), products);
+		result += ", SECOND: " + offerPricesUpdatesV2(environment.getProperty("yandex.market.warehouse.compaign.second", Integer.class), products);
+		result += ", THIRD: " + offerPricesUpdatesV2(environment.getProperty("yandex.market.warehouse.compaign.third", Integer.class), products);		
 		return result;
 	}
 	
 	public Order order(int ymOrderId, Order order) {
 		
+		// GET /campaigns/{campaignId}/orders/{ymOrderId}
 		
 		int shipmentId = -1;
 		Order result = new Order();
-		final String url = STATIC_URL_API + getWarehouseCompainId(order) + "/orders/" + ymOrderId + ".json";
+		final String url = environment.getProperty("yandex.market.url") + getWarehouseCompainId(order) + "/orders/" + ymOrderId + ".json";
 		
 		URL obj;
 		JSONObject myResponse = null;
@@ -257,7 +267,7 @@ public class YandexMarketApi {
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 			
 		    con.setRequestProperty("Content-type", "application/json");			
-			con.setRequestProperty("Authorization", "OAuth oauth_token=\"" + OAUTH_TOKEN + "\", oauth_client_id=\"" + OAUTH_CLIENT_ID + "\"");
+			con.setRequestProperty("Authorization", "OAuth oauth_token=\"" + environment.getProperty("yandex.market.oauth.token") + "\", oauth_client_id=\"" + environment.getProperty("yandex.market.oauth.client") + "\"");
 		    		  
 		    int responseCode = con.getResponseCode();
 		    logger.debug("offerMappingEntries() responseCode:{}", responseCode);
@@ -283,11 +293,9 @@ public class YandexMarketApi {
     	    String regionName = jsonDelivery.getJSONObject("region").getString("name");
     	    String parentRegionName = jsonDelivery.getJSONObject("region").getJSONObject("parent").getString("name");
     	    String parentParentRegionName = jsonDelivery.getJSONObject("region").getJSONObject("parent").getJSONObject("parent").getString("name");
-
     	    String addressText = regionName + ", " + parentRegionName + ", " + parentParentRegionName + ", [" + deliveryType + ", " + deliveryName + "]";
     	       	        	    
     	   	result.getDelivery().getAddress().setAddress(addressText.trim());    	    	
-
     	    
     	    JSONArray jsonShipments = myResponse.getJSONObject("order").getJSONObject("delivery").getJSONArray("shipments");    	    
     	    if (jsonShipments.length() > 0) {
@@ -344,9 +352,7 @@ public class YandexMarketApi {
 			shipmentId = ymOrder.getDelivery().getShipments().get(0).getId();
 			fulfilmentCode = ymOrder.getDelivery().getShipments().get(0).getFulfilmentCode();			
 		} 
-				
-		
-		final String url = STATIC_URL_API + getWarehouseCompainId(order) + "/orders/" + ymOrderId + "/delivery/shipments/" + shipmentId + "/boxes.json";
+		final String url = environment.getProperty("yandex.market.url") + getWarehouseCompainId(order) + "/orders/" + ymOrderId + "/delivery/shipments/" + shipmentId + "/boxes.json";
 		
 		String inputJson = "" +
 				"{\r\n" +
@@ -429,20 +435,19 @@ public class YandexMarketApi {
 	
 	private int getWarehouseCompainId(Order order) {
 		if (order == null || order.getCustomer() == null || order.getCustomer().getId() <= 0) {
-			return FIRST_WAREHOUSE_CAMPAIGN_ID;
+			return environment.getProperty("yandex.market.warehouse.compaign.first", Integer.class);
 		} else if (order.getCustomer().getId() == 6611) {
-			return FIRST_WAREHOUSE_CAMPAIGN_ID; 
+			return environment.getProperty("yandex.market.warehouse.compaign.first", Integer.class); 
 		} else if (order.getCustomer().getId() == 7204) {
-			return SECOND_WAREHOUSE_CAMPAIGN_ID; 
+			return environment.getProperty("yandex.market.warehouse.compaign.second", Integer.class); 
 		} else if (order.getCustomer().getId() == 7277) {
-			return THIRD_WAREHOUSE_CAMPAIGN_ID; 
+			return environment.getProperty("yandex.market.warehouse.compaign.third", Integer.class); 
 		} else {
-			return FIRST_WAREHOUSE_CAMPAIGN_ID;
+			return environment.getProperty("yandex.market.warehouse.compaign.first", Integer.class);
 		} 
 	}
 
 	public String status(Order order) {
-		
 				
 		int ymOrderId = -1;
 		String status = "";
@@ -480,7 +485,7 @@ public class YandexMarketApi {
 			return result;
 		}
 				
-		final String url = STATIC_URL_API + getWarehouseCompainId(order) + "/orders/" + ymOrderId + "/status.json";			
+		final String url = environment.getProperty("yandex.market.url") + getWarehouseCompainId(order) + "/orders/" + ymOrderId + "/status.json";			
 		String inputJson = "" +				
 							"{\r\n" +
 							"\"order\":\r\n" + 
@@ -517,8 +522,7 @@ public class YandexMarketApi {
         	    in.close();                
         	    
         	    myResponse = new JSONObject(responseB.toString());
-        	    logger.debug("status() jsonResponse:{}", myResponse.toString());        	    
-  	    
+        	    logger.debug("status() jsonResponse:{}", myResponse.toString()); 
             }
 
 		} catch (Exception ex) {

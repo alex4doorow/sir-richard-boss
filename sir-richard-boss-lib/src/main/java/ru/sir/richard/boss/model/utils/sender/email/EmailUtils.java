@@ -22,6 +22,7 @@ import javax.mail.search.SearchTerm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.PropertyResolver;
 
 import ru.sir.richard.boss.model.types.StoreTypes;
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
@@ -30,11 +31,17 @@ public class EmailUtils {
 	
 	private final Logger logger = LoggerFactory.getLogger(EmailUtils.class);
 	
+	private final PropertyResolver environment;
+	
+	public EmailUtils(PropertyResolver environment) {
+		super();
+		this.environment = environment;
+	} 
+	
 	public boolean sendSSLEmail(StoreTypes store, String toEmail, String subject, String body) {
-				
-
-		final String pmFromEmail = "notice@pribormaster.ru"; //requires valid mail id
-		final String pmPassword = "***"; // correct password for mail id
+		
+		final String pmFromEmail = environment.getProperty("mail.auth.from");
+		final String pmPassword = environment.getProperty("mail.auth.key");
 		
 		String fromEmail;
 		String password;
@@ -42,14 +49,13 @@ public class EmailUtils {
 		fromEmail = pmFromEmail;
 		password = pmPassword;
 		
-
 		logger.debug("email:{}", "start");		
 		Properties props = new Properties();
-		props.put("mail.smtp.host", "smtp.yandex.ru"); //SMTP Host
-		props.put("mail.smtp.socketFactory.port", "465"); //SSL Port
-		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); //SSL Factory Class
-		props.put("mail.smtp.auth", "true"); //Enabling SMTP Authentication
-		props.put("mail.smtp.port", "465"); //SMTP Port
+		props.put("mail.smtp.host", environment.getProperty("mail.smtp.host")); //SMTP Host
+		props.put("mail.smtp.socketFactory.port", environment.getProperty("mail.smtp.socketFactory.port")); //SSL Port
+		props.put("mail.smtp.socketFactory.class", environment.getProperty("mail.smtp.socketFactory.class")); //SSL Factory Class
+		props.put("mail.smtp.auth", environment.getProperty("mail.smtp.auth")); //Enabling SMTP Authentication
+		props.put("mail.smtp.port", environment.getProperty("mail.smtp.port")); //SMTP Port
 				
 		Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
@@ -62,13 +68,9 @@ public class EmailUtils {
 		boolean result;
 		try {
 			MimeMessage message = new MimeMessage(session);
-			
-			
-	        message.setFrom(new InternetAddress(fromEmail, store.getEmail(), "UTF-8"));	        
-	        
+	        message.setFrom(new InternetAddress(fromEmail, store.getEmail(), "UTF-8"));  
 	        message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
 	        message.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(store.getEmail()));
-
 	        message.setSubject(subject, "utf-8");
 	        
 	        String replacedBody = body.replace("\"", "").replaceAll("→", "->").replaceAll("“", "\"").replaceAll("”", "\"");   
@@ -89,20 +91,21 @@ public class EmailUtils {
 		return result;
 	}
 	
-	public static boolean sendEmail(StoreTypes store, String toEmail, String subject, String body) {		
-		EmailUtils emailUtils = new EmailUtils();
+	public static boolean sendEmail(PropertyResolver environment, StoreTypes store, String toEmail, String subject, String body) {		
+		EmailUtils emailUtils = new EmailUtils(environment);
 		return emailUtils.sendSSLEmail(store, toEmail, subject, body);
 	}
 	
 	public List<String> loadMessagesFromEmail(StoreTypes shopStore, Date executorDate, String folderName) {
 				
 		List<String> result = new ArrayList<String>();		
-		String host = "imap.yandex.ru";
+		String host = environment.getProperty("mail.imap.host");
 	    String mailStoreType = "imaps";	    
 	    String username = shopStore.getEmail();
 	    String password;
 	    Properties properties = new Properties();
-	    password = "";			    	    
+	    password = environment.getProperty("mail.imap.auth.key");	    
+		    	    
 		try {
 			Session emailSession = Session.getDefaultInstance(properties);
 			Store store = emailSession.getStore(mailStoreType);
@@ -119,8 +122,7 @@ public class EmailUtils {
 
 			for (Message message : messages) {
 				result.add(message.getContent().toString());
-			}
-			
+			}			
 			emailFolder.close(false);
 			store.close();
 			

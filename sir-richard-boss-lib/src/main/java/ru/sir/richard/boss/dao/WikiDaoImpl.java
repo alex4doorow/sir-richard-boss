@@ -20,10 +20,11 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import ru.sir.richard.boss.config.DbConfig;
 import ru.sir.richard.boss.model.data.Address;
 import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.data.ProductCategory;
@@ -47,10 +48,14 @@ public class WikiDaoImpl extends AnyDaoImpl implements WikiDao {
 	
 	private List<ProductCategory> categories;
 	private List<Product> products;
-
+	
+	@Autowired
+	private Environment environment;
+	
 	@Override
-	public void init() {
+	public void init() {		
 		logger.debug("WikiDaoImpl.init()");
+		
 		this.categories = instanceCategories();
 		this.products = instanceProducts();
 		instanceProductsSpecialPrice();
@@ -188,8 +193,8 @@ public class WikiDaoImpl extends AnyDaoImpl implements WikiDao {
 							PreparedStatement pstmtOffer = null;
 							Connection conn = null;
 							try {
-								Class.forName(DbConfig.JDBC_DRIVER);
-								conn = DriverManager.getConnection(DbConfig.DB_PM_PRODUCTION_URL);
+								Class.forName(environment.getProperty("jdbc.driver"));
+								conn = DriverManager.getConnection(environment.getProperty("jdbc.pm.url"));		
 																					
 								pstmtOffer = conn.prepareStatement(sqlSelectYmOffer);
 								pstmtOffer.setInt(1,  product.getId());
@@ -232,8 +237,8 @@ public class WikiDaoImpl extends AnyDaoImpl implements WikiDao {
 							pstmtOffer = null;
 							conn = null;
 							try {
-								Class.forName(DbConfig.JDBC_DRIVER);
-								conn = DriverManager.getConnection(DbConfig.DB_PM_PRODUCTION_URL);
+								Class.forName(environment.getProperty("jdbc.driver"));
+								conn = DriverManager.getConnection(environment.getProperty("jdbc.pm.url"));
 																					
 								pstmtOffer = conn.prepareStatement(sqlSelectOzonOffer);
 								pstmtOffer.setInt(1,  product.getId());
@@ -271,12 +276,7 @@ public class WikiDaoImpl extends AnyDaoImpl implements WikiDao {
 								} catch (SQLException se) {
 									logger.error("SQLException: ", se);				
 								} 
-							}	
-							
-							
-							
-							
-							
+							}
 							
 						}
 		                return product;
@@ -658,18 +658,10 @@ public class WikiDaoImpl extends AnyDaoImpl implements WikiDao {
 						newWikiProductQuantity = 0;
 					}
 					Product wikiProduct = getProductById(dbProduct.getId());
-					wikiProduct.setQuantity(newWikiProductQuantity);
-					
-					
-					
+					wikiProduct.setQuantity(newWikiProductQuantity);					
 				}
 					
 			}
-			
-			
-			
-			
-			
 		}
 		if (isStock) {
 			
@@ -723,39 +715,6 @@ public class WikiDaoImpl extends AnyDaoImpl implements WikiDao {
 		
 		Product wikiProduct = getProductById(productId);
 		wikiProduct.setQuantity(quantity);		
-		
-	}
-	
-	@Override
-	public void updateQuantityProductsBySuplierStockProducts(List<Product> products) {
-		
-		for (Product item : products) {
-			SupplierStockProduct supplierStockProduct = supplierStockProductFindByProductId(item.getId());
-			
-			int stockQuantity = 0;
-			if (supplierStockProduct.getProduct().isComposite()) {
-				// это комплект
-				/*
-				for (Product slave : supplierStockProduct.getProduct().getKitComponents()) {	
-					SupplierStockProduct supplierStockSlaveProduct = supplierStockProductFindByProductId(slave.getId());
-					if (supplierStockSlaveProduct == null) {
-						break;
-					}
-					
-					int slaveQuantity = supplierStockSlaveProduct.getProduct().getStockQuantity();
-					int deltaSlaveQuantity = slave.getSlaveQuantity() * deltaQuantity;
-					
-					slaveQuantity = slaveQuantity - deltaSlaveQuantity;						
-																					
-					Product wikiProduct = getProductById(slave.getId());
-					wikiProduct.setStockQuantity(slaveQuantity);
-				}
-				*/
-			} else {
-				stockQuantity = supplierStockProduct.getProduct().getStockQuantity();
-				updateQuantityProduct(item.getId(), stockQuantity);				
-			}			
-		}
 	}
 	
 	@Override

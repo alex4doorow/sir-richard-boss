@@ -3,6 +3,8 @@ package ru.sir.richard.boss.api.epochta.v2;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.env.PropertyResolver;
+
 import ru.sir.richard.boss.api.AnyApi;
 
 public class SmsApi implements AnyApi {
@@ -17,10 +19,10 @@ public class SmsApi implements AnyApi {
 		this.password = password;
 	}
 	
-	public SmsApi() {
-	    this(new SmsRequestBuilder("***"), 
-	    		"example@example.ru", 
-	    		"***");
+	public SmsApi(PropertyResolver environment) {
+		this(new SmsRequestBuilder(environment.getProperty("sms.api.url")), 
+				environment.getProperty("sms.api.login"), 
+				environment.getProperty("sms.api.password"));
 	}
 
 	public String getStatus(String msgId) {

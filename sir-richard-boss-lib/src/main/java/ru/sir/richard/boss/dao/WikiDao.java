@@ -45,7 +45,7 @@ public interface WikiDao {
 	void updateOzonOfferProduct(Product product);
 	
 	void updateQuantityProduct(int productId, int quantity);	
-	void updateQuantityProductsBySuplierStockProducts(List<Product> products);
+	//void updateQuantityProductsBySuplierStockProducts(List<Product> products);
 	
 	void updateDeltaQuantityProduct2(Product product, int deltaQuantity, boolean isProduct, boolean isStock, boolean isSynchronize);
 		

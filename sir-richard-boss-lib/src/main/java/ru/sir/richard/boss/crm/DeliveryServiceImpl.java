@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.xml.sax.SAXException;
@@ -69,6 +70,9 @@ import ru.sir.richard.boss.model.utils.sender.MessageManager;
 public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 		
 	private final Logger logger = LoggerFactory.getLogger(DeliveryService.class);
+	
+	@Autowired
+	private Environment environment;
 
 	@Autowired
 	private WikiDao wikiDao;
@@ -81,7 +85,7 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 		DeliveryTypes deliveryType = order.getDelivery().getDeliveryType();
 		String trackCode = "";
 		if (deliveryType.isСdek()) {
-			CdekApi cdek = new CdekApi();			
+			CdekApi cdek = new CdekApi(environment);			
 			// добавляем накладную в сдэк
 			
 			CdekOrderBean cdekOrderBean = convert4CdekCrmExportBean(order);
@@ -100,7 +104,7 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 		DeliveryTypes deliveryType = order.getDelivery().getDeliveryType();
 		String trackCode = "";
 		if (deliveryType.isOzonRocket()) {
-			OzonRocketApi ozonRocketApi = new OzonRocketApi();	
+			OzonRocketApi ozonRocketApi = new OzonRocketApi(this.environment);	
 			// добавляем накладную в озон рокет
 			trackCode = ozonRocketApi.addOrder(order);
 			// обновляем трэккод на нашем заказе
@@ -347,7 +351,7 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 	
 	@Override
 	public List<Address> getCdekPvzs(int cityId) {		
-		CdekApi cdek = new CdekApi();
+		CdekApi cdek = new CdekApi(environment);
 		List<Address> pvzs = new ArrayList<Address>();
 		
 		try {
@@ -370,7 +374,7 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 	@Override
 	public List<Address> getCdekPvz(int cityId, String pvzCode) {
 		
-		CdekApi cdek = new CdekApi();
+		CdekApi cdek = new CdekApi(environment);
 		List<Address> pvzs = new ArrayList<Address>();		
 		try {
 			CarrierInfo cdekPvz = cdek.getPvz(cityId, pvzCode);
@@ -441,8 +445,8 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 	public String ordersStatusesReload() {
 		SingleExecutor.DELIVERY_STATUS_CHANGE = true;
 								
-		CdekApi cdek = new CdekApi();
-		MessageManager messageManager = new MessageManager();
+		CdekApi cdek = new CdekApi(environment);
+		MessageManager messageManager = new MessageManager(environment);
 		
 		List<Order> cdekModifiedOrders = null;
 		// условия по отбору: isSdek статусы: подтвержден, отправлен, прибыли и долго не забирают
@@ -578,7 +582,7 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 			List<Order> ozonRoketOrders = orderDao.listOrdersByConditions(ozonRocketsConditions);
 			logger.debug("ozon.rocket:");
 			
-			OzonRocketApi ozonRocketApi = new OzonRocketApi();			
+			OzonRocketApi ozonRocketApi = new OzonRocketApi(this.environment);			
 			List<Order> ozonRocketModifiedOrders = ozonRocketApi.getStatuses(ozonRoketOrders);	
 			
 			for (Order currentStatusOrder : ozonRoketOrders) {
@@ -671,7 +675,7 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 			            }
 			        });
 			
-			OzonMarketApi ozonMarketApi = new OzonMarketApi();
+			OzonMarketApi ozonMarketApi = new OzonMarketApi(this.environment);
 			
 			for (Order currentStatusOrder : beforeOzonOrders) {
 				
@@ -829,7 +833,7 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 	
 	private DeliveryServiceResult ozonRocketCalc(Order order, BigDecimal totalAmount, DeliveryTypes deliveryType, Address to) {
 		
-		OzonRocketApi ozonRocketApi = new OzonRocketApi();
+		OzonRocketApi ozonRocketApi = new OzonRocketApi(this.environment);
 		
 		boolean isPostpay = false;	
 		boolean isCash  = false;
@@ -890,7 +894,7 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 
 	private DeliveryServiceResult cdekCalc(Order order, BigDecimal totalAmount, DeliveryTypes deliveryType, Address to) throws Exception {
 		
-		CdekApi cdek = new CdekApi();
+		CdekApi cdek = new CdekApi(environment);
 		
 		int tariffId = CdekApi.getCdekTariffId(deliveryType);		
 		int receiverCityId = to.getCarrierInfo().getCityId();
@@ -944,18 +948,7 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 	    } else {
 	    	parcelDataName = "";       
 	    }
-		
-		/*
-		int weight = 0;
-		BigDecimal totalWeight = BigDecimal.ZERO;
-		for (OrderItem item : order.getItems()) {
-			Product product = wikiDao.getProductById(item.getProduct().getId());
-			BigDecimal itemWeight = product.getWeight().multiply(BigDecimal.valueOf(item.getQuantity()));
-			totalWeight = totalWeight.add(itemWeight);
-		}
-		weight = totalWeight.multiply(BigDecimal.valueOf(1000)).round(new MathContext(4, RoundingMode.HALF_UP)).intValue();
-		weight = weight == 0 ? 500 : weight;
-		*/
+
 		PostcalcApi postcalc = new PostcalcApi();
 		return postcalc.postCalc(calcTotalWeightG(order), DateTimeUtils.sysDate(), totalAmount, parcelDataName, to, iBase);
 	}
