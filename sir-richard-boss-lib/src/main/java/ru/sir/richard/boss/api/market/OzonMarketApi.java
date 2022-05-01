@@ -59,19 +59,6 @@ public class OzonMarketApi {
 	 * application.properties
 	 */	
 	private final PropertyResolver environment;
-
-		
-	//private final int CDEK_PROVIDER_ID = 51;
-	//private final int OZON_PROVIDER_ID = 24;
-	
-	//private final int CDEK_COURIER_DELIVERY_METHOD_ID = 53597;
-	//private final int CDEK_COURIER_ECONOMY_DELIVERY_METHOD_ID = 56440;
-	//private final int CDEK_PVZ_TYPICAL_DELIVERY_METHOD_ID = 36936;
-	//private final int CDEK_PVZ_ECONOMY_DELIVERY_METHOD_ID = 36941;
-	
-	//private final Long CDEK_WAREHOUSE_ID = 22067517155000L; // отгрузка СДЭК 
-	//private final Long OZON_WAREHOUSE_COURIER_ID = 22067558791000L; // курьером ОЗОН 
-	//private final Long OZON_WAREHOUSE_PICKUP_ID = 22294396015000L; // самостоятельно до склада ОЗОН
 	
 	public OzonMarketApi(PropertyResolver environment) {
 		super();
@@ -364,7 +351,6 @@ public class OzonMarketApi {
 
 		} catch (Exception ex) {
 			logger.error("Exception: ", ex);
-			//result = "status: EXCEPTION " + ex.getMessage();
 		} finally {
 			try {
 				httpClient.close();

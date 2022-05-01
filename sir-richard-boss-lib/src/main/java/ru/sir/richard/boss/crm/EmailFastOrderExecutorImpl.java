@@ -95,17 +95,7 @@ private final Logger logger = LoggerFactory.getLogger(OpencartExecutorImpl.class
 			if ("Быстрый заказ".equals(textValues[0])) {
 				logger.info("text message:{}", text);
 
-				/*
-				System.out.println("---------------------------------");
-				// System.out.println("Subject: " + message.getSubject());
-				System.out.println("From: " + message.getFrom()[0]);
-				
-
-				System.out.println("SentDate: " + message.getSentDate());
-				System.out.println("RecieviedDate: " + message.getReceivedDate());
-*/
 				order = new Order();
-				//order.setNo(orderDao.nextOrderNo());				
 				order.setOrderType(OrderTypes.ORDER);
 	            order.setPaymentType(PaymentTypes.POSTPAY);
 	            order.setSourceType(OrderSourceTypes.FAST_LID);

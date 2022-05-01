@@ -911,26 +911,6 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 		return result;
 	}
 	
-	/*
-	private int getCdekTariffId(DeliveryTypes deliveryType) {
-		int tariffId;
-		if (deliveryType == DeliveryTypes.CDEK_COURIER) {
-			tariffId = 137;
-		} else if (deliveryType == DeliveryTypes.CDEK_COURIER_ECONOMY) {
-			tariffId = 233;			
-	    } else if (deliveryType == DeliveryTypes.CDEK_PVZ_TYPICAL) {
-	    	tariffId = 136;
-	    } else if (deliveryType == DeliveryTypes.PICKUP) {
-	    	tariffId = 136;
-	    } else if (deliveryType == DeliveryTypes.CDEK_PVZ_ECONOMY) {
-	    	tariffId = 234;	
-	    } else {
-	    	tariffId = 0;       
-	    }
-		return tariffId;
-	}
-	*/
-	
 	private DeliveryServiceResult postCalc(Order order, BigDecimal totalAmount, DeliveryTypes type, Address to) throws IOException {
 		
 		if (StringUtils.isEmpty(to.getPostCode())) {
@@ -1022,9 +1002,7 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 		orderConditions.setDeliveryTypes(deliveryTypes);
 		
 		orderConditions.setTrackCodeNotExist(true);
-				
-		//final String sqlSelectListOrders = createSQLQueryListOrdersByConditions(orderConditions).getConditionText();
-		//logger.debug(sqlSelectListOrders);
+
 		return orderDao.listOrdersByConditions(orderConditions);		
 	}	
 	
@@ -1071,7 +1049,6 @@ public class DeliveryServiceImpl extends AnyDaoImpl implements DeliveryService {
 					bean.setRecipientPhone(order.getDelivery().getRecipient().getPhoneNumber().trim());
 				}
 			}
-			//bean.setRecipient(order.getCustomer().getViewLongName());
 			
 		} else {
 			ForeignerCompanyCustomer company = (ForeignerCompanyCustomer) order.getCustomer();  

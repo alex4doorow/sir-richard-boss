@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -228,7 +227,6 @@ public class OzonRocketApi {
 					break;
 				}
 
-//		    	{"objectTypeId":52895552000,"code":"22211793158000","wifiAvailable":false,"streets":"Агрономическая","contractorId":0,"postalCode":603105,"objectTypeName":"Самовывоз","fittingClothesAvailable":true,"isRestrictionAccess":false,"cityId":0,"enabled":true,"long":"44.027205","settlement":"Нижний Новгород","fiasGuidControl":"00000000-0000-0000-0000-000000000000","legalEntityNotAvailable":false,"stateName":"Active","restrictionLength":5000,"utcOffsetStr":"UTC+3","howToGet":"Трамвайная остановка рыбинская , тр 18 и 27. \n\nОт остановки пройти 100 м  по направлению к ул Агрономическая. Справа будет магазин Магнит, чуть дальше, в этом же здании с торца у дороги, аптека и тот же вход в пвз, ориентир — вывеска Ozon.\n\nДо встречи на Ozon!","id":1011000000006877,"lat":"56.300999","isCashForbidden":true,"isPartialPrepaymentForbidden":true,"address":"Россия, Нижний Новгород, Агрономическая улица, 132\/35","returnAvailable":false,"isGeozoneAvailable":false,"maxWeight":40000,"restrictionWidth":5000,"cardPaymentAvailable":false,"addressElementId":0,"phone":"+7(962)505-19-42","name":"Пункт выдачи Россия, Нижний Новгород, Агрономическая улица, 132\/35","fittingShoesAvailable":true,"partialGiveOutAvailable":true,"dangerousAvailable":false,"placement":"ул. Агрономическая, д. 132\/35","maxPrice":500000,"region":"Нижегородская","fiasGuid":"555e7d61-d9a7-4ba6-9770-6caa8198c483","restrictionHeight":5000}
 
 			}
 			if (result == null && StringUtils.isNotEmpty(nextPageToken)) {
@@ -617,16 +615,6 @@ public class OzonRocketApi {
 			
 			sellingPrice = order.getItems().get(i).getPrice().doubleValue();
 			estimatedPrice = order.getItems().get(i).getPrice().doubleValue();
-			/*
-			if (order.getPaymentType() == PaymentTypes.POSTPAY) {
-				sellingPrice = order.getItems().get(i).getAmount().doubleValue();
-				estimatedPrice = order.getItems().get(i).getAmount().doubleValue();
-			} else {
-				sellingPrice = order.getItems().get(i).getAmount().doubleValue();
-				estimatedPrice = order.getItems().get(i).getAmount().doubleValue();				
-			}
-			*/
-			
 			
 			String productName;
 			if (StringUtils.isNoneEmpty(order.getItems().get(i).getProduct().getDeliveryName())) {
@@ -714,18 +702,6 @@ public class OzonRocketApi {
 				
 			}			
 			result = CarrierStatuses.getValueByCode(orderStatusCode, CrmTypes.OZON);
-						
-			/*
-			JSONArray jsonResponseStatusByOrderNumberBodyArray = jsonResponseStatusByOrderNumberBody.getJSONArray("postingInfos");
-			for (int i = 0; i <= jsonResponseStatusByOrderNumberBodyArray.length() - 1; i++) {
-				JSONObject postingInfo = jsonResponseStatusByOrderNumberBodyArray.getJSONObject(i);
-				String postingInfoStatus = postingInfo.getString(key)
-				CarrierStatuses.getValueByCode(CrmTypes.OZON, )
-				
-				
-			}
-			*/			
-			//{"postingInfos":[{"actualStatusCode":"Registered","postingNumber":"pl-054726-11932-11932","postingCode":"22973503811000","actualStatus":"Заказ зарегистрирован","trackingEvents":[{"eventId":5,"action":"Отправление зарегистрировано","moment":"2022-02-02T18:16:33.64"}],"items":[]}],"orderStatusCode":"Registered","orderStatus":"Заказ зарегистрирован","orderActualTimeslot":"2022.02.06 17:01 - 20:00"}
 			
 		} catch (UnirestException e) {
 			logger.error("UnirestException:", e);

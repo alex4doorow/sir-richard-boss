@@ -65,13 +65,6 @@ public class CdekApi implements AnyApi {
 	private final PropertyResolver environment;
 	
 	private final Logger logger = LoggerFactory.getLogger(CdekApi.class);
-
-	//private final String CDEK_AUTH_LOGIN_KEY = "login";
-	//private final String CDEK_AUTH_SECURE_KEY = "secure";
-	//private final String CDEK_AUTH_DATE_KEY = "dateQuery";
-	
-	//private final String CDEK_AUTH_LOGIN = "b11a53fc3966ecd9ed00701a9daa67e0"; 
-	//private final String CDEK_SECURE = "adf17184b274e8e1c345f9fbe5ad3608";
 	
 	public CdekApi(PropertyResolver environment) {
 		super();
@@ -226,10 +219,8 @@ public class CdekApi implements AnyApi {
 						//modifiedOrder.setNo(parseElementByAttributeName(eElement, "Number"));
 						
 						modifiedOrder.getDelivery().setTrackCode(eElement.getAttribute("DispatchNumber"));
-						
-						
+
 						//"CM_43694_25787"
-						// TODO если по ошибке влетит деловые линии?
 						int dispatchNumber = parseElementByAttributeName(eElement, "DispatchNumber");
 						modifiedOrder = getCrmConnectData(modifiedOrder, orders, dispatchNumber, eElement.getAttribute("Number"));
 						
@@ -380,10 +371,7 @@ public class CdekApi implements AnyApi {
         	    myResponse = new JSONObject(responseB.toString());
         	    logger.debug("cdekCalc() jsonResponse:{}", myResponse.toString());
         	    
-        	    //cdekCalc() jsonResponse:{"error":[{"code":3,"text":"Невозможно осуществить доставку по этому направлению при заданных условиях"}]}        	    
-        	    // jsonResponse:{"result":{"deliveryDateMin":"2019-06-03","price":"1440.01","deliveryDateMax":"2019-06-05","priceByCurrency":1440.01,"currency":"RUB","tariffId":"137","services":[{"rate":0.75,"price":0.01,"id":2,"title":"Страхование"},{"price":0,"id":37,"title":"Осмотр вложения"}],"deliveryPeriodMin":4,"deliveryPeriodMax":6}}
-        	    
-        	    JSONObject parcelData = (JSONObject) myResponse.get("result");
+              	JSONObject parcelData = (JSONObject) myResponse.get("result");
            	    deliveryPeriodMin = (Integer) parcelData.get("deliveryPeriodMin");
            	    deliveryPeriodMax = (Integer) parcelData.get("deliveryPeriodMax");
            	    deliveryPrice = (new BigDecimal((String) parcelData.get("price"))).setScale(0, RoundingMode.HALF_UP);

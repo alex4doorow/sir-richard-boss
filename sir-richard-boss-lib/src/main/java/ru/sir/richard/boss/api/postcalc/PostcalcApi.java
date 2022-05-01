@@ -35,12 +35,10 @@ public class PostcalcApi implements AnyApi {
 	    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 	    con.setRequestMethod("GET");
 	    con.setRequestProperty("User-Agent", "Mozilla/5.0");	    
-	    //con.setRequestProperty("Accept-Encoding", "gzip, deflate");	      
+     
 	    int responseCode = con.getResponseCode();
 	    logger.debug("postCalc() responseCode:{}", responseCode);
 	    logger.debug("postCalc() sending 'GET' request to URL:{}", url);
-	    
-	    //BufferedReader in = new BufferedReader((new InputStreamReader(con.getInputStream())));
 	    
 	    InputStream  gis = new GZIPInputStream(con.getInputStream());	    
 	    BufferedReader in2 = new BufferedReader(new InputStreamReader(gis));
