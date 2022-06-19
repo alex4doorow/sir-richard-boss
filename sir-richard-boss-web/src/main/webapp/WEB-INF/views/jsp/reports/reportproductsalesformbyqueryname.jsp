@@ -8,17 +8,17 @@
 	class="d-flex justify-content-start flex-wrap flex-md-nowrap align-items-start">
 
 			<h1 class="h2">
-				<fmt:message key="reports.productSalesByQuery.form.header" />
+				<fmt:message key="reports.productSalesByQueryName.form.header" />
 			</h1>
 </div>
 <div
 	class="d-flex justify-content-start flex-wrap flex-md-nowrap align-items-start border-bottom- mb-2">		
 </div>
 <br />
-			<spring:url value="${urlReport}product-sales-by-query/filter/exec" var="reportProductSalesFilterExecActionUrl" />
+			<spring:url value="${urlReport}product-sales-by-query-name/filter/exec" var="reportProductSalesFilterExecActionUrl" />
 			<form:form id="report-product-sales-form" class="needs-validation" method="post" modelAttribute="reportForm" action="${reportProductSalesFilterExecActionUrl}">
 				
-				<h4 class="mb-4"><fmt:message key="reports.productSalesByQuery.form.headers.period" /></h4>
+				<h4 class="mb-4"><fmt:message key="reports.productSalesByQueryName.form.headers.period" /></h4>
 				<div class="form-row">				
 					<spring:message code="reports.productSalesByQuery.form.fields.placeholder.period.start" var="reportProductSalesFormFieldsPlaceholderPeriodStart"/> 
 					<spring:bind path="periodStart">
@@ -54,54 +54,16 @@
 					</div>
 					</spring:bind>
 				</div>
-			
 				
-				<h6 class="mb-4"><fmt:message key="reports.productSalesByQuery.form.headers.deliveryTypes" /></h6>
-				<div class="form-row">
-					<div class="col-sm-5">										
-						<div id="form-checks-deliveryTypes">
-						<spring:bind path="viewDeliveryTypes">
-									<form:checkboxes path="viewDeliveryTypes" items="${allViewDeliveryTypes}" element="div class='form-check'" />							
-									<form:errors path="viewDeliveryTypes" class="control-label" />				 
-						</spring:bind>
-						</div>
-					</div>
-				</div>	
-				<h6 class="mb-4"><fmt:message key="reports.productSalesByQuery.form.headers.customerTypes" /></h6>				
-				<div class="form-row">
-					<div class="col-sm-5">										
-						<div id="form-checks-customerTypes">
-						<spring:bind path="viewCustomerTypes">
-									<form:checkboxes path="viewCustomerTypes" items="${allViewCustomerTypes}" element="div class='form-check'" />							
-									<form:errors path="viewCustomerTypes" class="control-label" />				 
-						</spring:bind>
-						</div>
-					</div>
-				</div>	
+				<h4 class="mb-4"><fmt:message key="reports.productSalesByQueryName.form.fields.queryName" /></h4>
 				
-				<h6 class="mb-4"><fmt:message key="reports.productSalesByQuery.form.headers.paymentTypes" /></h6>				
-				<div class="form-row">
-					<div class="col-sm-5">										
-						<div id="form-checks-paymentTypes">
-						<spring:bind path="viewPaymentTypes">
-									<form:checkboxes path="viewPaymentTypes" items="${allViewPaymentTypes}" element="div class='form-check'" />							
-									<form:errors path="viewPaymentTypes" class="control-label" />				 
-						</spring:bind>
-						</div>
+				<div class="form-row">			
+					<div class="form-group col-4">			  
+					  	<form:select path="queryName" id="select-report-query-name" class="form-control form-control-sm">
+						    <form:options items="${reportQueryNames}" itemLabel="annotation" />
+						</form:select>	
 					</div>
 				</div>
-				
-				<h6 class="mb-4"><fmt:message key="reports.productSalesByQuery.form.headers.advertTypes" /></h6>				
-				<div class="form-row">
-					<div class="col-sm-5">										
-						<div id="form-checks-advertTypes">
-						<spring:bind path="viewAdvertTypes">
-									<form:checkboxes path="viewAdvertTypes" items="${allViewAdvertTypes}" element="div class='form-check'" />							
-									<form:errors path="viewAdvertTypes" class="control-label" />				 
-						</spring:bind>
-						</div>
-					</div>
-				</div>		
 																			
 				<hr class="mb-4">	
 				<button id="btn-clear-filter" type="button" class="btn btn-light">
@@ -123,33 +85,17 @@
 <!-- local java script -->
 <script>
 	
-	$('#nav-link-report-product-sales-by-query').addClass('active');
-	$('#nav-link-report-product-sales-by-query i').removeClass('text-dark').addClass('text-info');
+	$('#nav-link-report-product-sales-by-query-name').addClass('active');
+	$('#nav-link-report-product-sales-by-query-name i').removeClass('text-dark').addClass('text-info');
 	$('#btn-clear-filter').click(function() {
 		$('.form-control-input-text').val(''); 
-		$('.form-check-input').prop('checked', false);
-		$('#checkbox-period-exist').prop('checked',  true);
+		
 	});
 	$('#btn-excute-filter').click(function() {
 		$('#report-product-sales-form').submit();
 	});
 	
-	formChecksWraping('deliveryTypes');
-	formChecksWraping('customerTypes');
-	formChecksWraping('paymentTypes');
-	formChecksWraping('advertTypes');
-	
-	function formChecksWraping(elementName) {
-		
-		$('#form-checks-' + elementName + ' .form-check').wrap('<div class="form-group col-6"></div>');
-		$('#form-checks-' + elementName + ' .form-group:nth-child(odd)').addClass('form-row-odd');
-		$('#form-checks-' + elementName + ' .form-group:nth-child(even)').addClass('form-row-even');	
-		$('#form-checks-' + elementName + ' .form-row-odd').wrap('<div class="form-row"></div>');
-		$('#form-checks-' + elementName + ' .form-row-even').wrap('<div class="form-row"></div>');	
-		$('#form-checks-' + elementName + ' input:checkbox').addClass('form-check-input');	
-		$('#form-checks-' + elementName + ' label').addClass('form-check-label');	
-		
-	}
+
 
 
 		

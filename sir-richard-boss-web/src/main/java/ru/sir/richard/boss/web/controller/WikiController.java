@@ -158,13 +158,10 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/ym", method = RequestMethod.GET)
 	public String showYandexMarketProducts(Model model) {
 		
-		logger.debug("showYandexMarketProducts()");
-			
-		//wikiService.getConfig().saveFormStringValue(1, "productForm", "product.name", contextString);				
+		logger.debug("showYandexMarketProducts()");		
 		ProductConditions productConditions = wikiService.getConfig().loadYmProductConditions(OrderListController.USER_ID);		
 		List<Product> products = wikiService.getWiki().listYmProductsByConditions(productConditions);
-		populateDefaultModel(model);
-		
+		populateDefaultModel(model);		
 		
 		model.addAttribute("products", products);
 		model.addAttribute("listType", "ym");
@@ -286,24 +283,20 @@ public class WikiController extends AnyController {
 						product.getViewName());
 			redirectAttributes.addFlashAttribute("msg", msg);
 			model.addAttribute("listType", listType);
-			if (listType.equals("ym")) {
-				return "redirect:/wiki/products/ym"; 				
-			} else if (listType.equals("ozon")) {
-				return "redirect:/wiki/products/ozon"; 				
+			if (listType.equals("ym") || listType.equals("ozon")) {
+				return "redirect:/wiki/products/" + listType; 				
+			} else {
+				ProductConditions productConditions = new ProductConditions();
+				productConditions.setProductId(product.getId());
+				List<Product> products = wikiService.getWiki().listProductsByConditions(productConditions);
+				productConditions.setName(product.getName());
+				populateDefaultModel(model);
+				model.addAttribute("products", products);
+				model.addAttribute("listType", "products");
+				model.addAttribute("productConditions", productConditions);
+				return "wiki/listproducts";
 			}
 			
-			ProductConditions productConditions = new ProductConditions();
-			productConditions.setProductId(product.getId());
-			//productConditions.setName(product.getName());
-			List<Product> products = wikiService.getWiki().listProductsByConditions(productConditions);
-			//List<Product> products = new ArrayList<Product>();
-			productConditions.setName(product.getName());
-			populateDefaultModel(model);
-			model.addAttribute("products", products);
-			model.addAttribute("listType", "products");
-			model.addAttribute("productConditions", productConditions);
-			return "wiki/listproducts";			
-			//return "redirect:/wiki/products/context/" + product.getSku();				
 		}
 	}	
 	

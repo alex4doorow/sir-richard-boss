@@ -42,6 +42,7 @@ import ru.sir.richard.boss.model.data.conditions.ProductSalesReportConditions;
 import ru.sir.richard.boss.model.data.report.ProductSalesReportBean;
 import ru.sir.richard.boss.model.data.report.SalesFunnelReportBean;
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
+import ru.sir.richard.boss.model.types.ReportQueryNames;
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.web.data.FormProductSalesReport;
 import ru.sir.richard.boss.web.data.FormSalesFunnelReport;
@@ -184,12 +185,59 @@ public class ReportController extends AnyController {
 		parameters.put("PERIOD_START", reportForm.getPeriod().getStart());
 		parameters.put("PERIOD_END", reportForm.getPeriod().getEnd());
 		parameters.put("ADVERT_BUDGET", reportForm.getAdvertBudget());
-										
+		parameters.put("REPORT_QUERY_NAME", "Данные за период");
+												
 		List<ProductSalesReportBean> reportBeans = reportManager.productSales(reportForm.getPeriod());
 		createPdfReport(reportBeans, parameters, reportForm, response, "/resources/jasperreports/report-product-sales-master-v3.jasper",
 				"report-product-sales.pdf");
-	}	
+	}
 	
+	
+	@RequestMapping(value = "/reports/product-sales-by-query-name", method = RequestMethod.GET)
+	public String reportProductSalesByQueryName(Model model) {
+
+			logger.debug("reportProductSalesByQueryName()");
+			
+			int userId = OrderListController.USER_ID;
+			
+			Date periodStart = wikiService.getConfig().getFormDateValueByKey(userId, "productSalesReportByQueryForm", "period.start", DateTimeUtils.sysDate());
+			Date periodEnd = wikiService.getConfig().getFormDateValueByKey(userId, "productSalesReportByQueryForm", "period.end", DateTimeUtils.sysDate());
+			
+			int reportQueryNameId = wikiService.getConfig().getFormIntegerValueByKey(userId, "productSalesReportByQueryForm", "reportQueryName", ReportQueryNames.CDEK_POSTPAYMENT.getId());
+			
+			FormProductSalesReport reportForm = new FormProductSalesReport(periodStart, periodEnd);
+			reportForm.setQueryName(ReportQueryNames.getValueById(reportQueryNameId));
+			
+			model.addAttribute("reportForm", reportForm);
+			model.addAttribute("reportQueryNames", ReportQueryNames.values());
+			populateDefaultModel(model);
+
+			return "reports/reportproductsalesformbyqueryname";
+	}
+	
+	@RequestMapping(value = "/reports/product-sales-by-query-name/filter/exec", method = RequestMethod.POST)
+	public void execReportProductSalesByQueryName(@ModelAttribute("reportForm") FormProductSalesReport reportForm,
+			Model model, final RedirectAttributes redirectAttributes, HttpServletResponse response) throws JRException, IOException {
+		
+		logger.debug("execReportProductSalesByQueryName()");
+		
+		int userId = OrderListController.USER_ID;
+		wikiService.getConfig().saveFormDateValue(userId, "productSalesReportByQueryForm", "period.start", reportForm.getPeriod().getStart());
+		wikiService.getConfig().saveFormDateValue(userId, "productSalesReportByQueryForm", "period.end", reportForm.getPeriod().getEnd());	
+		
+		wikiService.getConfig().saveFormIntegerValue(userId, "productSalesReportByQueryForm", "reportQueryName", reportForm.getQueryName().getId());
+		
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.putAll(wikiService.getConfigData());
+		parameters.put("PERIOD_START", reportForm.getPeriod().getStart());
+		parameters.put("PERIOD_END", reportForm.getPeriod().getEnd());
+		parameters.put("ADVERT_BUDGET", BigDecimal.ZERO);
+		parameters.put("REPORT_QUERY_NAME", reportForm.getQueryName().getAnnotation());
+												
+		List<ProductSalesReportBean> reportBeans = reportManager.productSalesByQueryName(reportForm);
+		createPdfReport(reportBeans, parameters, reportForm, response, "/resources/jasperreports/report-product-sales-master-v4.jasper",
+				"report-product-sales-by-query.pdf");
+	}	
 	
 	// list page
 	@RequestMapping(value = "/reports/product-sales-by-query", method = RequestMethod.GET)
@@ -223,9 +271,10 @@ public class ReportController extends AnyController {
 		parameters.put("PERIOD_START", reportForm.getPeriod().getStart());
 		parameters.put("PERIOD_END", reportForm.getPeriod().getEnd());
 		parameters.put("ADVERT_BUDGET", BigDecimal.ZERO);
+		parameters.put("REPORT_QUERY_NAME", "Данные по запросу");
 										
 		List<ProductSalesReportBean> reportBeans = reportManager.productSalesByQuery(reportForm);
-		createPdfReport(reportBeans, parameters, reportForm, response, "/resources/jasperreports/report-product-sales-master-v3.jasper",
+		createPdfReport(reportBeans, parameters, reportForm, response, "/resources/jasperreports/report-product-sales-master-v4.jasper",
 				"report-product-sales-by-query.pdf");
 	}
 	
@@ -255,7 +304,7 @@ public class ReportController extends AnyController {
 				DateTimeUtils.halfYearOfDate(DateTimeUtils.sysDate())));
 		reportForm.setReportPeriodYear(wikiService.getConfig().getFormIntegerValueByKey(userId, "salesFunnelReportForm", "reportPeriodYear", 
 				DateTimeUtils.yearOfDate(DateTimeUtils.sysDate())));
-		model.addAttribute("reportForm", reportForm);
+		model.addAttribute("reportForm", reportForm);			
 
 		return "reports/reportsalesfunnelform";
 	}
@@ -294,7 +343,7 @@ public class ReportController extends AnyController {
 		parameters.put("PERIOD_YEAR", reportForm.getReportPeriodYear());
 
 		List<SalesFunnelReportBean> reportBeans = reportManager.salesFunnel(reportForm.getPeriod());
-		createPdfReport(reportBeans, parameters, reportForm, response, "/resources/jasperreports/report-sales-funnel-v4.jasper",
+		createPdfReport(reportBeans, parameters, reportForm, response, "/resources/jasperreports/report-sales-funnel-v5.jasper",
 				"report-sales-funnel.pdf");				
 	}
 	

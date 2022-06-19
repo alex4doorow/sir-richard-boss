@@ -688,7 +688,6 @@
 					<!-- ${status.count} ${item.no}  -->
 					<div class="col-sm-3">
 						<div class="input-group">
-
 							<form:input path="items[${status.index}].product.name"
 								type="text"
 								class="form-control form-control-sm input-details-item-product input-calc-amounts"
@@ -1160,17 +1159,32 @@
 <%@ include file="../fragments/footer2init.jsp"%>
 <!-- local java script -->
 <script>
-/*
-var widjet = new ISDEKWidjet({
-    defaultCity: '${cdekDefaultCity}',
-    cityFrom: '${cdekCityFrom}',
-    link: 'forpvz',
-    path: 'https://pribormaster.ru/catalog/view/theme/zemez808/js/cdek-pvzwidget/scripts/',
-    servicepath: 'https://pribormaster.ru/catalog/controller/extension/shipping/cdek/service.php' 
+
+$(document).on('change', 'input', function() {	
+    var options = $('datalist')[0].options;
+    var val = $(this).val();
+    for (var i = 0; i < options.length; i++) {
+       if (options[i].value === val) {
+    	  console.log($(options[i]).attr('key') + ", " + $(options[i]).attr('sku') + ", " + $(options[i]).attr('name'));   	      
+          break;
+       }
+    }
 });
+
+/*
+
+	$('.input-details-item-product').focusout(function(){
+		var selected = $(this).val();
+	    console.log(selected);
+	});
+	
+	//$('#btn-find-details-item-product-' + currentStatusIndex).on('click', {selector: this}, btnDetailsItemProductOnClick);
+	
+	$('.input-details-item-product').on('input', function(e){
+	    var selected = $(this).val();
+	    console.log(selected);
+	});
 */
-
-
 	$('#btn-cdek-pvzs').click(function() {		
 		openCdekPvzs();
 	});
@@ -1354,7 +1368,7 @@ var widjet = new ISDEKWidjet({
 	
 <c:choose>
 	<c:when test="${orderForm['new']}">	
-	var isNew = true;
+	var isNew = true;	
 	</c:when>
 	<c:otherwise>
 	var isNew = false;
@@ -1647,6 +1661,14 @@ var widjet = new ISDEKWidjet({
 	});
 		
 	$('#button-modal-delivery-ozon-rocket-ok').click(function() {
+		/*
+		$('#delivery-ozon-rocket-modal submit').click()
+		$('#input-ozon-rocket-delivery-variant-data').attr('data', ozonRocketDeliveryVariantData);		
+		$('#input-ozon-rocket-delivery-variant-id').val(ozonRocketDeliveryVariantData.id);
+		$('#input-delivery-address-carrierPvz-deviveryVariantId').val(ozonRocketDeliveryVariantData.id);		
+		$('#input-ozon-rocket-delivery-variant-address').val(ozonRocketDeliveryVariantData.address);
+		$('#input-delivery-address-carrierPvz-city').val(ozonRocketDeliveryVariantData.address);
+		*/	
 		
 		var cityContext = $('#input-delivery-address-carrierPvz-city').val(),
 			cityId = 0,
@@ -1770,9 +1792,8 @@ var widjet = new ISDEKWidjet({
 			done: function(e) {
 				console.log('DONE');
 			}
-		});			
-		
-		$('#delivery-ozon-rocket-modal').modal('hide');							
+		});					
+		$('#delivery-ozon-rocket-modal').modal('hide');
 	});
 	
 	$('.btn-find-details-item-product').on('click', {selector: this}, btnDetailsItemProductOnClick);
@@ -2061,9 +2082,12 @@ var widjet = new ISDEKWidjet({
 	function btnDetailsItemProductOnClick(element) {
 		
 		var inputProductId = $(this).attr('id');
+		if (typeof inputProductId === 'object') {
+			return;
+		}
 		var itemId = inputProductId.substr('btn-find-details-item-product-'.length, inputProductId.length);
-		
-		var stringContext = $('#input-details-item-product-' + itemId).val();
+				
+		var stringContext = $('#input-details-item-product-' + itemId).val();				
 		if (stringContext == null || stringContext.trim() == '') {
 			return;
 		}
@@ -2094,10 +2118,13 @@ var widjet = new ISDEKWidjet({
 							$('#select-product-category').val(data.result.products[0].category.id);
 						}											
 						$('#datalist-product-name-' + itemId + ' option').remove();
-						for (var key in data.result.products) {						
-							  $('#datalist-product-name-' + itemId).append('<option>' + data.result.products[key].name + '</option>');
-						}
-						
+						for (var key in data.result.products) {	
+							if (data.result.products[key].sku.trim() == '') {
+								$('#datalist-product-name-' + itemId).append('<option>' + data.result.products[key].name + '</option>');
+							} else {
+								$('#datalist-product-name-' + itemId).append('<option class="datalist-product-option" name="' + data.result.products[key].name + '" sku="' + data.result.products[key].sku + '" key="' + data.result.products[key].id + '" id="' + itemId + "-" + data.result.products[key].sku + '">' + data.result.products[key].sku + ' : ' + data.result.products[key].name + '</option>');	
+							}
+						}						
 						$('#span-details-item-product-sku-info-' + itemId).text(data.result.products[0].sku);
 						
 						$('#span-details-item-quantity-stock-info-' + itemId).text(data.result.products[0].viewStockQuantityText);						
@@ -2120,7 +2147,7 @@ var widjet = new ISDEKWidjet({
 			}
 		});			
 	}	
-	
+			
 	function findDeliveryCdekCities(element) {
 		
 		var contextString = $('#input-delivery-cdek-city-search').val().trim();
@@ -2485,10 +2512,17 @@ var widjet = new ISDEKWidjet({
 			if ($('#input-delivery-address-carrierPvz-city').val().trim() == '') {
 				ozonRocketDeliveryCity = $('#input-delivery-address').val().trim();
 			} else {
-				ozonRocketDeliveryCity = $('#input-delivery-address-carrierPvz-city').val().trim();
-				
+				ozonRocketDeliveryCity = $('#input-delivery-address-carrierPvz-city').val().trim();				
 			}
-			var ozonWidgetSrc = "https://rocket.ozon.ru/lk/widget?token=WJSvphyEiaY3sEyWk2jNOA%3D%3D&showdeliveryprice=false&showdeliverytime=false&defaultcity=" + ozonRocketDeliveryCity;
+			var showPaymentText = ""
+			if ($('#select-payment-type').val() == 'POSTPAY') {
+				// postpayment
+				showPaymentText = "&showPostpaymentOnly=true";
+			} else {
+				// prepayment
+			}
+			// https://rocket.ozon.ru/lk/widget?token=XQoStt3Pr8TFIJfRTw7txw%3D%3D&showPostpaymentOnly=true.
+			var ozonWidgetSrc = "https://rocket.ozon.ru/lk/widget?token=WJSvphyEiaY3sEyWk2jNOA%3D%3D&showdeliveryprice=false&showdeliverytime=false&defaultcity=" + ozonRocketDeliveryCity + showPaymentText;
 			$('#iframe-ozon-widget').attr('src', ozonWidgetSrc);
 			$('#delivery-ozon-rocket-modal').modal({keyboard: false});
 			
@@ -2682,6 +2716,10 @@ var widjet = new ISDEKWidjet({
 	
 	function calcAmount(indexItem) {
 		
+		if (typeof indexItem === 'object' || typeof indexItem === 'function') {
+			return;
+		}
+		
 		var quantity = $('#input-details-item-quantity-' + indexItem).val().toNumber();
 		var price = $('#input-details-item-price-' + indexItem).val().toNumber();
 		var discount = $('#input-details-item-discount-rate-' + indexItem).val().toNumber();
@@ -2744,21 +2782,24 @@ var widjet = new ISDEKWidjet({
 	
 	window.addEventListener("message", ozonRocketReceiveMessage, false);
 	function ozonRocketReceiveMessage(event) {
-		// Важно не слушать чужие события
+		// don't listen alien enents
 		if (event.origin !== "https://rocket.ozon.ru" || typeof event.data !== "string")
 			return;
-		console.log(event.data);
-		var ozonRocketDeliveryVariantData = JSON.parse(event.data);
-		$('#input-ozon-rocket-delivery-variant-data').attr('data', ozonRocketDeliveryVariantData);
 		
+		var ozonRocketDeliveryVariantData = JSON.parse(event.data);		
+		if (ozonRocketDeliveryVariantData.messageType !== "OzonRocketWidgetSelectDeliveryVariant") {			
+		    return;			
+		} 
+		console.log(ozonRocketDeliveryVariantData.data);
+		
+		$('#input-ozon-rocket-delivery-variant-data').attr('data', ozonRocketDeliveryVariantData);		
 		$('#input-ozon-rocket-delivery-variant-id').val(ozonRocketDeliveryVariantData.id);
 		$('#input-delivery-address-carrierPvz-deviveryVariantId').val(ozonRocketDeliveryVariantData.id);		
-		
 		$('#input-ozon-rocket-delivery-variant-address').val(ozonRocketDeliveryVariantData.address);
-
 		$('#input-delivery-address-carrierPvz-city').val(ozonRocketDeliveryVariantData.address);
+				
 		$('#button-modal-delivery-ozon-rocket-ok').click();
-		
+				
 	}
 	
 </script>

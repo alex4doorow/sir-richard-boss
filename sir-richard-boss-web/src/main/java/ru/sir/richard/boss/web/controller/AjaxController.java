@@ -27,6 +27,7 @@ import ru.sir.richard.boss.model.data.conditions.CustomerConditions;
 import ru.sir.richard.boss.model.data.conditions.OrderConditions;
 import ru.sir.richard.boss.model.data.conditions.ProductConditions;
 import ru.sir.richard.boss.model.data.crm.DeliveryServiceResult;
+
 import ru.sir.richard.boss.model.types.DeliveryPrices;
 import ru.sir.richard.boss.model.types.DeliveryTypes;
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
@@ -68,7 +69,19 @@ public class AjaxController {
 		result.setMsg("result msg");
 	
 		if (isValidContextString(contextString)) {
-			List<Product> products = wikiService.getWiki().findProductsByName(contextString);
+			List<Product> products = null;
+			if (StringUtils.contains(contextString, " : ")) {
+				
+				String[] contextStringValues = StringUtils.split(contextString, " : ");
+				String contextSku = contextStringValues[0];
+				
+				Product singleProduct = wikiService.getWiki().findProductBySku(contextSku);				
+				products = new ArrayList<Product>();
+				products.add(singleProduct);		
+				
+			} else {
+				products = wikiService.getWiki().findProductsByName(contextString);				
+			}
 			if (products != null && products.size() > 0) {
 				result.setCode("200");
 				result.setMsg("");
@@ -77,6 +90,7 @@ public class AjaxController {
 				result.setCode("204");
 				result.setMsg("No any product!");
 			}
+		
 
 		} else {
 			result.setCode("400");
@@ -206,6 +220,18 @@ public class AjaxController {
 		result.setMsg("");		
 		return result;	
 		
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/ajax/orders/marketplace-info")
+	public OrderFormAjaxResponseBody findOrderMarketplaceInfoAjax(@RequestBody Order orderContainer) {
+		//logger.debug("findOrderMarketplaceInfoAjax(): {}", orderContainer.getId());
+		
+		Order order = orderService.getOrderDao().findById(orderContainer.getId());
+		OrderFormAjaxResponseBody result = new OrderFormAjaxResponseBody();
+		result.setCode("200");
+		result.setMsg(order.getViewMarketNo());					
+		return result;
 	}
 	
 	@ResponseBody
@@ -346,12 +372,10 @@ public class AjaxController {
 		if (contextString == null) {
 			return false;
 		}
-		if ((StringUtils.isEmpty(contextString))) {
-			
+		if ((StringUtils.isEmpty(contextString))) {			
 			return false;
 		}
 		return true;
-	}
-	
+	}	
 	
 }

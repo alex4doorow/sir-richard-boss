@@ -43,7 +43,6 @@
 		
 
 		<div>	
-
 			    <button id="button-crm-load" class="btn btn-sm btn-light" onclick="onClickCrmLoad()" data-toggle="tooltip" data-placement="bottom" title='<fmt:message key="orders.btn.crm-load"/>'>
 			   		<i class="bi bi-arrow-repeat text-dark"></i>
 				</button>
@@ -143,12 +142,13 @@
 			<tbody>
 				<c:forEach var="order" items="${orders}">			
 				<tr class="table-${order.viewStatus.union}">				
-		 				<td class="table-${order.viewStatus.orderId}"><input id="checkbox-${order.id}" type="checkbox" data-no="${order.no}"></td>
-						<td class="table-${order.viewStatus.orderNo}" scope="row"><a href="${urlOrders}/${order.id}/${listType}">${order.no}</a></td>							
+		 				<td class="table-${order.viewStatus.orderId}"><input data-delivery-code="${order.delivery.deliveryType}" data-delivery-category="${order.delivery.deliveryType.category}" id="checkbox-${order.id}" type="checkbox" data-no="${order.no}"></td>
+						<td id="td-id-${order.id}" class="td-id table-${order.viewStatus.orderNo}" scope="row" data-id="${order.id}"><a href="${urlOrders}/${order.id}/${listType}">${order.no}</a></td>							
+						
 						<td class="table-${order.viewStatus.orderDate}" data-original-title="${order.viewDateInfo}" data-container="body" data-toggle="tooltip" data-placement="bottom" title="">
 							<fmt:formatDate pattern="dd.MM.yyyy" value="${order.orderDate}" />
-						</td>		
-						<td>${order.productCategory.name}</td>
+						</td>						
+						<td>${order.productCategory.name}</td>						
 						<td data-original-title="${order.annotation}" data-toggle="tooltip" data-placement="bottom" title="">${order.customer.viewShortName}</td>
 						<td>${order.customer.viewPhoneNumber}</td>
 						<td data-original-title="${order.delivery.viewDeliveryInfo}" data-toggle="tooltip" data-placement="bottom" title="">${order.delivery.address.viewAddress}</td>					
@@ -160,7 +160,7 @@
 								<fmt:message key="orders.table.items.amount.postpay" />: <fmt:formatNumber type = 'currency' value = '${order.amounts.getValue(OrderAmountTypes.POSTPAY)}' />" 
 								data-container="body" data-toggle="tooltip" data-placement="bottom" title="">				
 						  <fmt:formatNumber type = "currency" value = "${order.amounts.getValue(OrderAmountTypes.TOTAL_WITH_DELIVERY)}" />					
-						<td class="text-center">${order.delivery.trackCode}</td>
+						<td id="td-trackcode-${order.id}" class="text-center">${order.delivery.trackCode}</td>
 						
 							
 				</tr>			
@@ -407,8 +407,23 @@
 				
 				if ($(this).prop('checked')) {
 					
-    				orderId = this.id.substring(9, this.id.length);
-    				
+					var deliveryCode = $(this).attr('data-delivery-code');
+					var deliveryCategory = $(this).attr('data-delivery-category');
+					
+					$('#button-exporters').attr('disabled', '');
+					$('#button-export-excel-cdek').prop('hidden', true);
+					$('#button-export-api-cdek').prop('hidden', true);					
+					$('#button-export-api-ozon-rocket').prop('hidden', true);					
+					if (deliveryCategory == "OZON Rocket") {
+						$('#button-exporters').removeAttr('disabled');    
+						$('#button-export-api-ozon-rocket').prop('hidden', false);			
+					} else if (deliveryCategory == "CDEK" || deliveryCode == "PICKUP") {
+						$('#button-exporters').removeAttr('disabled');    
+						$('#button-export-excel-cdek').prop('hidden', false);
+						$('#button-export-api-cdek').prop('hidden', false);		
+					}
+					
+    				orderId = this.id.substring(9, this.id.length);    				
         	    	updateHref = '${urlOrders}/' + orderId + '/update/${listType}';        	    	        	    	
         	    	cloneHref = '${urlOrders}/' + orderId + '/clone';
         	    	deleteHref = '${urlOrders}/' + orderId + '/delete';
@@ -483,6 +498,50 @@
     	    });
 		});	
 		
+		$( 'td.td-id' ).mouseover(function() {			
+			var orderId = $(this).attr('data-id');
+			var tdOrderNo = $(this);			
+			var orderContainer = { id: orderId }		
+			
+			if (tdOrderNo.attr("data-toggle") == "tooltip") {
+				console.log('AJAX YET}: ' + tdOrderNo.attr('title'));	
+				return;
+			}			
+			$.ajax({
+				type: 'POST',
+				contentType: 'application/json',
+				url: '${urlHome}ajax/orders/marketplace-info',
+				data : JSON.stringify(orderContainer),
+				dataType: 'json',
+				timeout: 100000,
+				success: function(data) {
+					console.log('SUCCESS: ', data.msg);	
+					if (data.msg != '') {
+						if ($('#td-trackcode-' + orderId).text().trim() == '') {
+							$('#td-trackcode-' + orderId).text(data.msg);	
+						} 
+						tdOrderNo.attr('title', data.msg).attr('data-toggle', 'tooltip').tooltip('show');
+						setTimeout(function() {							
+							var tdOrderNo = $(this);
+							tdOrderNo.tooltip('hide');
+							$('.td-id').tooltip('hide');
+						}, 4000);
+					} else {
+						tdOrderNo.attr('title', data.msg).attr('data-toggle', 'tooltip').tooltip('hide');
+					}					
+				},
+				error: function(e) {
+					console.log('ERROR: ', e);
+					},
+				done: function(e) {
+					console.log('DONE');					
+				}
+			});		
+		}).mouseout(function() {
+			  var tdOrderNo = $(this);
+			  tdOrderNo.tooltip('hide');
+			  $('.td-id').tooltip('hide');		  
+		});		
 		
 		$('#button-modal-confirm-ok').click(function() {
 			var eraseHref = $('#button-erase').attr('href');

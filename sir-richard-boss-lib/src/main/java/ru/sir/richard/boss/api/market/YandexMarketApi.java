@@ -1,6 +1,11 @@
 package ru.sir.richard.boss.api.market;
 
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
@@ -8,8 +13,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -19,11 +29,16 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.printing.PDFPageable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.PropertyResolver;
+
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.data.OrderDeliveryShipment;
@@ -68,7 +83,7 @@ public class YandexMarketApi {
 		post.setHeader("Authorization", "OAuth oauth_token=\"" + environment.getProperty("yandex.market.oauth.token") + "\", oauth_client_id=\"" + environment.getProperty("yandex.market.oauth.client") + "\"");
 		return post;
 	}
-	
+		
 	// POST /campaigns/{campaignId}/offer-prices/updates
 	public String offerPricesUpdatesV1(List<Product> products) {
 				
@@ -175,7 +190,7 @@ public class YandexMarketApi {
 			String item = 
 			"    \r\n" +			
 			"    {\r\n" + 
-			"      \"id\": "+ product.getSku() + ",\r\n" +
+			"      \"id\": \""+ product.getSku() + "\",\r\n" +
 			"      \"price\": \r\n" + 
 			"      {\r\n" + 
 			"        \"currencyId\": \"RUR\",\r\n" + 
@@ -319,6 +334,70 @@ public class YandexMarketApi {
 		}
 		return result;		
 	}
+	
+	// https://yandex.ru/dev/market/partner-marketplace-cd/doc/dg/reference/get-campaigns-id-orders-id-delivery-labels.html
+	public void OrderLabels(int ymOrderId) {
+		
+		Map<String, String> headers = new HashMap<>();
+		headers.put("Content-type", "application/json");			
+		headers.put("Authorization", "OAuth oauth_token=\"" + environment.getProperty("yandex.market.oauth.token") + "\", oauth_client_id=\"" + environment.getProperty("yandex.market.oauth.client") + "\"");
+		
+		final String url = environment.getProperty("yandex.market.url") + environment.getProperty("yandex.market.warehouse.compaign.first") + "/orders/" + ymOrderId + "/delivery/labels.json";
+		com.mashape.unirest.http.HttpResponse<InputStream> insResponse = null;
+		try {			
+			insResponse = Unirest.get(url)
+					.headers(headers)
+					.asBinary();
+			
+			InputStream in = insResponse.getBody();		
+		    File downloadedFile = File.createTempFile("ym-label-" + ymOrderId, ".pdf");
+		    FileOutputStream out = new FileOutputStream(downloadedFile);
+		    
+		    byte[] buffer = new byte[1024];
+		    int len = in.read(buffer);
+		    while (len != -1) {
+		        out.write(buffer, 0, len);
+		        len = in.read(buffer);
+		        if (Thread.interrupted()) {
+		            try {
+		                throw new InterruptedException();
+		            } catch (InterruptedException e) {
+		            	logger.error("InterruptedException:", e);		                
+		            }
+		        }
+		    }
+		    in.close();
+		    out.close();
+		    
+		    logger.info("downloadedFile: {}", downloadedFile.getAbsolutePath());
+		    PDDocument document = PDDocument.load(new File(downloadedFile.getAbsolutePath()));
+		    		    
+		    PrintService myPrintService = findPrintService(environment.getProperty("printer.service.to.labels"));
+	        if (myPrintService != null) {	        	
+	            PrinterJob job = PrinterJob.getPrinterJob();
+	            job.setPageable(new PDFPageable(document));
+	            job.print();     	
+	        } else {
+	        	logger.error("Printer " + environment.getProperty("printer.service.to.labels") + " is not found");
+	        }	
+		} catch (UnirestException e) {
+			logger.error("UnirestException:", e);
+		} catch (IOException e) {
+			logger.error("IOException:", e);
+		} catch (PrinterException e) {
+			logger.error("PrinterException:", e);
+		}		
+	}
+		
+	private PrintService findPrintService(String printerName) {
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+        for (PrintService printService : printServices) {
+            if (printService.getName().trim().equals(printerName)) {
+                return printService;
+            }
+        }
+        return null;
+    }
 	
 	public Order order(Order realOrder) {
 		
@@ -534,5 +613,5 @@ public class YandexMarketApi {
 		return result;		
 		
 	}
-
+	
 }

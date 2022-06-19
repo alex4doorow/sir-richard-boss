@@ -567,6 +567,7 @@ public class OzonMarketApi {
 				"{" +
 					    "\"stocks\": [";
 		
+		int ozonProducts = 0;
 		for (Product product : products) {
 			
 			if (StringUtils.isEmpty(product.getMarket(CrmTypes.OZON).getMarketSku())) {
@@ -578,11 +579,12 @@ public class OzonMarketApi {
 			
 			int cdekQuantity = 0;
 			int ozonPickupQuantity = 0;
-			int ozonCourierQuantity = 0;
+			int ozonExpressQuantity = 0;
 			int CDEK_QUANTITY_GREATER = 10;
 			if (product.getQuantity() > CDEK_QUANTITY_GREATER) {
-				cdekQuantity = 0;
-				ozonPickupQuantity = product.getQuantity();
+				cdekQuantity = 2;
+				ozonExpressQuantity = 2;
+				ozonPickupQuantity = product.getQuantity() - cdekQuantity - ozonExpressQuantity;
 			} else {
 				ozonPickupQuantity = product.getQuantity();				
 			}
@@ -604,12 +606,15 @@ public class OzonMarketApi {
 							        "{\r\n" +
 						            "\"offer_id\": \"" + product.getSku() + "\"," + "\r\n" +
 						            "\"product_id\": " +  product.getMarket(CrmTypes.OZON).getMarketSku() + "," + "\r\n" +
-						            "\"stock\": "+  ozonCourierQuantity + "," + "\r\n" +
-						            "\"warehouse_id\": "+  environment.getProperty("ozon.market.ozon.warehouse.courier") + "\r\n" +
+						            "\"stock\": "+  ozonExpressQuantity + "," + "\r\n" +
+						            "\"warehouse_id\": "+  environment.getProperty("ozon.market.ozon.warehouse.express") + "\r\n" +
 						        "}";
 					
-			inputJson += item + ",";			
-			
+			inputJson += item + ",";
+			ozonProducts++;			
+		}		
+		if (ozonProducts == 0) {
+			return ozonResult;
 		}
 		
 		inputJson = StringUtils.substring(inputJson, 0, inputJson.length() - 1); 
@@ -674,12 +679,12 @@ public class OzonMarketApi {
 		
 		String result = "";
 		
-		String inputJson =  
-				
+		String inputJson =  				
 				
 				"{" +
 					    "\"prices\": [";
 		
+		int ozonProducts = 0;
 		for (Product product : products) {
 			
 			if (StringUtils.isEmpty(product.getMarket(CrmTypes.OZON).getMarketSku())) {
@@ -689,23 +694,34 @@ public class OzonMarketApi {
 				continue;
 			}
 			
+			String stringOldPrice = "0";			
 			String stringPrice;
 			if (product.getMarket(CrmTypes.OZON).getSpecialPrice() == null || product.getMarket(CrmTypes.OZON).getSpecialPrice().equals(BigDecimal.ZERO)) {
-				stringPrice = NumberUtils.localeFormatNumber(product.getPrice(), new Locale("en", "UK"), '.', "#########.00");
+				if (product.getPriceWithoutDiscount().compareTo(product.getPrice()) > 0) {
+					stringPrice = NumberUtils.localeFormatNumber(product.getPriceWithDiscount(), new Locale("en", "UK"), '.', "#########.00");
+					stringOldPrice = NumberUtils.localeFormatNumber(product.getPriceWithoutDiscount(), new Locale("en", "UK"), '.', "#########.00");
+					
+				} else {
+					stringPrice = NumberUtils.localeFormatNumber(product.getPrice(), new Locale("en", "UK"), '.', "#########.00");
+				}
 			} else {
 				stringPrice = NumberUtils.localeFormatNumber(product.getMarket(CrmTypes.OZON).getSpecialPrice(), new Locale("en", "UK"), '.', "#########.00");
 			}
 			String item = "\r\n" +
 						        "{\r\n" +
-						            "\"offer_id\": \"" + product.getSku() + "\"," + "\r\n" +						            						            
-									"\"old_price\": \"0\"," + "\r\n" +
-						            "\"premium_price\": \"0\"," + "\r\n" +
+						            "\"offer_id\": \"" + product.getSku() + "\"," + "\r\n" +						        
+						            "\"old_price\": \""+ stringOldPrice + "\"," + "\r\n" +
+//						            "\"premium_price\": \"0\"," + "\r\n" +
 						            "\"price\": \""+ stringPrice + "\"," + "\r\n" +
 						            "\"product_id\": " +  product.getMarket(CrmTypes.OZON).getMarketSku() + "\r\n" +
 						        "}";
 					
-			inputJson += item + ",";			
+			inputJson += item + ",";
+			ozonProducts++;
 			
+		}
+		if (ozonProducts == 0) {
+			return result;
 		}
 		
 		inputJson = StringUtils.substring(inputJson, 0, inputJson.length() - 1); 

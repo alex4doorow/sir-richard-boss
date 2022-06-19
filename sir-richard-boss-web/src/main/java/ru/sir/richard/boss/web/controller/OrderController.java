@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +39,7 @@ import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.OrderTypes;
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.model.utils.NumberUtils;
+import ru.sir.richard.boss.model.utils.sender.MessageManager;
 import ru.sir.richard.boss.model.utils.sender.MessageSendingStatus;
 import ru.sir.richard.boss.model.utils.sender.email.EmailSenderTextGenerator;
 import ru.sir.richard.boss.web.data.FormOrder;
@@ -48,12 +50,19 @@ import ru.sir.richard.boss.web.validator.OrderFormValidator;
 public class OrderController extends AnyController {
 
 	private final Logger logger = LoggerFactory.getLogger(OrderController.class);
+	
+	@Autowired
+	private Environment environment;
 
 	@Autowired
 	OrderFormValidator orderFormValidator;
 		
 	@Autowired
 	private OrderService orderService;
+	
+	public OrderController() {
+		super();	
+	}
 		
 	@InitBinder
 	protected void initBinder(WebDataBinder binder, HttpServletRequest httpServletRequest) {	
@@ -250,14 +259,14 @@ public class OrderController extends AnyController {
 			return "orders/orderstatusform";
 		} else {	
 			String msg;			
-			Order oldOrder = orderService.getOrderDao().findById(id);
-			
+			Order oldOrder = orderService.getOrderDao().findById(id);			
 			formOrder.setExternalCrms(oldOrder.getExternalCrms());
 			formOrder.setCustomer(oldOrder.getCustomer());
 			
 			orderService.getOrderDao().changeFullStatusOrder(formOrder);
 			
 			Order newOrder = orderService.getOrderDao().findById(id);
+			MessageManager messageManager = new MessageManager(environment);	
 			MessageSendingStatus responceStatus = messageManager.sendOrderMessage(newOrder, formOrder.isSendMessage());
 			redirectAttributes.addFlashAttribute("css", "success");			
 			msg = String.format("Статус заказа изменен: #%s от %s г, %s. Было: \"%s\", стало: \"%s\". Сообщение %s", 
@@ -322,6 +331,7 @@ public class OrderController extends AnyController {
 			orderService.getOrderDao().changeBillExpiredStatusOrder(formOrder);
 			
 			//Order newOrder = orderService.findById(id);
+			MessageManager messageManager = new MessageManager(environment);	
 			MessageSendingStatus responceStatus = messageManager.sendOrderManualMessage(oldOrder, formOrder.getTextMessage(), formOrder.isSendMessage());
 			redirectAttributes.addFlashAttribute("css", "success");
 			

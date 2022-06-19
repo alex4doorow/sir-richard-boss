@@ -119,6 +119,13 @@
 	                </li>
 	                
 	                <li class="nav-item">	                
+		                <a id="nav-link-report-product-sales-by-query-name" class="nav-link" href="${urlHome}reports/product-sales-by-query-name">
+                          <i class="bi bi-printer text-dark"></i>
+		                  <fmt:message key="main.menus.left.Reports.productSalesByQueryName" />
+		                </a>
+	                </li>
+	                
+	                <li class="nav-item">	                
 		                <a id="nav-link-report-sales-funnel" class="nav-link" href="${urlHome}reports/sales-funnel">
                           <i class="bi bi-printer text-dark"></i>
 		                  <fmt:message key="main.menus.left.Reports.salesFunnel" />

@@ -19,34 +19,17 @@ import ru.sir.richard.boss.model.types.PaymentDeliveryTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
 import ru.sir.richard.boss.model.types.ProductTypes;
 import ru.sir.richard.boss.model.types.SupplierTypes;
-import ru.sir.richard.boss.model.utils.sender.AnySender;
-import ru.sir.richard.boss.model.utils.sender.MessageManager;
-import ru.sir.richard.boss.model.utils.sender.sms.SmsSender;
-import ru.sir.richard.boss.web.config.MvcDbConfig;
 import ru.sir.richard.boss.web.service.WikiService;
 
 public abstract class AnyController {
-	
-	protected final AnySender smsSender;
-	
-	protected final MessageManager messageManager;
-	
+		
 	@Autowired
 	protected WikiService wikiService;
-	
-	@Autowired
-	protected MvcDbConfig mvcConfig;
-	
+			
 	public AnyController() {
-		this.smsSender = new SmsSender();
-		this.messageManager = new MessageManager();	
-		
+		super();
 	}
 			
-	public MvcDbConfig getMvcConfig() {
-		return mvcConfig;
-	}
-
 	protected void populateDefaultModel(Model model) {
 		
 		model.addAttribute("productCategories", wikiService.getWiki().getCategories());
@@ -156,6 +139,7 @@ public abstract class AnyController {
 		allViewSuppliers.add(SupplierTypes.PYROHOUSE.getAnnotation());
 		allViewSuppliers.add(SupplierTypes.DADJET.getAnnotation());
 		allViewSuppliers.add(SupplierTypes.HOONT.getAnnotation());
+		allViewSuppliers.add(SupplierTypes.RUSONAR.getAnnotation());		
 		allViewSuppliers.add(SupplierTypes.CAMPING_2000.getAnnotation());
 		allViewSuppliers.add(SupplierTypes.T4L.getAnnotation());
 		model.addAttribute("allViewSuppliers", allViewSuppliers);	

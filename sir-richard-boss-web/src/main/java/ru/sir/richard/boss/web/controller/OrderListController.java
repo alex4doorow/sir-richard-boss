@@ -178,14 +178,15 @@ public class OrderListController extends AnyController {
 		int id = 0;
 		try {
 			 id = orderService.getOrderDao().findIdByNo(Integer.valueOf(dirtyConditions.trim()), orderSubNo, orderYear);
-	         
+			 if (id > 0) {
+				 return "redirect:/orders/" + id + "/orders";
+			 }
 	    } catch (NumberFormatException nfe) {
-	    	 id = 0;
-	          
-	    }
+	    	 id = 0;	          
+	    }		
 		OrderConditions orderConditions;
 		CustomerConditions customerConditions;
-		
+		List<Order> orders = null;
 		if (id <= 0) {
 			// 2) ищем по трэккоду
 			final String trackCode = dirtyConditions.trim();
@@ -194,7 +195,7 @@ public class OrderListController extends AnyController {
 			customerConditions = new CustomerConditions();
 			orderConditions.setCustomerConditions(customerConditions);
 			orderConditions.setTrackCode(trackCode);			
-			List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
+			orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
 			if (orders.size() > 0) {
 				id = orders.get(0).getId();
 			}			
@@ -210,40 +211,37 @@ public class OrderListController extends AnyController {
 			customerConditions = new CustomerConditions();
 			customerConditions.setPersonPhoneNumber(phoneNumber);
 			orderConditions.setCustomerConditions(customerConditions);
-			List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
+			orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
 			if (orders.size() > 0) {
 				id = orders.get(0).getId();
 			}			
-		}
-		
+		}		
 		if (id <= 0 && TextUtils.textIsEmail(dirtyConditions)) {
 			// 4) ищем по email физика
-			final String email = dirtyConditions.trim();
+			final String email = dirtyConditions.trim() + ".ru";
 			
 			orderConditions = new OrderConditions();
 			orderConditions.setPeriodExist(false);
 			customerConditions = new CustomerConditions();
 			customerConditions.setPersonEmail(email);
 			orderConditions.setCustomerConditions(customerConditions);
-			List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
+			orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
 			if (orders.size() > 0) {
 				id = orders.get(0).getId();
 			}
-		}
-		
+		}		
 		if (id <= 0 && TextUtils.textIsEmail(dirtyConditions)) {
 			// 5) ищем по email юрика
-			final String email = dirtyConditions.trim();				
+			final String email = dirtyConditions.trim() + ".ru";				
 			orderConditions = new OrderConditions();
 			orderConditions.setPeriodExist(false);
 			customerConditions = new CustomerConditions();
 			customerConditions.setCompanyMainContactEmail(email);
 			orderConditions.setCustomerConditions(customerConditions);
-			List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
+			orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
 			if (orders.size() > 0) {
 				id = orders.get(0).getId();
-			}			
-
+			}
 		}
 		if (id <= 0) {
 			// 6) ищем по телефону юрика
@@ -254,12 +252,11 @@ public class OrderListController extends AnyController {
 			customerConditions = new CustomerConditions();
 			customerConditions.setCompanyMainContactPhoneNumber(phoneNumber);
 			orderConditions.setCustomerConditions(customerConditions);
-			List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
+			orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
 			if (orders.size() > 0) {
 				id = orders.get(0).getId();
 			}
-		}
-		
+		}		
 		if (id <= 0) {
 			// 6) ищем по opencart no
 			final String crmNo = dirtyConditions.trim();
@@ -269,20 +266,43 @@ public class OrderListController extends AnyController {
 			customerConditions = new CustomerConditions();
 			orderConditions.setCustomerConditions(customerConditions);
 			orderConditions.setCrmNo(crmNo);			
-			List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
+			orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
 			if (orders.size() > 0) {
 				id = orders.get(0).getId();
 			}
-		}
-		
-		if (id <= 0) {			
+		}		
+		if (id <= 0) {
+			// 6) ищем по наименованию компании			
+			orderConditions = new OrderConditions();
+			orderConditions.setPeriodExist(false);
+			customerConditions = new CustomerConditions();
+			customerConditions.setCompanyShortName(dirtyConditions.trim());
+			orderConditions.setCustomerConditions(customerConditions);	
+			orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
+			if (orders.size() > 0) {
+				id = orders.get(0).getId();
+			}			
+		}		
+		if (orders != null && orders.size() == 1) {
+			id = orders.get(0).getId();
+			return "redirect:/orders/" + id + "/orders";			
+		} else if (orders != null && orders.size() > 0) {			
+			//Map<OrderAmountTypes, BigDecimal> totalAmounts = new HashMap<OrderAmountTypes, BigDecimal>();
+			
+			Map<OrderAmountTypes, BigDecimal> totalAmounts = orderService.getOrderDao().calcTotalOrdersAmountsByConditions(orders,
+					new Pair<Date>(DateTimeUtils.sysDate()));
+			
+			model.addAttribute("orders", orders);
+			model.addAttribute("totalAmounts", totalAmounts);
+			model.addAttribute("reportPeriodType", ReportPeriodTypes.CURRENT_MONTH);
+			model.addAttribute("listType", "orders");
+			return "orders/list";
+		} else {			
 			redirectAttributes.addFlashAttribute("css", "danger");
 			redirectAttributes.addFlashAttribute("msg", "Запись не найдена!");
 			return "redirect:/orders";
-		}	
-		return "redirect:/orders/" + id + "/orders";
+		}			
 	}
-
 		
 	@RequestMapping(value = "/orders/statuses/reload", method = RequestMethod.GET)
 	public String ordersStatusesReload(Model model, final RedirectAttributes redirectAttributes) {
