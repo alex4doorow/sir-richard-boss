@@ -27,7 +27,6 @@
 			</h1>
 		</c:otherwise>
 	</c:choose>
-
 </div>
 <div
 	class="d-flex justify-content-start flex-wrap flex-md-nowrap align-items-start border-bottom- mb-2">
@@ -502,12 +501,7 @@
 					<form:input path="delivery.address.carrierInfo.deliveryVariantId" type="text" 
 								class="form-control form-control-sm delivery-address-carrierPvz" 
 								id="input-delivery-address-carrierPvz-deviveryVariantId" />											
-								
-																
-								
 					<!-- HIDEN END -->														
-								
-					
 				</div>
 			</div>
 			
@@ -1040,8 +1034,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
-      
+      <div class="modal-body">      
 	    <form>	    
 		  <div class="input-group mb-3">
 			<input type="text" id="input-delivery-cdek-city-search" class="form-control form-control-sm" placeholder='<fmt:message key="order.form.modal.delivery.cdek.fields.city.search" />' aria-label='<fmt:message key="order.form.modal.delivery.cdek.fields.city.search" />' aria-describedby="basic-addon2">
@@ -1171,20 +1164,6 @@ $(document).on('change', 'input', function() {
     }
 });
 
-/*
-
-	$('.input-details-item-product').focusout(function(){
-		var selected = $(this).val();
-	    console.log(selected);
-	});
-	
-	//$('#btn-find-details-item-product-' + currentStatusIndex).on('click', {selector: this}, btnDetailsItemProductOnClick);
-	
-	$('.input-details-item-product').on('input', function(e){
-	    var selected = $(this).val();
-	    console.log(selected);
-	});
-*/
 	$('#btn-cdek-pvzs').click(function() {		
 		openCdekPvzs();
 	});
@@ -1217,14 +1196,13 @@ $(document).on('change', 'input', function() {
 			if (cityCheck == "" || cityCheck == null) {
 				cityCheck = '${cdekDefaultCity}';
 			}
-			//console.log('openCdekWidjet: <' + cityCheck + '>');
 			
 			var widjet = new ISDEKWidjet({
 			    path: 'https://pribormaster.ru/catalog/view/theme/zemez808/js/cdek-pvzwidget/scripts/',
 			    servicepath: 'https://pribormaster.ru/catalog/controller/extension/shipping/cdek/service.php',
 			    choose: true,
 			    country: '${cdekDefaultCountry}',
-			    defaultCity: cityCheck, // $('#input-delivery-address-carrierPvz-city').val
+			    defaultCity: cityCheck, 
 			    cityFrom: '${cdekCityFrom}',
 			    link: 'forpvz',
 			    //link: false,
@@ -1247,16 +1225,7 @@ $(document).on('change', 'input', function() {
 	}
 	
 	function onCdekWidjetChoose(wat) {
-	    /*
-	    alert(
-	        'Set PVZ ' + wat.id + "\n" +
-	        'цена ' + wat.price + "\n" +
-	        'срок ' + wat.term + " дн.\n" +
-	        'город ' + wat.cityName + ', код города ' + wat.city
-	    );
-	    )
-	    */    
-	    //var cityId = $('#input-delivery-address-carrierPvz-cityId').val();
+
 	    $('#input-delivery-address-carrierPvz-city').val(wat.cityName);
 	    $('#input-delivery-address-carrierPvz-cityId').val(wat.city);
 	    $('#input-delivery-address').val(wat.cityName + ", " + wat.PVZ.Address);
@@ -1273,7 +1242,6 @@ $(document).on('change', 'input', function() {
 			var indexItem = $(this).attr('id');
 			if (indexItem != 'input-details-item-product-hidden') {				
 				indexItem = indexItem.substr('input-details-item-product'.length + 1, 2);	
-				//console.log(indexItem);
 				orderItem = {
 						product: {
 							id: $('#input-details-item-product-id-' + indexItem).val().toNumber(), 
@@ -1353,9 +1321,9 @@ $(document).on('change', 'input', function() {
 	function onCdekWidjetChooseProfile(wat) {
 		/*
 	    alert(
-	        'Set courier in city ' + wat.cityName + ', код города ' + wat.city + "\n" +
-	        'цена ' + wat.price + "\n" +
-	        'срок ' + wat.term + ' дн.'
+	        'Set courier in city ' + wat.cityName + ', city code ' + wat.city + "\n" +
+	        'price ' + wat.price + "\n" +
+	        'term ' + wat.term + ' дн.'
 	    );
 		*/
 		//$('#cdek-widjet-modal').modal('hide');
@@ -1661,15 +1629,7 @@ $(document).on('change', 'input', function() {
 	});
 		
 	$('#button-modal-delivery-ozon-rocket-ok').click(function() {
-		/*
-		$('#delivery-ozon-rocket-modal submit').click()
-		$('#input-ozon-rocket-delivery-variant-data').attr('data', ozonRocketDeliveryVariantData);		
-		$('#input-ozon-rocket-delivery-variant-id').val(ozonRocketDeliveryVariantData.id);
-		$('#input-delivery-address-carrierPvz-deviveryVariantId').val(ozonRocketDeliveryVariantData.id);		
-		$('#input-ozon-rocket-delivery-variant-address').val(ozonRocketDeliveryVariantData.address);
-		$('#input-delivery-address-carrierPvz-city').val(ozonRocketDeliveryVariantData.address);
-		*/	
-		
+
 		var cityContext = $('#input-delivery-address-carrierPvz-city').val(),
 			cityId = 0,
 			pvz = 0,
@@ -1716,11 +1676,7 @@ $(document).on('change', 'input', function() {
 		});
 		
 		var orderContainer = {
-				/*
-				customer: {
-					customerType: $('.radio-customer-type:checked').val()
-				},
-				*/
+
 				orderType: $('#select-order-type').val(),
 				paymentType: $('#select-payment-type').val(),
 				delivery: {
@@ -2093,7 +2049,6 @@ $(document).on('change', 'input', function() {
 		}
 		
 		var data = {};
-		//data["query"] = $("#query").val();
 		
 		btnSearchProductsDisabled(true);
 		
@@ -2221,7 +2176,6 @@ $(document).on('change', 'input', function() {
 	$("#select-delivery-cdek-pvz").change(function() {
 		
 		var address = $('#select-delivery-cdek-pvz').find('option:selected').attr('pvz-name');
-		//console.log(address);
 		$('#input-delivery-cdek-city-address').val(address);
 	});
 	
@@ -2276,8 +2230,7 @@ $(document).on('change', 'input', function() {
 			success: function(data) {
 				console.log('SUCCESS: ', data);
 				display(data);
-				
-				//$('#textarea-pvzs-cdek').val('');
+
 				var pvzs = "";
 				for (var key in data.result.deliveryServiceResult.addresses) {
 					var pvzInfo = "";
@@ -2343,7 +2296,6 @@ $(document).on('change', 'input', function() {
 			var indexItem = $(this).attr('id');
 			if (indexItem != 'input-details-item-product-hidden') {				
 				indexItem = indexItem.substr('input-details-item-product'.length + 1, 2);	
-				//console.log(indexItem);
 				orderItem = {
 						product: {
 							id: $('#input-details-item-product-id-' + indexItem).val().toNumber(), 
@@ -2423,7 +2375,7 @@ $(document).on('change', 'input', function() {
 				var indexItem = $(this).attr('id');
 				if (indexItem != 'input-details-item-product-hidden') {				
 					indexItem = indexItem.substr('input-details-item-product'.length + 1, 2);	
-					//console.log(indexItem);
+
 					orderItem = {
 							product: {
 								id: $('#input-details-item-product-id-' + indexItem).val().toNumber(), 
@@ -2439,11 +2391,7 @@ $(document).on('change', 'input', function() {
 			});
 			
 			var orderContainer = {
-					/*
-					customer: {
-						customerType: $('.radio-customer-type:checked').val()
-					},
-					*/
+
 					orderType: $('#select-order-type').val(),
 					paymentType: $('#select-payment-type').val(),
 					delivery: {
@@ -2570,8 +2518,6 @@ $(document).on('change', 'input', function() {
 			street = $('#input-delivery-cdek-street').val(),
 			house = $('#input-delivery-cdek-house').val(),
 			flat = $('#input-delivery-cdek-flat').val();
-
-		//г. Москва, Байкальская ул., дом 18, корп. 1, кв. 82
 		
 		$('#input-delivery-cdek-city-address').val('<fmt:message key="order.form.modal.delivery.cdek.fields.address.prefix.city" /> ' + city + '<fmt:message key="order.form.modal.delivery.cdek.fields.address.prefix.street" /> ' + street + ' <fmt:message key="order.form.modal.delivery.cdek.fields.address.prefix.house" /> ' + house + '<fmt:message key="order.form.modal.delivery.cdek.fields.address.prefix.flat" /> ' + flat);
 		
@@ -2587,7 +2533,6 @@ $(document).on('change', 'input', function() {
 			var indexItem = $(this).attr('id');
 			if (indexItem != 'input-details-item-product-hidden') {				
 				indexItem = indexItem.substr('input-details-item-product'.length + 1, 2);	
-				//console.log(indexItem);
 				orderItem = {
 						quantity: $('#input-details-item-quantity-' + indexItem).val().toNumber(),
 						price: $('#input-details-item-price-' + indexItem).val().toNumber(),
@@ -2632,13 +2577,8 @@ $(document).on('change', 'input', function() {
 				$('#details-items-amounts-supplier').text(data.result.amounts.supplier.formatMoney(2));
 				$('#details-items-amounts-margin').text(data.result.amounts.margin.formatMoney(2));
 				$('#details-items-amounts-postpay').html('<p><strong>' + data.result.amounts.postpay.formatMoney(2) + '</strong></p>');
-				
-				//$('#input-delivery-price').val(data.result.amounts.delivery);
 				$('#input-amounts-postpay').val(data.result.amounts.postpay);
-								
-				//$('#details-items-amounts-delivery-seller-summary').text($('#input-delivery-customer-price').val().toNumber().formatMoney(2));
-				//$('#details-items-amounts-delivery-customer-summary').text($('#input-delivery-customer-price').val().toNumber().formatMoney(2));
-				
+
 				
 			},
 			error: function(e) {
@@ -2694,7 +2634,8 @@ $(document).on('change', 'input', function() {
 		$('#input-details-item-price-' + currentStatusIndex).on('change', {selector: this}, inputItemPriceChange);
 		$('#input-details-item-quantity-' + currentStatusIndex).on('change', {selector: this}, inputItemPriceChange);
 		$('#input-details-item-discount-rate-' + currentStatusIndex).on('change', {selector: this}, inputItemPriceChange);
-		calcAmount(inputItemPriceChange);		
+		calcAmount(inputItemPriceChange);	
+		
 	});
 	
 
@@ -2704,12 +2645,6 @@ $(document).on('change', 'input', function() {
 	
 	$('.btn-details-item-delete').click(function() {
 		btnDetailsItemDeleteOnClick(this);
-		/*
-		var id = $(this).attr('id');
-		id = id.substr('btn-details-item-delete-'.length, id.length);
-		console.log(id);
-		$('#details-item-row-' + id).remove();
-		*/
 		
 	});
 	
@@ -2760,7 +2695,7 @@ $(document).on('change', 'input', function() {
 		//$('#feedback-product').html(json);
 	}
 	
-	// Example starter JavaScript for disabling form submissions if there are invalid fields
+
 	(function() {
 	  'use strict';
 	  window.addEventListener('load', function() {
@@ -2778,8 +2713,7 @@ $(document).on('change', 'input', function() {
 	    });
 	  }, false);
 	})();
-	
-	
+		
 	window.addEventListener("message", ozonRocketReceiveMessage, false);
 	function ozonRocketReceiveMessage(event) {
 		// don't listen alien enents
