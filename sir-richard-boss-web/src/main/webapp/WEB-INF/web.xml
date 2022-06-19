@@ -6,7 +6,6 @@
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
-  
   <error-page>
     <location>/errors</location>
   </error-page>
