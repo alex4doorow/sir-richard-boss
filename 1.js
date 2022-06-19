@@ -4,6 +4,6 @@
 <title><fmt:message key="app.title" /> | <fmt:message
 		key="order.form.update.title" /></title>
 
-function addNumber(a,b) {
-  return a + b;
+function deductNumber (a, b) {
+  return a - b;
 }
