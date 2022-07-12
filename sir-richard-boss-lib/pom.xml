@@ -28,7 +28,7 @@
 		<logback.version>1.2.3</logback.version>
 		<jcl.slf4j.version>1.7.20</jcl.slf4j.version>
 		<org.apache.commons.version>3.8</org.apache.commons.version>
-		<org.apache.poi.version>3.17</org.apache.poi.version>
+		<org.apache.poi.version>4.1.1</org.apache.poi.version>
 		<icu4j.version>61.1</icu4j.version>
 		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>		
 	</properties>
