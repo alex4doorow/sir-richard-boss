@@ -6,7 +6,37 @@
 	<artifactId>sir-richard-boss</artifactId>
 	<version>3.0.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<mysql.version>5.1.6</mysql.version>		
+		<jstl.version>1.2</jstl.version>
+		<jackson.version>2.9.5</jackson.version>
+				
+		<servletapi.version>3.1.0</servletapi.version>
+		<spring-framework.version>2.0.1.RELEASE</spring-framework.version>
+		<spring.version>5.0.5.RELEASE</spring.version>
 
+		<logback.version>1.2.3</logback.version>
+		<jcl.slf4j.version>1.7.20</jcl.slf4j.version>
+		<jasperreports.version>6.1.0</jasperreports.version>
+		<jasperreports-fonts.version>6.0.0</jasperreports-fonts.version>
+		
+		<org.apache.commons.version>3.12.0</org.apache.commons.version>
+		<org.apache.poi.version>4.1.2</org.apache.poi.version>
+		<org.apache.httpcomponents.version>4.5.13</org.apache.httpcomponents.version>
+		
+		<icu4j.version>61.1</icu4j.version>
+		<xerces.version>2.12.2</xerces.version>
+		<net.sf.barcode4j.version>2.1</net.sf.barcode4j.version>
+		<batik.version>1.5</batik.version>
+		<batik-bridge.version>1.6-1</batik-bridge.version>
+		<batik-css.version>1.7</batik-css.version>
+		<batik-anim.version>1.10</batik-anim.version>
+		
+		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+	</properties>
 	<modules>
 		<module>sir-richard-boss-lib</module>
 		<module>sir-richard-boss-web</module>
