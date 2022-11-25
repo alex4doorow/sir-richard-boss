@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,14 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
 
+/*
+// https://en.wikipedia.org/wiki/ISO_8601
+http://www.geonames.org/export/web-services.html#timezone
+указывать часовой пояс по адресу доставки. "Сейчас в норильске 4:37" https://ru.stackoverflow.com/questions/723350/%D0%A7%D0%B0%D1%81%D0%BE%D0%B2%D1%8B%D0%B5-%D0%BF%D0%BE%D1%8F%D1%81%D0%B0-java
+https://grishaev.me/timezone/
+
+Орск, Оренбург https://geocode-maps.yandex.ru/1.x/?apikey=*******&geocode=орск  
+*/
 public class GeoNamesApi {
 
 	private final Logger logger = LoggerFactory.getLogger(GeoNamesApi.class);
@@ -51,26 +60,30 @@ public class GeoNamesApi {
 			if (jsonResponseMapsYandex.getStatus() != 200) {
 				return null;
 			}
-			JSONObject jsonResponseMapsYandexBody = jsonResponseMapsYandex.getBody().getObject()
-					.getJSONObject("response").getJSONObject("GeoObjectCollection");
+			JSONObject jsonResponseMapsYandexBody;
+			
+			jsonResponseMapsYandexBody = jsonResponseMapsYandex.getBody().getObject()
+						.getJSONObject("response").getJSONObject("GeoObjectCollection");
 			JSONArray jsonResponseMapsYandexBodyArray = jsonResponseMapsYandexBody.getJSONArray("featureMember");
 			for (int i = 0; i <= jsonResponseMapsYandexBodyArray.length() - 1; i++) {
 
-				JSONObject objectPoint = jsonResponseMapsYandexBodyArray.getJSONObject(i).getJSONObject("GeoObject");
-				sPos = objectPoint.getJSONObject("Point").getString("pos");
-				JSONObject addressObjectPoint = objectPoint.getJSONObject("metaDataProperty")
-						.getJSONObject("GeocoderMetaData").getJSONObject("Address");
-				String countryCode = addressObjectPoint.getString("country_code");
-				String addressText = addressObjectPoint.getString("formatted");
+					JSONObject objectPoint = jsonResponseMapsYandexBodyArray.getJSONObject(i).getJSONObject("GeoObject");
+					sPos = objectPoint.getJSONObject("Point").getString("pos");
+					JSONObject addressObjectPoint = objectPoint.getJSONObject("metaDataProperty")
+							.getJSONObject("GeocoderMetaData").getJSONObject("Address");
+					String countryCode = addressObjectPoint.getString("country_code");
+					String addressText = addressObjectPoint.getString("formatted");
 
-				logger.debug("objectPoint: {}, {}, {}", sPos, countryCode, addressText);
-				if (countryCode.equals("RU") && StringUtils.isNotEmpty(sPos)) {
-					break;
-				}
+					logger.debug("objectPoint: {}, {}, {}", sPos, countryCode, addressText);
+					if (countryCode.equals("RU") && StringUtils.isNotEmpty(sPos)) {
+						break;
+					}
 			}
 
 		} catch (UnirestException e) {
 			logger.error("UnirestException:", e);
+		} catch (JSONException e) {
+			logger.error("JSONException", e);				
 		}
 		
 		if (StringUtils.isEmpty(sPos)) {
@@ -119,6 +132,8 @@ public class GeoNamesApi {
 
 		} catch (UnirestException e) {
 			logger.error("UnirestException:", e);
+		} catch (JSONException e) {
+			logger.error("JSONException:", e);
 		}
 		String localDateTime = DateTimeUtils.defaultFormatDateTimeByTimeZone(currentDateTime, timeZoneId);
 		String localTime = DateTimeUtils.defaultFormatTimeByTimeZone(currentDateTime, timeZoneId);

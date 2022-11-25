@@ -15,6 +15,12 @@ public class Pair<T extends Cloneable> {
 		this.start = start;
 		this.end = end;		
 	}
+	
+	public Pair(T value) {
+		this();
+		this.start = value;
+		this.end = value;		
+	}
 
 	public T getStart() {
 		return start;

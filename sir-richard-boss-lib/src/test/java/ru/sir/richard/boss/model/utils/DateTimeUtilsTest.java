@@ -1,26 +1,33 @@
 package ru.sir.richard.boss.model.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 
 public class DateTimeUtilsTest {
-	
-	private final Logger logger = LoggerFactory.getLogger(DateTimeUtilsTest.class);
-	
+		
 	@Test
-	public void testOne() {
+	public void testMonth() throws ParseException {
+		
 		String s = DateTimeUtils.formatDate(new Date(), "MMMM");
-		logger.debug("testOne():{}", s);		
+
+		assertTrue(StringUtils.isNotEmpty(s));
+		
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");		
+		final java.util.Date currentDate = sdf.parse("2022-10-16");
+		
+		s = DateTimeUtils.formatDate(currentDate, "MMMM");
+		assertEquals("октябрь", s);		
 	}
 	
 	@Test
-	public void testTwo() throws ParseException {
+	public void testDate() throws ParseException {
 		Date one;
 		Date result;
 		one = DateTimeUtils.defaultFormatStringToDate("18.03.2020");
@@ -41,16 +48,12 @@ public class DateTimeUtilsTest {
 	}
 	
 	@Test
-	public void testThree() throws ParseException {
+	public void testSysDate() throws ParseException {
 		Date d1 = DateTimeUtils.sysDate();
 		Date d2 = new Date();
 		
 		d2 = DateTimeUtils.truncateDate(d2);		
-		d2.compareTo(d1);
-		
+
 		assertEquals(d1, d2);	
-	}
-	
-	
-	
+	}	
 }

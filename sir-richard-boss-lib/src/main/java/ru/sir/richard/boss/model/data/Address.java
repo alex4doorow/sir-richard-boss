@@ -6,22 +6,21 @@ import ru.sir.richard.boss.model.types.AddressTypes;
 import ru.sir.richard.boss.model.types.Countries;
 import ru.sir.richard.boss.model.utils.TextUtils;
 
-public class Address extends AnyId {	
+public class Address extends AnyId {
 
 	private AddressTypes addressType;
-	private Countries country;	
+	private Countries country;
 	private CarrierInfo carrierInfo;
 	private String address;
-	private String subwayStation;
 	private String annotation;
 
 	public Address(Countries country, AddressTypes addressTypes) {
 		super();
 		this.country = country;
 		this.addressType = addressTypes;
-		this.carrierInfo = new CarrierInfo();		
+		this.carrierInfo = new CarrierInfo();
 	}
-	
+
 	public Address() {
 		this(Countries.RUSSIA, AddressTypes.MAIN);
 	}
@@ -37,7 +36,7 @@ public class Address extends AnyId {
 	public String getCity() {
 		return TextUtils.cutCityFromAddress(this.address);
 	}
-	
+
 	public String getStreetAddress() {
 		return TextUtils.cutStreetFromAddress(this.address);
 	}
@@ -61,7 +60,7 @@ public class Address extends AnyId {
 	public String getPvz() {
 		return carrierInfo.getPvz();
 	}
-	
+
 	public CarrierInfo getCarrierInfo() {
 		return carrierInfo;
 	}
@@ -80,9 +79,9 @@ public class Address extends AnyId {
 		} else {
 			postCode = "";
 		}
-		return (NumberUtils.isCreatable(postCode)) ? postCode : ""; 
+		return (NumberUtils.isCreatable(postCode)) ? postCode : "";
 	}
-	
+
 	public String getPostAddressText() {
 		if (this.address == null || this.country != Countries.RUSSIA) {
 			return "";
@@ -92,14 +91,14 @@ public class Address extends AnyId {
 			text = text.substring(7, text.length()).replace(" →", ",");
 		} else {
 			text = this.address;
-		}		
+		}
 		return text;
 	}
 
 	public String getAddress() {
 		return address;
 	}
-	
+
 	public String getViewAddress() {
 		if (address != null) {
 			final int MAX_VIEW_LENGTH = 25;
@@ -117,26 +116,17 @@ public class Address extends AnyId {
 		this.address = address;
 	}
 
-	public String getSubwayStation() {
-		return subwayStation;
-	}
-
-	public void setSubwayStation(String subwayStation) {
-		this.subwayStation = subwayStation;
-	}
-	
 	@Override
-	public Address clone() throws CloneNotSupportedException  {
-		Address clone = (Address) super.clone();		
+	public Address clone() throws CloneNotSupportedException {
+		Address clone = (Address) super.clone();
 		clone.addressType = this.addressType;
-		clone.country = this.country;		
+		clone.country = this.country;
 		clone.carrierInfo = this.carrierInfo == null ? null : (CarrierInfo) this.getCarrierInfo().clone();
 		clone.address = this.address == null ? null : new String(this.address);
-		clone.subwayStation = this.subwayStation == null ? null : new String(this.subwayStation);
-		clone.annotation = this.annotation == null ? null : new String (this.annotation);
+		clone.annotation = this.annotation == null ? null : new String(this.annotation);
 		return clone;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -145,8 +135,7 @@ public class Address extends AnyId {
 		result = prime * result + ((addressType == null) ? 0 : addressType.hashCode());
 		result = prime * result + ((annotation == null) ? 0 : annotation.hashCode());
 		result = prime * result + ((country == null) ? 0 : country.hashCode());
-		
-		result = prime * result + ((subwayStation == null) ? 0 : subwayStation.hashCode());
+
 		return result;
 	}
 
@@ -163,7 +152,7 @@ public class Address extends AnyId {
 			if (other.address != null)
 				return false;
 		} else if (!address.equals(other.address))
-			return false;		
+			return false;
 		if (addressType != other.addressType)
 			return false;
 		if (annotation == null) {
@@ -171,23 +160,16 @@ public class Address extends AnyId {
 				return false;
 		} else if (!annotation.equals(other.annotation))
 			return false;
-		
+
 		if (country != other.country)
-			return false;		
-		
-		if (subwayStation == null) {
-			if (other.subwayStation != null)
-				return false;
-		} else if (!subwayStation.equals(other.subwayStation))
 			return false;
+
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Address [id=" + getId() + ", addressType=" + addressType + ", country=" + country
-				+ ", address=" + address
-				+ ", cdekInfo=" + carrierInfo
-				+ "]";
-	}	
+		return "Address [id=" + getId() + ", addressType=" + addressType + ", country=" + country + ", address="
+				+ address + ", cdekInfo=" + carrierInfo + "]";
+	}
 }

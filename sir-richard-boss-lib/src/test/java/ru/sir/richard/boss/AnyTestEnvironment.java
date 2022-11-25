@@ -32,7 +32,7 @@ public abstract class AnyTestEnvironment implements PropertyResolver {
 		}
 		return null;
 	}
-	
+			
 	@Override
 	public boolean containsProperty(String key) {
 		return false;

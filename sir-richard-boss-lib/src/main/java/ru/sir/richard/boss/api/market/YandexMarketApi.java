@@ -32,6 +32,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,9 +86,9 @@ public class YandexMarketApi {
 	}
 		
 	// POST /campaigns/{campaignId}/offer-prices/updates
-	public String offerPricesUpdatesV1(List<Product> products) {
+	public String offerPricesUpdatesV1(List<Product> products) throws JSONException {
 				
-		final String url = environment.getProperty("yandex.market.url") + environment.getProperty("yandex.market.warehouse.compaign.first") + "/offer-prices/updates.json";
+		final String url = environment.getProperty("yandex.market.url") + environment.getProperty("yandex.market.warehouse.compaign.main") + "/offer-prices/updates.json";
 		
 		String result = "";
 		String inputJson = "{\"offers\": \r\n" + 
@@ -172,7 +173,7 @@ public class YandexMarketApi {
 	}
 	
 	// POST /campaigns/{campaignId}/offer-prices/updates
-	public String offerPricesUpdatesV2(int warehouseCompainId, List<Product> products) {
+	public String offerPricesUpdatesV2(int warehouseCompainId, List<Product> products) throws JSONException {
 				
 		final String url = environment.getProperty("yandex.market.url") + warehouseCompainId + "/offer-prices/updates.json";
 		
@@ -259,16 +260,17 @@ public class YandexMarketApi {
 		return result;
 	}	
 	
-	public String offerPricesUpdatesByAllWarehouses(List<Product> products) {
+	public String offerPricesUpdatesByAllWarehouses(List<Product> products) throws JSONException {
 		String result = "";
-		result += "FIRST: " + offerPricesUpdatesV2(environment.getProperty("yandex.market.warehouse.compaign.first", Integer.class), products);
-		result += ", SECOND: " + offerPricesUpdatesV2(environment.getProperty("yandex.market.warehouse.compaign.second", Integer.class), products);
-		result += ", THIRD: " + offerPricesUpdatesV2(environment.getProperty("yandex.market.warehouse.compaign.third", Integer.class), products);		
+		result += "MAIN: " + offerPricesUpdatesV2(environment.getProperty("yandex.market.warehouse.compaign.main", Integer.class), products);
+		result += ", EXPRESS: " + offerPricesUpdatesV2(environment.getProperty("yandex.market.warehouse.compaign.express", Integer.class), products);
+		result += ", HUGE: " + offerPricesUpdatesV2(environment.getProperty("yandex.market.warehouse.compaign.huge", Integer.class), products);
+		result += ", DBS: " + offerPricesUpdatesV2(environment.getProperty("yandex.market.warehouse.compaign.dbs", Integer.class), products);
 		return result;
 	}
 	
-	public Order order(int ymOrderId, Order order) {
-		
+	public Order order(Long ymOrderId, Order order) {
+				
 		// GET /campaigns/{campaignId}/orders/{ymOrderId}
 		
 		int shipmentId = -1;
@@ -285,6 +287,10 @@ public class YandexMarketApi {
 			con.setRequestProperty("Authorization", "OAuth oauth_token=\"" + environment.getProperty("yandex.market.oauth.token") + "\", oauth_client_id=\"" + environment.getProperty("yandex.market.oauth.client") + "\"");
 		    		  
 		    int responseCode = con.getResponseCode();
+		    
+		    if (responseCode == 404) {
+		    	return null;
+		    }		    
 		    logger.debug("offerMappingEntries() responseCode:{}", responseCode);
 		    logger.debug("offerMappingEntries() sending 'GET' request to URL:{}", url);
 		    
@@ -300,16 +306,42 @@ public class YandexMarketApi {
 		    myResponse = new JSONObject(response.toString());
     	    logger.debug("offerMappingEntries() jsonResponse:{}", myResponse.toString());        	    
     	       	        
+    	    String yandexMarketStatus = myResponse.getJSONObject("order").getString("status");
+    	    String yandexMarketSubStatus = "";    	    
+    	    try {
+    	    	yandexMarketSubStatus = myResponse.getJSONObject("order").getString("substatus");    	    	
+    	    } catch (org.json.JSONException ex) {
+    	    	yandexMarketSubStatus = "";
+    	    }    	        	     
+    	    if (yandexMarketStatus.equalsIgnoreCase("PROCESSING") && yandexMarketSubStatus.equalsIgnoreCase("SHIPPED")) {
+				result.setStatus(OrderStatuses.DELIVERING);
+    	    } else if (yandexMarketStatus.equalsIgnoreCase("PROCESSING") && yandexMarketSubStatus.equalsIgnoreCase("COURIER_ARRIVED_TO_SENDER")) {
+				result.setStatus(OrderStatuses.DELIVERING);
+    	    } else if (yandexMarketStatus.equalsIgnoreCase("DELIVERY")) {
+				result.setStatus(OrderStatuses.DELIVERING);
+    	    } else if (yandexMarketStatus.equalsIgnoreCase("CANCELLED")) {
+    	    	result.setStatus(OrderStatuses.CANCELED);    	    	
+    	    } else if (yandexMarketStatus.equalsIgnoreCase("DELIVERED")) {
+    	    	result.setStatus(OrderStatuses.DELIVERED);    	    	
+    	    } else if (yandexMarketStatus.equalsIgnoreCase("PICKUP")) {
+    	    	result.setStatus(OrderStatuses.READY_GIVE_AWAY);    	    	
+    	    } else if (yandexMarketStatus.equalsIgnoreCase("PROCESSING")) {
+    	    	result.setStatus(OrderStatuses.APPROVED);
+    	    } else if (yandexMarketStatus.equalsIgnoreCase("UNPAID")) {
+        	    result.setStatus(OrderStatuses.APPROVED);    	    	
+        	} else {
+        		result.setStatus(OrderStatuses.UNKNOWN);
+        	} 
+    	    logger.debug("status: [{}, {}] -> {}", yandexMarketStatus, yandexMarketSubStatus, result.getStatus());
+    	        	    
     	    JSONObject jsonDelivery = myResponse.getJSONObject("order").getJSONObject("delivery");
     	    
     	    String deliveryType = jsonDelivery.getString("type");
     	    String deliveryName = jsonDelivery.getString("serviceName");
     	    
-    	    String regionName = jsonDelivery.getJSONObject("region").getString("name");
-    	    String parentRegionName = jsonDelivery.getJSONObject("region").getJSONObject("parent").getString("name");
-    	    String parentParentRegionName = jsonDelivery.getJSONObject("region").getJSONObject("parent").getJSONObject("parent").getString("name");
-    	    String addressText = regionName + ", " + parentRegionName + ", " + parentParentRegionName + ", [" + deliveryType + ", " + deliveryName + "]";
-    	       	        	    
+    	    Region4JsonData resultRegionData = parsingRegionAddress(new Region4JsonData(jsonDelivery));
+	        	    
+    	    String addressText = resultRegionData.getAddress() + ", [" + deliveryType + ", " + deliveryName + "]";
     	   	result.getDelivery().getAddress().setAddress(addressText.trim());    	    	
     	    
     	    JSONArray jsonShipments = myResponse.getJSONObject("order").getJSONObject("delivery").getJSONArray("shipments");    	    
@@ -328,10 +360,13 @@ public class YandexMarketApi {
     	    }  	    
 			
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			logger.error("MalformedURLException:", e);
+			return null;			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception:", e);			
+			return null;
 		}
+		result.setId(ymOrderId.intValue());
 		return result;		
 	}
 	
@@ -342,7 +377,7 @@ public class YandexMarketApi {
 		headers.put("Content-type", "application/json");			
 		headers.put("Authorization", "OAuth oauth_token=\"" + environment.getProperty("yandex.market.oauth.token") + "\", oauth_client_id=\"" + environment.getProperty("yandex.market.oauth.client") + "\"");
 		
-		final String url = environment.getProperty("yandex.market.url") + environment.getProperty("yandex.market.warehouse.compaign.first") + "/orders/" + ymOrderId + "/delivery/labels.json";
+		final String url = environment.getProperty("yandex.market.url") + environment.getProperty("yandex.market.warehouse.compaign.main") + "/orders/" + ymOrderId + "/delivery/labels.json";
 		com.mashape.unirest.http.HttpResponse<InputStream> insResponse = null;
 		try {			
 			insResponse = Unirest.get(url)
@@ -401,7 +436,7 @@ public class YandexMarketApi {
 	
 	public Order order(Order realOrder) {
 		
-		int ymOrderId = -1;				
+		Long ymOrderId = -1L;				
 		for (OrderExternalCrm orderExternalCrm : realOrder.getExternalCrms()) {
 			if (orderExternalCrm.getCrm() == CrmTypes.YANDEX_MARKET && orderExternalCrm.getParentId() > 0) {
 				ymOrderId = orderExternalCrm.getParentId();
@@ -414,7 +449,7 @@ public class YandexMarketApi {
 		return null;
 	}
 	
-	public boolean boxes(int ymOrderId, Order order) {
+	public boolean boxes(int ymOrderId, Order order) throws JSONException {
 				
 		boolean resultRequest = false;
 		
@@ -426,7 +461,7 @@ public class YandexMarketApi {
 		final int height = 20;
 		final int depth = 20;
 		
-		Order ymOrder = order(ymOrderId, order);
+		Order ymOrder = order(Long.valueOf(ymOrderId), order);
 		if (ymOrder.getDelivery().getShipments().size() > 0) {
 			shipmentId = ymOrder.getDelivery().getShipments().get(0).getId();
 			fulfilmentCode = ymOrder.getDelivery().getShipments().get(0).getFulfilmentCode();			
@@ -514,15 +549,17 @@ public class YandexMarketApi {
 	
 	private int getWarehouseCompainId(Order order) {
 		if (order == null || order.getCustomer() == null || order.getCustomer().getId() <= 0) {
-			return environment.getProperty("yandex.market.warehouse.compaign.first", Integer.class);
+			return environment.getProperty("yandex.market.warehouse.compaign.main", Integer.class);
 		} else if (order.getCustomer().getId() == 6611) {
-			return environment.getProperty("yandex.market.warehouse.compaign.first", Integer.class); 
+			return environment.getProperty("yandex.market.warehouse.compaign.main", Integer.class); 
 		} else if (order.getCustomer().getId() == 7204) {
-			return environment.getProperty("yandex.market.warehouse.compaign.second", Integer.class); 
+			return environment.getProperty("yandex.market.warehouse.compaign.express", Integer.class); 
 		} else if (order.getCustomer().getId() == 7277) {
-			return environment.getProperty("yandex.market.warehouse.compaign.third", Integer.class); 
+			return environment.getProperty("yandex.market.warehouse.compaign.huge", Integer.class); 
+		} else if (order.getCustomer().getId() == 7541) {
+			return environment.getProperty("yandex.market.warehouse.compaign.dbs", Integer.class); 
 		} else {
-			return environment.getProperty("yandex.market.warehouse.compaign.first", Integer.class);
+			return environment.getProperty("yandex.market.warehouse.compaign.main", Integer.class);
 		} 
 	}
 
@@ -533,7 +570,7 @@ public class YandexMarketApi {
 		String subStatus = "";		
 		for (OrderExternalCrm orderExternalCrm : order.getExternalCrms()) {
 			if (orderExternalCrm.getCrm() == CrmTypes.YANDEX_MARKET && orderExternalCrm.getParentId() > 0) {
-				ymOrderId = orderExternalCrm.getParentId();
+				ymOrderId = orderExternalCrm.getParentId().intValue();
 				break;
 			}
 		}
@@ -545,7 +582,12 @@ public class YandexMarketApi {
 		
 		if (order.getStatus() == OrderStatuses.APPROVED) {
 					
-			boolean resultRequestBoxes = boxes(ymOrderId, order);
+			boolean resultRequestBoxes = false;
+			try {
+				resultRequestBoxes = boxes(ymOrderId, order);
+			} catch (JSONException e) {
+				logger.error("JSONException: {}", e);
+			}
 			if (!resultRequestBoxes) {
 				return result;
 			}
@@ -576,7 +618,12 @@ public class YandexMarketApi {
 			
 		
 		logger.debug("status() inputJson:{}", inputJson);        
-		JSONObject inputJsonObj = new JSONObject(inputJson);
+		JSONObject inputJsonObj = null;
+		try {
+			inputJsonObj = new JSONObject(inputJson);
+		} catch (JSONException e) {
+			logger.error("JSONException: {}", e);
+		}
 	
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 		JSONObject myResponse = null;
@@ -614,4 +661,74 @@ public class YandexMarketApi {
 		
 	}
 	
+	private Region4JsonData parsingRegionAddress(Region4JsonData regionData) throws JSONException {
+		Region4JsonData result = null;
+		
+		JSONObject region = null;
+		try {
+			region = regionData.getRegion().getJSONObject("region");			
+		} catch (org.json.JSONException ex) {
+			region = null;
+		}
+		if (region != null) {			
+			result = new Region4JsonData(region);
+			if (StringUtils.isNoneEmpty(regionData.getAddress())) {
+				result.setAddress(regionData.getAddress() + ", " + region.getString("name"));
+			} else {
+				result.setAddress(region.getString("name"));
+			}
+			result = parsingRegionAddress(result);			
+		} else {			
+			try {
+				region = regionData.getRegion().getJSONObject("parent");
+			} catch (org.json.JSONException ex) {
+				region = null;
+			}
+			if (region == null) {
+				return regionData;
+			}
+			result = new Region4JsonData(region);
+			if (StringUtils.isNoneEmpty(regionData.getAddress())) {
+				result.setAddress(regionData.getAddress() + ", " + region.getString("name"));
+			} else {
+				result.setAddress(region.getString("name"));
+			}	
+			if (region != null) {
+				return parsingRegionAddress(result);
+			} 
+		}
+		return result;
+	}
+	
+	private class Region4JsonData {
+		
+		private JSONObject region = null;
+		private String address = "";
+		
+		public Region4JsonData() {
+			super();			
+		}
+		
+		public Region4JsonData(JSONObject region) {
+			this();
+			this.region = region;
+		}
+		
+		public JSONObject getRegion() {
+			return region;
+		}
+		
+		public String getAddress() {
+			return address;
+		}
+		
+		public void setAddress(String address) {
+			this.address = address;
+		}
+
+		@Override
+		public String toString() {
+			return "Region4JsonData [region=" + region + ", address=" + address + "]";
+		}		
+	}	
 }

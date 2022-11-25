@@ -6,7 +6,7 @@ import ru.sir.richard.boss.model.data.Product;
 
 public class ProductSalesReportBean {
 	
-	private Product product;
+	private Product product;	
 	private int quantity;
 	private BigDecimal amount; 
 	

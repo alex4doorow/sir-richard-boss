@@ -2,7 +2,7 @@ package ru.sir.richard.boss.model.types;
 
 public enum CrmTypes {
 	
-	UNKNOWN(0, "нет"),
+	NONE(0, "нет"),
 	OPENCART(1, "Админка сайта Opencart"),
 	EMAIL(2, "Быстрй заказ"),
 	CDEK(3, "СДЭК Маркет"),
@@ -32,6 +32,18 @@ public enum CrmTypes {
 	public void setAnnotation(String annotation) {
 		this.annotation = annotation;
 	}
+	
+	/**
+	 * Лид, с поведением как у ручного или ручной
+	 * @return
+	 */
+	public boolean isSimple() {
+		if (this == CrmTypes.NONE || this == CrmTypes.EMAIL || this == CrmTypes.CDEK) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public static CrmTypes getValueById(int value) {
 		if (value == 1) {
@@ -45,7 +57,8 @@ public enum CrmTypes {
 		} else if (value == 5) {
 			return CrmTypes.OZON;			
 		} else {
-			return CrmTypes.UNKNOWN;
+			return CrmTypes.NONE;
 		}		
-	}
+	}	
+	
 }

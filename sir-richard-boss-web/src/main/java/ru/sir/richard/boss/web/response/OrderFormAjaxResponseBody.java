@@ -38,6 +38,9 @@ public class OrderFormAjaxResponseBody extends AnyAjaxResponseBody {
 	public class ResultOrderFormAjaxResponseBody {
 		
 		@JsonView(Views.Public.class)
+		FormOrder formOrder;
+		
+		@JsonView(Views.Public.class)
 		FormCustomer formCustomer;
 		
 		@JsonView(Views.Public.class)
@@ -60,6 +63,14 @@ public class OrderFormAjaxResponseBody extends AnyAjaxResponseBody {
 			this.deliveryServiceResult = new DeliveryServiceResult();
 		}
 						
+		public FormOrder getFormOrder() {
+			return formOrder;
+		}
+
+		public void setFormOrder(FormOrder formOrder) {
+			this.formOrder = formOrder;
+		}
+
 		public FormCustomer getFormCustomer() {
 			return formCustomer;
 		}

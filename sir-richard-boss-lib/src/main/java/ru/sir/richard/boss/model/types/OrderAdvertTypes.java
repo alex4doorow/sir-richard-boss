@@ -80,5 +80,20 @@ public enum OrderAdvertTypes {
 		} else {
 			return null;
 		}		
-	}	
+	}
+	
+	public static String convertValuesToSplitedString(OrderAdvertTypes... values) {		
+		
+		if (values == null || values.length == 0) {
+			return "";
+		}
+		String result = "";
+		for (OrderAdvertTypes value : values) {
+			result += String.valueOf(value.getId()) + ",";			
+		}
+		result = result.substring(0, result.length() - 1).trim();
+		return result;		
+	}
+	
+	
 }

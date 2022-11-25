@@ -38,9 +38,7 @@ public class OzonResultBean {
 	public void setErrors(String errors) {
 		this.errors = errors;
 	}
-
-
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -247,7 +247,7 @@ public class Order extends AnyId {
 	}
 	
 	public OrderExternalCrm getExternalCrmByCode(CrmTypes crmTypes) {
-		if (externalCrms == null || externalCrms.size() == 0 || crmTypes == CrmTypes.UNKNOWN) {
+		if (externalCrms == null || externalCrms.size() == 0 || crmTypes == CrmTypes.NONE) {
 			return null;			
 		}				
 		for (OrderExternalCrm externalCrm : externalCrms) {
@@ -256,6 +256,21 @@ public class Order extends AnyId {
 			}
 		}		
 		return null;
+	}
+	
+	public CrmTypes getExternalCrm() {
+		CrmTypes result;
+		if (this.getExternalCrmByCode(CrmTypes.OZON) != null) {
+			result = CrmTypes.OZON;			
+		} else if (this.getExternalCrmByCode(CrmTypes.YANDEX_MARKET) != null) {
+			result = CrmTypes.YANDEX_MARKET;
+		}  else if (this.getExternalCrmByCode(CrmTypes.OPENCART) != null) {
+			result = CrmTypes.OPENCART;
+		} else {
+			result = CrmTypes.NONE;
+		}	
+		return result;
+		
 	}
 
 	public OrderOffer getOffer() {
@@ -413,11 +428,8 @@ public class Order extends AnyId {
 
 	public String getViewNo() {
 		String result = String.valueOf(this.no);
-		if (getExternalCrms() != null && getExternalCrms().size() > 0) {
-			
+		if (getExternalCrms() != null && getExternalCrms().size() > 0) {			
 			if (this.getAdvertType() == OrderAdvertTypes.OZON) {
-				
-				
 				String ozonMarketNo = "";
 				for (OrderExternalCrm externalCrm : getExternalCrms()) {										
 					if (externalCrm.getCrm() == CrmTypes.OZON) {
@@ -425,8 +437,7 @@ public class Order extends AnyId {
 					}
 				}
 				result += " (" + ozonMarketNo + ")";				
-				return result;
-				
+				return result;	
 				
 			} else if (this.getAdvertType() == OrderAdvertTypes.YANDEX_MARKET) {
 				String openCartNo = "";
@@ -455,6 +466,30 @@ public class Order extends AnyId {
 		} else {
 			return result + '-' + String.valueOf(subNo);
 		}
+	}
+	
+	public String getViewMarketNo() {
+		if (getExternalCrms() != null && getExternalCrms().size() > 0) {			
+			if (this.getAdvertType() == OrderAdvertTypes.OZON) {
+				for (OrderExternalCrm externalCrm : getExternalCrms()) {										
+					if (externalCrm.getCrm() == CrmTypes.OZON) {
+						return String.valueOf(externalCrm.getParentCode());						
+					}
+				}
+			} else if (this.getAdvertType() == OrderAdvertTypes.YANDEX_MARKET) {								
+				String openCartNo = "";
+				String yandexMarketNo = "";
+				for (OrderExternalCrm externalCrm : getExternalCrms()) {
+					if (externalCrm.getCrm() == CrmTypes.OPENCART) {
+						openCartNo = String.valueOf(externalCrm.getParentId());						
+					} else if (externalCrm.getCrm() == CrmTypes.YANDEX_MARKET) {
+						yandexMarketNo = String.valueOf(externalCrm.getParentId());						
+					}
+				}
+				return yandexMarketNo + " / " + openCartNo;
+			}					
+		}	
+		return "";
 	}	
 	
 	public ViewOrderStatus getViewStatus() {
@@ -463,7 +498,6 @@ public class Order extends AnyId {
 	
 	public String getBarcodeNumber() {					
 		String s = DateTimeUtils.formatDate(this.getOrderDate(), "yyMMdd") + StringUtils.leftPad(String.valueOf(this.getNo()), 2, '0');
-		//return Integer.valueOf(s).intValue();	
 		return s;
 	}
 	

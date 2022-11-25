@@ -63,5 +63,18 @@ public enum CustomerTypes {
 			return CustomerTypes.UNKNOWN;
 		} 
 	}	
+	
+	public static String convertValuesToSplitedString(CustomerTypes... values) {		
+						
+		if (values == null || values.length == 0) {
+			return "";
+		}
+		String result = "";
+		for (CustomerTypes value : values) {
+			result += String.valueOf(value.getId()) + ",";			
+		}
+		result = result.substring(0, result.length() - 1).trim();
+		return result;		
+	}
 
 }

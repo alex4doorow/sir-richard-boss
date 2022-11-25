@@ -245,55 +245,6 @@
 	$('#btn-submit-filter').attr('hidden', 'true');	
 	$('.input-mask-phone').mask('(000) 000-00-00');
 	selectReportTypeOnChange();
-	/*
-	$('#form-checks-statuses .form-check').wrap('<div class="form-group col-6"></div>');
-	$('#form-checks-statuses .form-group:nth-child(odd)').addClass('form-row-odd');
-	$('#form-checks-statuses .form-group:nth-child(even)').addClass('form-row-even');	
-	$('#form-checks-statuses .form-row-odd').wrap('<div class="form-row"></div>');
-	$('#form-checks-statuses .form-row-even').wrap('<div class="form-row"></div>');	
-	$('#form-checks-statuses input:checkbox').addClass('form-check-input');	
-	$('#form-checks-statuses label').addClass('form-check-label');
-	
-	$('#form-checks-orderTypes .form-check').wrap('<div class="form-group col-6"></div>');
-	$('#form-checks-orderTypes .form-group:nth-child(odd)').addClass('form-row-odd');
-	$('#form-checks-orderTypes .form-group:nth-child(even)').addClass('form-row-even');	
-	$('#form-checks-orderTypes .form-row-odd').wrap('<div class="form-row"></div>');
-	$('#form-checks-orderTypes .form-row-even').wrap('<div class="form-row"></div>');	
-	$('#form-checks-orderTypes input:checkbox').addClass('form-check-input');	
-	$('#form-checks-orderTypes label').addClass('form-check-label');
-	
-	$('#form-checks-deliveryTypes .form-check').wrap('<div class="form-group col-6"></div>');
-	$('#form-checks-deliveryTypes .form-group:nth-child(odd)').addClass('form-row-odd');
-	$('#form-checks-deliveryTypes .form-group:nth-child(even)').addClass('form-row-even');	
-	$('#form-checks-deliveryTypes .form-row-odd').wrap('<div class="form-row"></div>');
-	$('#form-checks-deliveryTypes .form-row-even').wrap('<div class="form-row"></div>');	
-	$('#form-checks-deliveryTypes input:checkbox').addClass('form-check-input');	
-	$('#form-checks-deliveryTypes label').addClass('form-check-label');	
-	
-	$('#form-checks-customerTypes .form-check').wrap('<div class="form-group col-6"></div>');
-	$('#form-checks-customerTypes .form-group:nth-child(odd)').addClass('form-row-odd');
-	$('#form-checks-customerTypes .form-group:nth-child(even)').addClass('form-row-even');	
-	$('#form-checks-customerTypes .form-row-odd').wrap('<div class="form-row"></div>');
-	$('#form-checks-customerTypes .form-row-even').wrap('<div class="form-row"></div>');	
-	$('#form-checks-customerTypes input:checkbox').addClass('form-check-input');	
-	$('#form-checks-customerTypes label').addClass('form-check-label');	
-	
-	$('#form-checks-paymentTypes .form-check').wrap('<div class="form-group col-6"></div>');
-	$('#form-checks-paymentTypes .form-group:nth-child(odd)').addClass('form-row-odd');
-	$('#form-checks-paymentTypes .form-group:nth-child(even)').addClass('form-row-even');	
-	$('#form-checks-paymentTypes .form-row-odd').wrap('<div class="form-row"></div>');
-	$('#form-checks-paymentTypes .form-row-even').wrap('<div class="form-row"></div>');	
-	$('#form-checks-paymentTypes input:checkbox').addClass('form-check-input');	
-	$('#form-checks-paymentTypes label').addClass('form-check-label');
-	
-	$('#form-checks-advertTypes .form-check').wrap('<div class="form-group col-6"></div>');
-	$('#form-checks-advertTypes .form-group:nth-child(odd)').addClass('form-row-odd');
-	$('#form-checks-advertTypes .form-group:nth-child(even)').addClass('form-row-even');	
-	$('#form-checks-advertTypes .form-row-odd').wrap('<div class="form-row"></div>');
-	$('#form-checks-advertTypes .form-row-even').wrap('<div class="form-row"></div>');	
-	$('#form-checks-advertTypes input:checkbox').addClass('form-check-input');	
-	$('#form-checks-advertTypes label').addClass('form-check-label');
-	*/
 	
 	formChecksWraping('statuses');
 	formChecksWraping('orderTypes');

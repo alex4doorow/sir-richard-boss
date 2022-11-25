@@ -2,6 +2,8 @@ package ru.sir.richard.boss.model.utils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -174,12 +176,10 @@ public class TextUtils {
 	public static List<String> convertDelimitedStringToList(String delimitedString) {
 
 		List<String> result = new ArrayList<String>();
-
 		if (!StringUtils.isEmpty(delimitedString)) {
 			result = Arrays.asList(StringUtils.reverseDelimited(delimitedString, ','));
 		}
 		return result;
-
 	}
 
 	public static String convertStringListToDelimitedString(List<String> list) {
@@ -189,7 +189,6 @@ public class TextUtils {
 			result = StringUtils.join(list.toArray(), ',');
 		}
 		return result;
-
 	}
 	
 	public static String convertIntegerListToDelimitedString(List<Integer> list) {
@@ -214,8 +213,7 @@ public class TextUtils {
 		} else {
 			tailTextPartNumber2Dig = Integer.valueOf(textPartNumber.substring(textPartNumberLength - 2, textPartNumberLength));		
 		}
-		int tailTextPartNumber1Dig = Integer.valueOf(textPartNumber.substring(textPartNumberLength - 1, textPartNumberLength));
-					
+		int tailTextPartNumber1Dig = Integer.valueOf(textPartNumber.substring(textPartNumberLength - 1, textPartNumberLength));					
 		
 		String objectTextRoubles; 
 		if (tailTextPartNumber2Dig < 10 || tailTextPartNumber2Dig > 20) {
@@ -327,6 +325,8 @@ public class TextUtils {
 		}		
 		return result.trim();		
 	}
-
 	
+	public static String utf8EncodedString(String inputValue, Charset charset) {
+		return new String(inputValue.getBytes(charset), charset);		
+	}	
 }

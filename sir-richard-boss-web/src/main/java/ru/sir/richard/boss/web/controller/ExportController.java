@@ -76,18 +76,7 @@ public class ExportController {
 	
 	@RequestMapping(value = "/orders/{id}/export/api-ozon-rocket", method = RequestMethod.GET)
 	public String exportApiOzonRocket(@PathVariable("id") int orderId, Model model) throws JRException, IOException {
-		
-		logger.debug("exportApiOzonRocket(): {}", "start");
-		
-		if (orderId == 0) {
-			logger.debug("exportApiCdek():{},{}", "finish", "empty");
-			return "redirect:/orders";
-		}
-		
-		Order order = orderService.getOrderDao().findById(orderId);		
-		String trackCode = deliveryService.addOzonRocketParcelOrder(order);
-		
-		logger.debug("exportApiOzonRocket(): {}, {}", "finish", trackCode);
+
 		return "redirect:/orders";
 	}
 	

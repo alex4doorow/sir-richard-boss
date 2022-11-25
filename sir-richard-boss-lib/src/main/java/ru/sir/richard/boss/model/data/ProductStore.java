@@ -55,6 +55,19 @@ public class ProductStore implements Cloneable {
 	private List<ProductSpecialPrice> specialPrices;
 	
 	private List<ProductImage> images;	
+	
+	/**
+	 * JAN - вариант доставки 
+	 * 		0, 102 - текущий,
+	 * 		101 - полный
+	 * 		103 - бесплатная доставка
+	 * ISBN 
+	 * 		101 - дополнительный продукт
+	 * 		- обычный 
+	 * MPN
+	 * 		104 - цена по запросу
+	 * 
+	 */
 
 	public ProductStore() {
 		super();

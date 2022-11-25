@@ -10,13 +10,23 @@ public class OrderExternalCrm extends AnyId {
 	private Order parent;
 	private CrmTypes crm;
 	private CrmStatuses status;
-	private int parentId;
+	private Long parentId;
 	private String parentCode;
 		
 	public OrderExternalCrm() {
-		this.crm = CrmTypes.UNKNOWN;
+		super();
+		this.crm = CrmTypes.NONE;
 		this.status = CrmStatuses.NONE;
-		this.parentId = 0;
+		this.parentId = 0L;
+		this.parentCode = "";
+	}
+	
+	public OrderExternalCrm(CrmTypes crm, CrmStatuses status, Long parentId, String parentCode) {
+		this();
+		this.crm = crm;
+		this.status = status;
+		this.parentId = parentId;
+		this.parentCode = parentCode;
 	}
 	
 	public OrderExternalCrm(Order parent) {
@@ -48,11 +58,11 @@ public class OrderExternalCrm extends AnyId {
 		this.status = status;
 	}
 	
-	public int getParentId() {
+	public Long getParentId() {
 		return parentId;
 	}
 
-	public void setParentId(int parentId) {
+	public void setParentId(Long parentId) {
 		this.parentId = parentId;
 	}
 		
@@ -81,7 +91,6 @@ public class OrderExternalCrm extends AnyId {
 		int result = super.hashCode();
 		result = prime * result + ((crm == null) ? 0 : crm.hashCode());
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + parentId;
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}

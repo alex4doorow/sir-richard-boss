@@ -26,6 +26,7 @@ public class Product extends AnyCatalog {
 	private BigDecimal priceWithDiscount; // цена c дисконтом
 	
 	private BigDecimal supplierPrice;
+	private int supplierQuantity;
 	private int stockQuantity;	
 	private int slaveQuantity;
 	private ProductCategory category;
@@ -68,9 +69,9 @@ public class Product extends AnyCatalog {
 		this.store = new ProductStore();
 		
 		this.markets = new HashSet<ProductMarket>();
-		ProductMarket ozon = new ProductMarket(CrmTypes.OZON);		
-		this.markets.add(ozon);
 		
+		ProductMarket ozon = new ProductMarket(CrmTypes.OZON);		
+		this.markets.add(ozon);		
 		ProductMarket yandex = new ProductMarket(CrmTypes.YANDEX_MARKET);		
 		this.markets.add(yandex);
 	}
@@ -139,7 +140,6 @@ public class Product extends AnyCatalog {
 		}		
 	}
 	
-	
 	public String getViewName() {
 		final int MAX_VIEW_LENGTH = 139;
 		String result = "";
@@ -206,6 +206,14 @@ public class Product extends AnyCatalog {
 		return quantity;
 	}
 	
+	public int getSupplierQuantity() {
+		return supplierQuantity;
+	}
+
+	public void setSupplierQuantity(int supplierQuantity) {
+		this.supplierQuantity = supplierQuantity;
+	}
+
 	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
@@ -364,7 +372,7 @@ public class Product extends AnyCatalog {
 			ymExist = "размещен на \"ЯНДЕКС МАРКЕТ\", ";
 		}
 		
-		if (this.getStore().getWeight().compareTo(new BigDecimal(1)) < 0) {
+		if (this.getStore().getWeight().compareTo(BigDecimal.ONE) < 0) {
 			weightText = "";
 		} else {
 			weightText = ", вес " + NumberUtils.formatNumber(this.getStore().getWeight(), "#,##0") + " кг";
@@ -375,7 +383,7 @@ public class Product extends AnyCatalog {
 		} else if (this.getMainSupplier() == null) {
 			return "На складе: 0 ("+ ymExist + "на сайте: " + this.getQuantity() + ", уточнить наличие" + weightText + ")";				
 		} else if (this.getMainSupplier() == SupplierTypes.SITITEK) {
-			return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "поставщик " + this.getMainSupplier().getAnnotation() + ": " + this.getQuantity() + weightText + ")";			
+			return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "всего: " + this.getQuantity() + ", поставщик " + this.getMainSupplier().getAnnotation() + ": " + this.getSupplierQuantity() + weightText + ")";			
 		} else if (this.getMainSupplier() == SupplierTypes.LADIA) {
 			return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "поставщик " + this.getMainSupplier().getAnnotation() + ", на сайте: " + this.getQuantity() + weightText + ")";			
 		} else {
@@ -423,6 +431,8 @@ public class Product extends AnyCatalog {
 		clone.quantity = this.quantity;		
 		clone.price = this.price == null ? null : new BigDecimal(this.price.toString());
 		clone.supplierPrice = this.supplierPrice == null ? null : new BigDecimal(this.supplierPrice.toString());
+		clone.supplierQuantity = this.supplierQuantity;
+		
 		clone.stockQuantity = this.stockQuantity;		
 		clone.category = this.category == null ? null : this.category;
 		clone.optionalExist = this.optionalExist;

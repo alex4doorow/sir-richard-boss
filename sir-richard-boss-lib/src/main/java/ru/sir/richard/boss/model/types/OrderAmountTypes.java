@@ -26,6 +26,7 @@ public enum OrderAmountTypes {
 	POSTPAY_YANDEX_MARKET(111, "стоимость постоплаты \"Яндекс.Маркет\""),
 	POSTPAY_OZON_MARKET(112, "стоимость постоплаты \"OZON\""),
 	POSTPAY_OZON_ROCKET(113, "стоимость постоплаты \"OZON ROCKET\""),
+	POSTPAY_YANDEX_GO(114, "стоимость постоплаты \"YANDEX GO\""),
 		
 	// total amounts
 	TOTAL_SUPPLIER(121, "суммарный опт"),
@@ -90,6 +91,8 @@ public enum OrderAmountTypes {
 			return OrderAmountTypes.POSTPAY_OZON_MARKET;				
 		} else if (value == 113) {
 			return OrderAmountTypes.POSTPAY_OZON_ROCKET;
+		} else if (value == 114) {
+			return OrderAmountTypes.POSTPAY_YANDEX_GO;
 		} else if (value == 121) {
 			return OrderAmountTypes.TOTAL_SUPPLIER;
 		} else if (value == 122) {

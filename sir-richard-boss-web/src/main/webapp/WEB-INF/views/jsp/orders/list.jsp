@@ -4,8 +4,7 @@
 <title><fmt:message key="app.title" /> | <fmt:message key="orders.title" /></title>
 
 <%@ include file = "../fragments/header2html2navbar2start.jsp" %>
-<div
-	class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
 	<!-- local content -->
 	<h1 class="h2">
 		<fmt:message key="orders.header" />
@@ -54,7 +53,11 @@
 				</button>				
 				<button id="button-orders-trouble" class="btn btn-sm btn-light" onclick="onClickTroubleOrdersLoad()" data-toggle="tooltip" data-placement="bottom" title='<fmt:message key="orders.btn.orders-trouble"/>'>
 					<i class="bi bi-exclamation-triangle text-dark"></i>
+				</button>					
+				<button id="button-orders-actualization-postpay" class="btn btn-sm btn-light" onclick="onClickActualizationOrdersPostay()" data-toggle="tooltip" data-placement="bottom" title='<fmt:message key="orders.btn.actualization-postpay"/>'>
+					<i class="bi bi-cash-stack text-dark"></i>
 				</button>			
+						
 			    
 			    <button id="button-add" type="button" class="btn btn-sm btn-light" onclick="onClickAddOrder()"><fmt:message key="main.btn.add" /></button>
 			    <button id="button-update" type="button" class="btn btn-sm btn-light" disabled onclick="onClickUpdateOrder()"><fmt:message key="main.btn.update" /></button>
@@ -151,8 +154,8 @@
 						<td>${order.productCategory.name}</td>						
 						<td data-original-title="${order.annotation}" data-toggle="tooltip" data-placement="bottom" title="">${order.customer.viewShortName}</td>
 						<td>${order.customer.viewPhoneNumber}</td>
-						<td data-original-title="${order.delivery.viewDeliveryInfo}" data-toggle="tooltip" data-placement="bottom" title="">${order.delivery.address.viewAddress}</td>					
-						<td>${order.delivery.deliveryType.annotation}</td> 
+						<td data-original-title="${order.delivery.viewDeliveryInfo}" data-toggle="tooltip" data-placement="bottom" title="">${order.delivery.address.viewAddress}</td>
+						<td>${order.delivery.deliveryType.annotation}</td>
 						<td class="text-right" 
 							data-original-title="<fmt:message key="orders.table.items.amount.bill" />: <fmt:formatNumber type = 'currency' value = '${order.amounts.getValue(OrderAmountTypes.BILL)}' />, 
 								<fmt:message key="orders.table.items.amount.supplier" />: <fmt:formatNumber type = 'currency' value = '${order.amounts.getValue(OrderAmountTypes.SUPPLIER)}' />, 
@@ -194,6 +197,7 @@
 				         							 <fmt:message key='orders.table.footers.amount.postpayYandexMarket' /> <fmt:formatNumber type = 'currency' value = '${totalAmounts.get(OrderAmountTypes.POSTPAY_YANDEX_MARKET)}' />
 				         							 <fmt:message key='orders.table.footers.amount.postpayOzonMarket' /> <fmt:formatNumber type = 'currency' value = '${totalAmounts.get(OrderAmountTypes.POSTPAY_OZON_MARKET)}' />
 				         							 <fmt:message key='orders.table.footers.amount.postpayOzonRocket' /> <fmt:formatNumber type = 'currency' value = '${totalAmounts.get(OrderAmountTypes.POSTPAY_OZON_ROCKET)}' />
+				         							 <fmt:message key='orders.table.footers.amount.postpayYandexGo' /> <fmt:formatNumber type = 'currency' value = '${totalAmounts.get(OrderAmountTypes.POSTPAY_YANDEX_GO)}' />				         							 
 				         							 ">
 				         		<fmt:formatNumber type = "currency" value = "${totalAmounts.get(OrderAmountTypes.POSTPAY)}" />
 				         	</strong>
@@ -215,11 +219,11 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="confirm-modal" tabindex="-1" role="dialog" aria-labelledby="confirm-modal-title" aria-hidden="true">
+<div class="modal fade" id="confirm-modal-erase" tabindex="-1" role="dialog" aria-labelledby="confirm-modal-title" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="confirm-modal-title"><fmt:message key="order.form.modal.erase.header" /></h5>
+        <h5 class="modal-title" id="confirm-modal-title-erase"><fmt:message key="order.form.modal.erase.header" /></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -228,8 +232,28 @@
         <p><fmt:message key="order.form.modal.erase.text" /></p>
       </div>
       <div class="modal-footer">
-        <button id="button-modal-confirm-cancel" type="button" class="btn btn-light" data-dismiss="modal"><fmt:message key="main.btn.cancel" /></button>
-        <button id="button-modal-confirm-ok" type="button" class="btn btn-primary"><fmt:message key="main.btn.ok" /></button>
+        <button id="button-modal-confirm-cancel-1" type="button" class="btn btn-light" data-dismiss="modal"><fmt:message key="main.btn.cancel" /></button>
+        <button id="button-modal-confirm-ok-1" type="button" class="btn btn-primary"><fmt:message key="main.btn.ok" /></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirm-modal-actualization-postpay" tabindex="-1" role="dialog" aria-labelledby="confirm-modal-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirm-modal-title-actualization-postpay"><fmt:message key="order.form.modal.orders.actualization.postpay.header" /></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p><fmt:message key="order.form.modal.orders.actualization.postpay.text" /></p>
+      </div>
+      <div class="modal-footer">
+        <button id="button-modal-confirm-cancel-2" type="button" class="btn btn-light" data-dismiss="modal"><fmt:message key="main.btn.cancel" /></button>
+        <button id="button-modal-confirm-ok-2" type="button" class="btn btn-primary"><fmt:message key="main.btn.ok" /></button>
       </div>
     </div>
   </div>
@@ -257,6 +281,10 @@
 			window.location = '${urlOrders}/trouble-load';			
 		}
 		
+		function onClickActualizationOrdersPostay() {
+			$('#confirm-modal-actualization-postpay').modal({keyboard: false});				
+		}
+		
 		function onClickConditionsFilter() {
 			window.location = '${urlOrders}/conditions/filter';			
 		}		
@@ -270,7 +298,7 @@
 		}		
 		function onClickEraseOrder() {
 			console.log('onClickEraseOrder: ' + $('#button-erase').attr('href-data'));
-			$('#confirm-modal').modal({keyboard: false});
+			$('#confirm-modal-erase').modal({keyboard: false});
 		}
 		function onClickApproveOrder() {
 			console.log('onClickApproveOrder: ' + $('#button-approve').attr('href'));
@@ -504,7 +532,7 @@
 			var orderContainer = { id: orderId }		
 			
 			if (tdOrderNo.attr("data-toggle") == "tooltip") {
-				console.log('AJAX YET}: ' + tdOrderNo.attr('title'));	
+				//console.log('AJAX YET}: ' + tdOrderNo.attr('title'));	
 				return;
 			}			
 			$.ajax({
@@ -543,13 +571,16 @@
 			  $('.td-id').tooltip('hide');		  
 		});		
 		
-		$('#button-modal-confirm-ok').click(function() {
+		$('#button-modal-confirm-ok-1').click(function() {
 			var eraseHref = $('#button-erase').attr('href');
 			console.log('#modal-confirm-ok click: ' + eraseHref);
 			document.location.href = eraseHref;							
 		});
-	</script>   
-	 
+		
+		$('#button-modal-confirm-ok-2').click(function() {
+			window.location = '${urlOrders}/actualization-postpay';	
+		});
+	</script>  	 
   
 <%@ include file = "../fragments/footer2html.jsp" %>
 

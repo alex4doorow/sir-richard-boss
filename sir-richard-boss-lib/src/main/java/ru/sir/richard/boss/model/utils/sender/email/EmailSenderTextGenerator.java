@@ -24,7 +24,19 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 		
 	@Override
 	public Message createFeedbackMessage(Order order, OrderEmailStatuses orderEmailStatuses) {
+		// пока не будем спрашивать отзывы
+		if (order.getItems().size() < 0) {
+			Message message = new Message();		
+			String messageSubject = "empty"; 
+			String messageBody = "";
+			
+			message.setSubject(messageSubject);
+			message.setBody(messageBody);
+			message.setFooter("");
+			return message;
+		}
 		
+		/*
 		if (!order.getCustomer().isPerson() || StringUtils.isEmpty(order.getCustomer().getEmail()) || order.getItems().size() == 0) {
 			Message message = new Message();		
 			String messageSubject = "empty"; 
@@ -35,6 +47,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 			message.setFooter("");
 			return message;
 		}
+		*/
 		
 		ForeignerCustomer customer = (ForeignerCustomer) order.getCustomer();
 		

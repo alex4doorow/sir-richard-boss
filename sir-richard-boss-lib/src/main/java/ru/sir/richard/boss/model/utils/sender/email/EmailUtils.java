@@ -102,9 +102,8 @@ public class EmailUtils {
 		String host = environment.getProperty("mail.imap.host");
 	    String mailStoreType = "imaps";	    
 	    String username = shopStore.getEmail();
-	    String password;
+	    String password = environment.getProperty("mail.imap.pm.auth.key");
 	    Properties properties = new Properties();
-	    password = environment.getProperty("mail.imap.auth.key");	    
 		    	    
 		try {
 			Session emailSession = Session.getDefaultInstance(properties);

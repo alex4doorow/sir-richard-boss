@@ -123,6 +123,12 @@
 					<label for="input-stock-product-quantity"><fmt:message key="wiki.stock.form.fields.product.quantity" /></label>
 					<form:input path="product.quantity" type="text" class="form-control form-control-sm input-calc-amounts" id="input-stock-product-quantity" />
 				</div>
+				
+				<div class="form-group col-md-2">
+					<label for="input-stock-supplier-quantity"><fmt:message key="wiki.stock.form.fields.supplier.quantity" /></label>
+					<form:input path="product.supplierQuantity" type="text" class="form-control form-control-sm input-calc-amounts" id="input-stock-supplier-quantity" />
+				</div>
+				
 			</div>			
 			<div class="form-row">
 				<div class="form-group col-md-6">

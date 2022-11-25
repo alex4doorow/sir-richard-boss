@@ -14,6 +14,7 @@
     <!-- Custom styles for this template -->
     <link href="${urlResources}css/dashboard.css" rel="stylesheet">
     <link href="${urlResources}css/bootstrap-datepicker.css" rel="stylesheet">
+    <link href="${urlResources}css/datatables.css" rel="stylesheet"/>
     
     
     

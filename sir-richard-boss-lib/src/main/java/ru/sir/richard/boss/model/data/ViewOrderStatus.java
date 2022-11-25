@@ -61,8 +61,7 @@ public class ViewOrderStatus {
 	public void setOrderDate(String orderDate) {
 		this.union = VIEW_STATUS_NONE;
 		this.orderDate = orderDate;
-	}
-	
+	}	
 	
 	public static ViewOrderStatus createViewOrderStatus(Order order) {
 				
@@ -79,10 +78,7 @@ public class ViewOrderStatus {
 			if (order.getStatus() == OrderStatuses.BID) {
 				viewOrderStatus.setUnion(ViewOrderStatus.VIEW_STATUS_LIGHT);			
 				return viewOrderStatus; 
-			} /*else if (order.getStatus() == OrderStatuses.PROCESSING || order.getStatus() == OrderStatuses.UNPAID) {
-				viewOrderStatus.setUnion(ViewOrderStatus.VIEW_STATUS_LIGHT);			
-				return viewOrderStatus; 
-			} */else if (order.getStatus() == OrderStatuses.APPROVED) {
+			} else if (order.getStatus() == OrderStatuses.APPROVED) {
 				viewOrderStatus.setUnion(ViewOrderStatus.VIEW_STATUS_LIGHT);
 				if (order.getDelivery().getDeliveryType() == DeliveryTypes.YANDEX_MARKET_FBS) {
 					viewOrderStatus.setOrderId(ViewOrderStatus.VIEW_STATUS_WARNING);					
@@ -95,6 +91,9 @@ public class ViewOrderStatus {
 				} else if (order.getDelivery().getDeliveryType().isPost()) {
 					viewOrderStatus.setOrderId(ViewOrderStatus.VIEW_STATUS_WARNING);					
 				} else if (order.getDelivery().getDeliveryType().isCourier()) {
+					viewOrderStatus.setUnion(ViewOrderStatus.VIEW_STATUS_WARNING);
+					return viewOrderStatus;
+				} else if (order.getDelivery().getDeliveryType() == DeliveryTypes.YANDEX_GO) {
 					viewOrderStatus.setUnion(ViewOrderStatus.VIEW_STATUS_WARNING);
 					return viewOrderStatus;
 				}
@@ -132,6 +131,9 @@ public class ViewOrderStatus {
 					viewOrderStatus.setOrderId(ViewOrderStatus.VIEW_STATUS_SUCCESS);
 					return viewOrderStatus;
 				} else if (order.getDelivery().getDeliveryType().isCourier()) {
+					viewOrderStatus.setUnion(ViewOrderStatus.VIEW_STATUS_WARNING);
+					return viewOrderStatus;
+				} else if (order.getDelivery().getDeliveryType() == DeliveryTypes.YANDEX_GO) {
 					viewOrderStatus.setUnion(ViewOrderStatus.VIEW_STATUS_WARNING);
 					return viewOrderStatus;
 				} else if (order.getDelivery().getDeliveryType() == DeliveryTypes.YANDEX_MARKET_FBS) {

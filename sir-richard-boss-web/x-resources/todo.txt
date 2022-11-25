@@ -1,0 +1,486 @@
+собеседование
+спринг https://habr.com/ru/post/350682/
+	   https://docs.spring.io/spring-framework/docs/3.0.0.M3/reference/html/ch04s04.html
+	   https://www.baeldung.com/spring-bean-scopes
+структура uri /:entity[/:id][/?:params]
+/account/124/add/?:search="qqq"
+ci https://habr.com/ru/post/508216/
+
+http request response https://developer.mozilla.org/en-US/docs/Web/HTTP/Session
+
+request
+prototype
+session
+singletone
+
+микросервис https://habr.com/ru/company/vk/blog/320962/
+партфолио
+https://proglib.io/p/developer-portfolio
+
+как перенести данные в git и затем в github
+https://monsterlessons.com/project/lessons/git-nachinaem-rabotat-s-gitom
+gitflow https://monsterlessons.com/project/lessons/git-optimiziruem-rabotu-s-pomoshyu-gitflow
+
+c:\src\--git4github
+клонирование репозитория с удаленного на локал
+git clone https://github.com/alex4doorow/sir-richard-boss.git
+git checkout origin/master
+
+git remote add origin https://github.com/alex4doorow/learning_git.git
+                      https://github.com/alex4doorow/learning_git.git
+
+alex4@mustang MINGW64 ~/sir-richard-boss (main)
+repository C:\Users\alex4\sir-richard-boss
+git status
+git add .
+git status
+git commit -m "notification of anything"
+вывод репозитория git remote -v 
+перенос в github git push -u origin master
+git push
+
+пример добавления файла в github
+touch 2.js
+git add .
+git commit -m "Added 2.js"
+git push
+////////////////
+урок
+создание нового бранча в удаленном репозитории git push --set-upstream origin new-branch
+c:\src\--git4github3\
+
+git init
+
+//////////////
+это перенос ветки с локала на сервер git push --set-upstream origin implement-new-logic
+
+написание фичи и перенос в develop
+git flow feature start implement-register
+....
+git flow feature finish implement-register
+установка версии
+git flow release start 1.1
+
+jsp jdbctemplate https://www.javatpoint.com/spring-mvc-pagination-example
+https://stackoverflow.com/questions/14311816/implement-pagination-in-jsp-page-in-a-spring-mvc-and-hibernate-application
+
+https://www.baeldung.com/spring-data-jpa-pagination-sorting
+https://coderlessons.com/articles/java/prostoi-primer-razbieniia-na-stranitsy-s-dannymi-spring-i-thymeleaf
+https://zetcode.com/springboot/pagination/
+https://www.geeksforgeeks.org/spring-rest-pagination/
+https://springframework.guru/spring-boot-pagination/
+
+https://docs.ozon.ru/rocket/integration/widget/
+
+TODO NEW STECK
+новая версия на микросервисах
+java 8 или выше
+spring cloud
+graphQL
+Kafka
+Hazelcast
+Quartz
+Keycloak
+Apache FreeMarker
+react https://academy.yandex.ru/posts/chto-takoe-react-i-kak-ego-osvoit
+grpc https://russianblogs.com/article/3548815972/
+
+
+
+dellin api https://dev.dellin.ru/api/  
+склад отгрузки ям при смене статуса заказа (в бэке java, php)
+	первый
+	второй
+	третий
+
+доставки
+	озон рокет
+	dpd
+	boxberry
+	яндекс срочная
+
+1-я ОЧЕРЕДЬ:
+fix -нужен метод проверки номера телефона, номера заказа на уникальность перед сохранением заказа
+список заказов по фильтру
+	период с по
+		30 дней
+		90 дней
+		текущий месяц
+		предыдущий месяц
+		текущий квартал
+		последние n записей
+	номер телефона
+	клиент
+	номер заказа
+fix -просмотр данных
+fix -изменить данные по заказу
+fix -добавить заказ
+fix -удалить заказ
+fix подсчет итогов по отобранным заказам:
+	суммарная прибыль
+	суммарная наложка
+
+fix изменить статус 
+	с заявки или кп на заказ
+	на отменить
+	с ожидаем оплату на оплата прошла. как высветить такие платежи?
+fix ввод и правка сумм
+	сумма к оплате
+	сумма дохода
+	сумма закупки
+	сумма прибыли
+	сумма наложки
+fix -ввод и правка значения трэккод
+
+2-я ОЧЕРЕДЬ:
+fix -функция сумма прописью
+fix -печать товарного чека на заказ
+стектрейс при ошибке на страницу еррор
+
+3-я ОЧЕРЕДЬ:
+fix- ПОЧТА РОССИИ печать наложки
+fix- ПОЧТА РОССИИ печать адресного ярлыка
+fix- КУРЬЕР накладная СДЭК 
+
+4-я ОЧЕРЕДЬ:
+fix период = прошлый месяц
+fix список заказов по номеру телефона
+fix ПОЧТА РОССИИ печать адресного ярлыка по предоплате
+fix КУРЬЕР накладная СДЭК две на одном листе
+
+5-я ОЧЕРЕДЬ:
+fix загрузка лидов из админки
+fix выгрузка заявок в сдэк
+fix - сделать стенделон pricer
+fix в списке заказов отображать дату и время доставки курьером в тултип
+fix добавить модальную форму на удаление заказа
+ 
+6-я ОЧЕРЕДЬ:
+отчеты
+fix отчет по продажам - товары 
+fix отчет "воронка продаж" 
+	https://econ.wikireading.ru/59867 
+	https://habr.com/ru/post/259273/
+	https://convertmonster.ru/gabook/free/materials
+	доходы. срез по физикам и юриувм
+	воронка продаж. сделать за месяц, квартал, полгода, год.
+fix приходный ордер
+fix отобрать заказы по условию "за период". добавить такой параметр. не учитывается только при вводе номер заказа и трэкккод
+fix отобрать заказы по условию "товар"
+fix добавить сумму доставки и итог на просмотре заказа
+fix исследование вызов api расчета доставки почта
+fix http://test.postcalc.ru/web.php?Extended=1&Output=JSON&From=107241&Weight=500&Valuation=2190&Step=0&Date=11.03.2019&IBase=f&ProcessingFee=0&PackingFee=50&Round=0.01&VAT=1&To=169500
+http://www.postcalc.ru/web.php?Extended=1&Output=json&From=107241&Weight=500&Valuation=2190&Step=0&Date=11.03.2019&IBase=p&ProcessingFee=0&PackingFee=50&Round=0.01&VAT=1&To=398070
+fix калькулятор расчета доставки почтой на заказе		
+fix калькулятор расчета доставки СДЭК на заказе
+http://integration.cdek.ru/pvzlist/v1/xml?weightmax=50&cityid=393&allowedcod=1
+fix error of special price
+fix в экспорте заказов при наличии кода пвз в delivery писать его
+fix загрузка файла с городами сдэк
+fix исследование - матчинг статусов заказов
+fix матчинг статусов заказов
+fix добавить СДЭК ЭКОНОМ курьер
+
+fix частичная постоплата. например норильск аэропорт. сумма 50 т.р. оплатили 27 т.р. постоплата 23 т.р.
+
+fix письмо с подтверждением заказа покупателю - если есть емейл
+fix контроль индекса что это цифры в Address.getpostCode()
+fix убрать мусор символов при формировании автоматических писем рассылки: адрес, кавычки
+fix тестирование и отладка автоматическая обработка статусов заказов
+	https://integration.cdek.ru/status_report_h.php
+	http://webimho.ru/topic/15373/page__st__60
+fix jsp error починить
+fix исследование - передача заказа в сдэк
+fix xml передача заказа в сдэк
+fix рефакторинг. переименовать SDEK_ -> CDEK_
+fix рефакторинг. переименовать методы ...sdek... -> ...cdek...
+fix подумать. экспорт заказов в эксель перенести в DeliveryService
+fix подумать. данные по доставке в сдек перенести из адреса куда-нибудь в другое место
+fix emeil отправлять с notice@sir-richard.ru
+fix refactoring deepclone -> clone
+fix копия заказа
+fix загрузка лидов быстрый заказ
+cloneable
+http://echuprina.blogspot.com/2012/02/cloneable.html
+
+fix error при неправильном тарифе сдэк - вывести текст "нет расчета для данного вида доставки"
+fix error письма не отправляются
+fix error вычиытка быстрого заказа не работает
+fix error нельзя курьер доставку по предоплате - лезут наличные
+fix письмо для физика по предоплате на отправку
+fix error смс по предоплате физику на отправку
+fix error быстрый заказ убрать мусор из поля дополнительно
+fix заказал один, получатель второй, перед созданием персоны - проверить по номеру телефона на существующего
+тест статус постоплата юрик подтвержден, сумма прибыли, сумма постоплаты
+     статус постоплата юрик отправлен, сумма прибыли, сумма постоплаты
+fix обновление состояния товаров по кнопке instanceConfig()
+fix показывать остаток товара на нашем складе
+fix список проблемных заказов
+fix front расчет доставки сдэк https://modx.pro/howto/13418
+fix показывать вес товара на нашем складе
+fix расчет доставки по г.Москва до пвз и самовывоз синхронно с сайтом
+fix в воронку продаж добавить: количество заказов по транспортным системсм: почта, сдэк, ноги, деловые
+fix вывод подробного журнала смены статусов перед списком заказов
+
+fix тесты
+расчет стоимости, дохода, прибыли, наложки
+1. физик, постоплата, самовывоз
+2. физик, постоплата, пвз, доставляется, платит клиент, скидка 3%
+   физик, постоплата, пвз, доставляется, платит продавец, скидка 3%
+   физик, постоплата, пвз, получен
+   физик, постоплата, пвз, завершен
+
+3. физик, постоплата, почта
+4. юрик, предоплата, пвз
+5. юрик, постоплата, пвз, ожидаем оплату
+5. юрик, постоплата, пвз, оплата поступила
+
+error На складе: 0 (на сайте: 0, уточнить наличие, вес 7 кг)
+
+сделать комплекты
+fix	- товар, собирающийся из других товаров
+fix	- при оформлении сделки выводить корректное количество комплектов
+fix	- при подтверждении заказа, списывать со склада все составляющие комплектов
+fix error последние 90 дней установить кепшен у кнопки
+fix сделать комплекты - интерфейс оформления комплекта на складе
+fix сделать при выводе списка заказов реального клиента ссылку на просмотр заказа прямо из попап http://mustang:9999/sir-richard-boss-web/orders/5293
+fix error - при приеме лидов из opencart если клиент указал неполные данные, а контакт уже существует, затираются фамилии
+fix выводить артикул товара на складе и в форме заказа в списке
+fix каждый час запускать сервис "обновление статусов"
+fix емейл. добавить отзыв о товаре. тем кто купил отправить письмо через неделю после получения. только физикам с емейлами. обработка списком.
+fix емейл. исправить баг с кодировкой
+bag. в проблемные заказы не попадали самовывозы с просрочкой забора
+fix в фильтр добавить 
+	самовывозы, деловые линии DeliveryTypes
+	коммерческие предложения OrderTypes
+fix список проблемных. добавить кп и счета в статусе заявка, созданые более 3 дней
+fix новый заказ. при нажатии кнопки повторный клиент по телефону, если число заказов > 1, устаноавливать канал привлечение = повторное обращение	
+front алгоритм расчета стоимости доставки в зависимости от (регион, способ доставки, товар)
+	1. параметр "наложка (да/нет)" на форме расчета доставки. 
+	2. учитывать его в алгоритме сдек  
+	3. учет страховки и наложки эквивалентно расчету бэка
+	4. учет параметров товара (сумма, вес, jan)
+	5. условия jan (на сдэк)
+		а. 101 FULL (3% ) - сумма доставки соответствует нашим расходам за доставку, страховку, наложку. Это палатки, картриджи, пропановые пушки. Для москвы пвз = справедливой цене
+		б. 102 CURRENT (1% ) - сумма доставки учитывает только 1% за наложку, 2% магазин берет на себя. все товары кроме классик и промо 
+		в. 103 PVZ_FREE - по москве - бесплатная доставка курьером, доставка до ПВЗ бесплатная. если клиент до урала, то до "ПВЗ", если за уралом, то до "ЭКОНОМ ПВЗ", а "ПВЗ" - как обычно. Это камеры калипсо.
+	6. тесты
+		товар
+				ГРАД А-1000 ПРО (дорогой и маржинальный) -> CURRENT
+				PF-TW-14 (дорогой, маржинальный, тяжелый, высокий спрос) -> FULL
+				CALYPSO US-03 (дорогой, маржинальный, низкий спрос) -> PVZ_FREE 			
+				GD100 антидог (дорогой, и не маржинальный) -> FULL. todo москва пвз = 200р для любого товара
+			следопыт очаг, картридж для антидога (дешевый, не маржинальный, спрос не волнует) -> FULL
+			поверка (низкая или нулевая маржа) -> FULL
+			кенари GD100 (низкая маржа) -> FULL		
+		регион
+			москва
+			мо
+			воронеж
+			архангельск
+			владивосток
+			норильск
+		оплата
+			наложенный платеж
+			предоплата
+		форма
+			расчет доставки на товаре
+			оформление заказа
+	7. передача расчета доставки, регион, город, индекс в письмо с формы "быстрый заказ" (если пользователь их заполнил)
+	8. если предоплата, то бесплатная доставка при определенных условиях (повторное обращение, особый товар, )
+	9. определение местоположения автоматически
+   10. почта россии. расчет доставки выводит сроки
+   11. при определении города, выбирать город из списка городов, как в бэке
+fix bag клонирование не работает при новом клиенте
+fix сделать быстрый поиск заказа по номеру
+fix отчет по доставке. сколько за период доставлено возвратов отправлено
+fix в проблемные добавить со статусом "отказ от вручения", больше 10 дней
+fix ajax выборка продуктов по условию. исключить отключенные. но должны быть мембраны, пьезоподжиг, поверки
+fix добавить параметр на лиды в sr_order {sr|pm} чтобы знать с какого сайта свалился заказ.
+fix запоминать позицию в списке склада
+fix конвертер oc_product из pm in sr
+fix письма и смс для pm & sr
+fix написать загрузчик лидов из pribormaster
+fix подстановка разных шаблонов товарных и курьерских документов для pm & sr
+fix письмо, организация, при смене статуса на "оплата прошла" 
+fix перенести конвертер продуктов в веб
+fix емейл. юрики. запрос на актуальность счета после n-дней. Выставляли счет, нужен? ...
+fix виджет с картами сдэк при расчете доставки
+fix при загрузке лидов из опенкарт анализировать опции
+fix перенос базы из sr in pm
+fix загрузка прайсов следопыт
+	папка для всех файлов прайса: зима, лето, палатки, туризм c:\\src\\sir-richard-boss\\--load\\sledopyt\\  C:\Users\1\Desktop\sledopyt
+	у всех продуктов должен быть проставлен артикул
+	загрузка всех прайсов из папки в общий список продуктов
+	у всех продуктов должен быть проставлен артикул и мануфактура 80
+	проход по выборке select * from oc_product p where p. manufacturer_id = 80
+	поиск по артикулу записи из прайса
+		если записи в прайсе нет, значит сейчас его нет в наличии у них - считываем свое количество + 0
+		если запись в прайсе есть, то ставим количество = свое + их, цену розницы и цену опта из прайса
+	у товаров правка sku isbn jan
+fix генерация description title для продуктов
+fix редактирование мета данных у продуктов
+fix ошибка повторной загрузки лида из опенкарт
+not actual уведемления по емейл. не отправлять письма на запрос отзыва, если это повторный клиент, и уже сделал отзыв по предыдущему заказу.
+
+fix указывать часовой пояс по адресу доставки. "Сейчас в норильске 4:37" https://ru.stackoverflow.com/questions/723350/%D0%A7%D0%B0%D1%81%D0%BE%D0%B2%D1%8B%D0%B5-%D0%BF%D0%BE%D1%8F%D1%81%D0%B0-java
+https://grishaev.me/timezone/
+
+https://console.cloud.google.com/apis/enableflow?apiid=timezone_backend&keyType=SERVER_SIDE&project=driven-catalyst-304408
+AIzaSyChkOQ23uVTQvl9He7hetGZSI8Ed0RU2mY
+  
+Орск, Оренбург
+получить координаты https://geocode-maps.yandex.ru/1.x/?apikey=3520c889-bbf4-4798-b131-d5e6f37d8922&geocode=%D0%BE%D1%80%D1%81%D0%BA  
+fix  получить часовой пояс http://api.geonames.org/timezone?lat=51.212650&lng=58.618969&username=alex4doorow
+fix добавить вывод в товарный чек номера счета из лида если это оплата картой.
+fix если коннекшен отваливается - шедалер не бросает ехсептион, а тихо выходит
+>>>>>>> Я ЗДЕСЬ >>>>>>>	
+
+TODO
+яндекс.логистика - наложенный платеж
+при подтверждении я.м указывать число мест в нашей форме подтверждения. по дефолту = 1
+построение rest api это спринг http://spring-projects.ru/guides/tutorials-bookmarks/
+
+у склада добавить поля
+	номер склада 1- офис, 2- холл 
+	место на складе
+	комментарий 2 белых, 7 черных 
+формирование yandex yml https://yandex.ru/support/webmaster/goods-prices/technical-requirements.html
+
+установка локальной базы 
+отчет по поставщикам. группировка поставщик, товар. колонки закуплено доход прибыль количество
+сделать отдельный тип заявки "предзаказ" 
+добавить в проблемные постоплаты по организациям. получено 01.10. сегодня 10.10. с разницей более 10 дней
+нужна всплывающая напоминалка с задачами на время "позвонить Васе в 15:00", "Отправить посылки 14:00"
+на главную повесить проблемный список?
+bag. jasperreport отчет "товарная накладная" скидка 2 переделать в расчет 2% от стоимости товара
+
+front вывод индикатора количества товара (нет, мало, достаточно, много)
+?front вывод суммы и наличия товара в зависимости от опции 
+front инструкция как купить https://mysuperdog.ru/how-to-buy
+front страница информации после совершения заказа
+
+error нерезидент, физик. статус, стоимость, счет
+todo отдельный статус "на контроле" sr_order_label 
+todo статус "посылка застряла в дороге"
+
+занесение информации по расходам для подсчета итогов
+смс клиенту с ручным текстом
+
+стандартные отчеты по продажам	
+	https://www.ecwid.ru/blog/customize-dashboard-google-analytics-and-yandex-metrika.html
+	+ общая выручка;
+	+ общее количество продаж;
+	+ средний чек;
+	+ средняя стоимость визита;
+	доход на пользователя;
+	суммарное количество проданных товаров;
+	доход по отдельным товарам;
+	распределение доходов по каналам и источникам трафика;
+	конверсия источников трафика. 
+-------------------------------------
+-------------------------------------
+
+DOM XML https://examples.javacodegeeks.com/core-java/xml/parsers/documentbuilderfactory/create-xml-file-in-java-using-dom-parser-example/
+
+как считать прибыль https://school.bigbird.ru/articles/chto-nado-znat-o-pribyli-chtoby-ne-progoret-raschet-vidy-i-otlichiya/	
+
+ERRORS
+sql The origin server did not find a current representation for the target resource or is not willing to disclose that one exists.
+		
+mykong Spring MVC form handling example http://www.mkyong.com/spring-mvc/spring-mvc-form-handling-example/
+
+1. message_ru_RU.properties Chrome - fix
+2. poi generate pdf and print
+3. form validator
+4. orders/ post -> orders/update/12/save
+5. apache poi jasper reports jasperreport: Calypso1967
+	http://www.quizful.net/post/jasperreports-and-ireports
+	https://stackoverflow.com/questions/27532446/how-to-use-jasperreports-with-spring-mvc
+6. система наименований javascript https://www.w3schools.com/js/js_conventions.asp	
+	orderAddOrderOnClick
+	кавычки двойные
+	
+7. конвертация данных
+8. связь справочника категорий 	
+9. верстка бутстрап пример шаблона https://getbootstrap.com/docs/4.0/examples/dashboard/#
+   bootstrap пример использования https://medium.com/@stasonmars/%D1%83%D0%B7%D0%BD%D0%B0%D0%B5%D0%BC-bootstrap-4-%D0%B7%D0%B0-30-%D0%BC%D0%B8%D0%BD%D1%83%D1%82-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D0%B2%D0%B0%D1%8F-%D0%BB%D0%B5%D0%BD%D0%B4%D0%B8%D0%BD%D0%B3-d268d52d6c84
+10. иконки https://feathericons.com/
+11. paint.net https://paint-net.ru/?id=73
+
+---
+java http post example http://www.javased.com/index.php?api=org.apache.http.client.methods.HttpPost
+
+11. javaScript
+$("input:checkbox:checked")
+mask input https://igorescobar.github.io/jQuery-Mask-Plugin/docs.html
+
+<Valve 
+    className="org.apache.catalina.valves.StuckThreadDetectionValve"
+    threshold="60" />
+    
+icons
+https://feathericons.com/   
+
+maven dependencies
+https://stackoverflow.com/questions/15383322/how-do-i-add-a-project-as-a-dependency-of-another-project		
+	
+	
+sms рассылка
+http://www.tucows.com/preview/221572
+Sending and receiving SMS From Java using the Ozeki Java SMS SDK
+https://mainsms.ru/home/integration/java
+https://www.epochta.ru/products/sms/api/examplejava.php
+
+сертификат https
+https://devaka.ru/articles/moving-to-https
+
+parent=project
+https://o7planning.org/en/10259/build-a-multiple-module-project-with-maven
+
+настройка целей 
+хороший пример https://semantica.in/blog/gajd-po-nastrojke-czelej-v-google-analytics-prostymi-slovami.html
+форум по теме https://www.ru.advertisercommunity.com/t5/Stati/Sobytiya-i-virtualnye-stranitsy-v-Google-Analytics/ba-p/61013
+петроченкова книга https://convertmonster.ru/gabook/free/materials
+ga('send', 'event', 'fastOrder', 'click');
+ga('send', 'event', 'review', 'click');
+
+доступ к томкат с другого компа
+https://toster.ru/q/466978
+http://qaru.site/questions/599137/how-to-access-tomcat-from-another-computer
+https://habr.com/ru/post/326164/
+
+расположение war в томкате
+c:\src\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\
+
+выгрузка данных из google analitics
+
+расчетные показатели https://e-pepper.ru/news/schitaem-effektivnost-internet-magazina.html
+	валовая прибыль = (доход - закупка)
+	маркетинговая ROI = (валовая прибыль - реклама)/реклама * 100%
+	CAC = Рекламный бюджет / Число заказов => стоимость заказа
+KPI https://e-pepper.ru/news/16-kpi-dlya-internet-magazina.html
+
+Яндекс директ
+Типичные ошибки при запуске рекламы https://www.seonews.ru/analytics/tipichnye-oshibki-pri-zapuske-reklamy-v-yandeks-direkt-kak-sdelat-srazu-pravilno-chtoby-ne-slit-byud/
+
+CPO = Затраты на рекламу / Количество заказов по рекламе
+СРС = Бюджет рекламы / Количество переходов по рекламе
+CR = кол-во целевых действий / количество кликов * 100%	
+CPA = Затраты на рекламу / количество целевых действий
+CPL = Затраты на рекламу / количество полученных лидов
+ROI = (Прибыль от рекламы - Расходы на рекламу) / Расходы на рекламу x 100%
+ROAS = Прибыль от заказов по рекламе / количество заказов, которые принесла реклама
+ДРР = Расходы на рекламу / Прибыль от рекламы * 100%
+
+
+paint.net
+старый газетный снимок https://paint-net.ru/forum/viewtopic.php?f=20&t=1170
+флаг развивается https://paint-net.ru/forum/viewtopic.php?f=6&t=1555
+эффекты https://paint-net.ru/?id=7
+вырезать объект https://uroki.paint-net.ru/822/
+логотипы https://ru.freepik.com/
+
+блог
+птицы https://www.pigeoncontrolresourcecentre.org/		
+https://www.birdfighter.com/#.W-XRQidRfAI

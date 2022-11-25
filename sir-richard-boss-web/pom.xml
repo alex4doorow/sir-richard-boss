@@ -1,16 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  	<modelVersion>4.0.0</modelVersion>
 	<artifactId>sir-richard-boss-web</artifactId>
 	<packaging>war</packaging>
 	<name>sir-richard-boss-web</name>
 	<description>SIR-RICHARD.RU BOSS webapp for customer's orders</description>
-	<url>http://maven.apache.org</url>
 	<parent>
 		<groupId>ru.sir.richard.boss</groupId>
 		<artifactId>sir-richard-boss</artifactId>
-		<version>3.0.5-SNAPSHOT</version>
+		<version>4.1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>		
 	</parent>	
 	<properties>	
@@ -36,17 +34,33 @@
 			<artifactId>sir-richard-boss-lib</artifactId>
 			<version>${sir-richard-boss.version}</version>
 		</dependency>
-
+		
+		<dependency>
+	        <groupId>org.projectlombok</groupId>
+	        <artifactId>lombok</artifactId>
+	        <scope>provided</scope>
+    	</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-security</artifactId> 
-			</dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+ 		<dependency>
+	        <groupId>org.springframework.security</groupId>
+	        <artifactId>spring-security-taglibs</artifactId>
+	    </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
@@ -57,8 +71,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- jstl -->
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
@@ -73,7 +85,6 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
@@ -82,23 +93,11 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
-			<version>${jasperreports.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports-fonts</artifactId>
-			<version>${jasperreports-fonts.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 			<version>${xerces.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/net.sf.barcode4j/barcode4j -->
 		<dependency>
 			<groupId>net.sf.barcode4j</groupId>
 			<artifactId>barcode4j</artifactId>
@@ -129,7 +128,6 @@
 			<artifactId>batik-awt-util</artifactId>
 			<version>${batik-bridge.version}</version>
 		</dependency>
-
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>
@@ -143,13 +141,49 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>${org.apache.poi.version}</version>
-		</dependency>			
-		<!-- https://mvnrepository.com/artifact/com.ibm.icu/icu4j -->
+		</dependency>
 		<dependency>
 			<groupId>com.ibm.icu</groupId>
 			<artifactId>icu4j</artifactId>
 			<version>${icu4j.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>${jasperreports.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-fonts</artifactId>
+			<version>${jasperreports-fonts.version}</version>
+		</dependency>
+
+		<dependency>
+	        <groupId>org.junit.jupiter</groupId>
+	        <artifactId>junit-jupiter-api</artifactId>
+	        <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.junit.jupiter</groupId>
+	        <artifactId>junit-jupiter-engine</artifactId>
+	        <scope>test</scope>
+	   </dependency>    
+	    <dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-core</artifactId>
+		    <scope>test</scope>
+		</dependency>		
+		<dependency>
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-junit-jupiter</artifactId>
+		    <scope>test</scope>
+		</dependency>		
+		<dependency>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-help-plugin</artifactId>
+		    <version>3.3.0</version>
+		</dependency>			
 	</dependencies>
 	<build>
 	    <resources>
@@ -158,22 +192,23 @@
 	        <filtering>true</filtering>
 	      </resource>
 	    </resources>	    
-		<plugins>	
+		<plugins>		
 			<plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-compiler-plugin</artifactId>
-			    <version>${maven-compiler-plugin.version}</version>			      	     		    
-			    <configuration>
-			    <failOnMissingWebXml>false</failOnMissingWebXml>			   
-			        <release>8</release>
-			        <verbose>true</verbose>
-			    </configuration>			    	   
-			</plugin>
+			    <artifactId>maven-war-plugin</artifactId>
+			    <version>3.3.2</version>
+			</plugin>		
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
+			      <groupId>org.apache.maven.plugins</groupId>
+			      <artifactId>maven-compiler-plugin</artifactId>
+			      <version>3.10.1</version>
+			</plugin>		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <version>2.22.2</version>			    
+			</plugin>			
+		</plugins>		
 		<finalName>sir-richard-boss-web</finalName>
 	</build>
 </project>

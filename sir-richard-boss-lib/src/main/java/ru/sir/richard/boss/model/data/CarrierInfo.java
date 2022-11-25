@@ -1,13 +1,17 @@
 package ru.sir.richard.boss.model.data;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 public class CarrierInfo implements Cloneable {
 	
 	private String region;
 	private String cityContext;
 	private String shortAddress;
 	private String fullAddress;
-		
-	private int cityId;
+	
+	private int pvzId;
+	private int cityId;	
 	private String pvz;
 	private String street;
 	private String house;
@@ -28,14 +32,32 @@ public class CarrierInfo implements Cloneable {
 	private String nearestStation;
 	private String metroStation;
 	private String url;
-	private String weightMax;	
-	
+	private String weightMax;
+	private BigDecimal coordX;
+	private BigDecimal coordY;
+	private List<String> postalCodes;
+		
 	private CourierInfo courierInfo;
 	
 	public CarrierInfo() {
-		this.courierInfo = new CourierInfo();
-		
+		this.courierInfo = new CourierInfo();		
 	}	
+
+	public BigDecimal getCoordX() {
+		return coordX;
+	}
+
+	public void setCoordX(BigDecimal coordX) {
+		this.coordX = coordX;
+	}
+
+	public BigDecimal getCoordY() {
+		return coordY;
+	}
+
+	public void setCoordY(BigDecimal coordY) {
+		this.coordY = coordY;
+	}
 
 	public String getPvz() {
 		return pvz;
@@ -59,6 +81,14 @@ public class CarrierInfo implements Cloneable {
 
 	public void setCityId(int cityId) {
 		this.cityId = cityId;
+	}
+
+	public int getPvzId() {
+		return pvzId;
+	}
+
+	public void setPvzId(int pvzId) {
+		this.pvzId = pvzId;
 	}
 
 	public String getCityContext() {
@@ -229,6 +259,21 @@ public class CarrierInfo implements Cloneable {
 		this.courierInfo = courierInfo;
 	}
 
+	public List<String> getPostalCodes() {
+		return postalCodes;
+	}
+
+	public void setPostalCodes(List<String> postalCodes) {
+		this.postalCodes = postalCodes;
+	}
+
+	public Integer getPostalSize() {
+    	if (postalCodes == null) {
+    		return 0;
+    	}
+    	return postalCodes.size();
+    }	
+	
 	@Override
 	public CarrierInfo clone() throws CloneNotSupportedException  {
 		CarrierInfo clone = (CarrierInfo) super.clone();		

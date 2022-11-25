@@ -16,8 +16,6 @@
 <spring:url value="/resources/client/" var="urlResources"/>
 <spring:url value="/" var="urlHome"/>
 
-
-
 <!doctype html>
 <html lang="ru">
   <head>
@@ -62,12 +60,9 @@
         <c:forEach items="${exception.stackTrace}" var="ste">    ${ste} 
     </c:forEach>
 -->
-	 
 	 	
 	</div>
 </div>
-
-
 	         
 	</div>    
 	<!-- alert block ets -->

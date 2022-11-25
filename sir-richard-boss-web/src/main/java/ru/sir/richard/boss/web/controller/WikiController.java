@@ -38,12 +38,20 @@ import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.model.utils.NumberUtils;
 import ru.sir.richard.boss.web.data.FormProduct;
 import ru.sir.richard.boss.web.data.FormSupplierStockProduct;
+import ru.sir.richard.boss.web.service.PricerService;
+import ru.sir.richard.boss.web.service.WikiRestService;
 import ru.sir.richard.boss.web.validator.SupplierStockProductFormValidator;
 
 @Controller
 public class WikiController extends AnyController {
 	
 	private final Logger logger = LoggerFactory.getLogger(WikiController.class);
+	
+	@Autowired
+	protected PricerService pricerService;
+	
+	@Autowired
+	protected WikiRestService wikiRestService;
 	
 	@Autowired
 	SupplierStockProductFormValidator supplierStockProductFormValidator;
@@ -55,8 +63,7 @@ public class WikiController extends AnyController {
 		
 		binder.registerCustomEditor(BigDecimal.class, 
 				new BigDecimalEditor(BigDecimal.class, new DecimalFormat(NumberUtils.NUMBER_FORMAT_MONEY), true));
-		//binder.setValidator(supplierStockProductFormValidator);
-		
+		//binder.setValidator(supplierStockProductFormValidator);		
 	}
 	
 	@RequestMapping(value = "/wiki/cdek/widjet/{contextString}", method = RequestMethod.GET)
@@ -300,6 +307,10 @@ public class WikiController extends AnyController {
 		}
 	}	
 	
+	/**
+	 new version showSupplierStockProductsBySupplier
+	 with datatable
+	*/
 	@RequestMapping(value = "/wiki/stock-products/suppliers/{supplierId}/product-categories/{productCategoryId}", method = RequestMethod.GET)
 	public String showSupplierStockProductsBySupplier(@PathVariable("supplierId") int supplierId, @PathVariable("productCategoryId") int productCategoryId, Model model) {
 
@@ -307,19 +318,21 @@ public class WikiController extends AnyController {
 		SupplierTypes inputSupplier = SupplierTypes.getValueById(supplierId);
 		ProductCategory inputProductCategory = wikiService.getWiki().getCategoryById(productCategoryId);
 		
-		SupplierStock stock = wikiService.getWiki().getSupplierStock(inputSupplier, inputProductCategory);	
+		SupplierStock stock = wikiService.getWiki().getSupplierStock(inputSupplier, inputProductCategory);		
+		SupplierStock stockTotal = wikiService.getWiki().getSupplierStocks();
+		
 		List<SupplierStockProduct> supplierStockProducts = stock.getSupplierStockProduct();		
 		wikiService.getConfig().saveFormIntegerValue(OrderListController.USER_ID, "stockForm", "supplier.id", supplierId);
 		wikiService.getConfig().saveFormIntegerValue(OrderListController.USER_ID, "stockForm", "productCategory.id", productCategoryId);
 								
 		model.addAttribute("supplierStockProducts", supplierStockProducts);
 		model.addAttribute("stock", stock);
+		model.addAttribute("stockTotal", stockTotal);		
 		model.addAttribute("inputSupplier", inputSupplier);
 		model.addAttribute("inputProductCategory", inputProductCategory);
-		
 		populateDefaultModel(model);
-		
-		return "wiki/liststock";
+				
+		return "wiki/liststock2";
 	}
 	
 	// list page
@@ -391,6 +404,17 @@ public class WikiController extends AnyController {
 				return "redirect:/wiki/stock-products";
 			}
 	}
+
+	@RequestMapping(value = "/wiki/stock-products/suppliers/sititek/price/reload", method = RequestMethod.GET)
+	public String SupplierSititekReLoadPrice() {
+		
+		pricerService.runSititek();
+		
+		int supplierId = 1;
+		int productCategoryId = 0;
+		return "redirect:/wiki/stock-products/suppliers/" + supplierId + "/product-categories/" + productCategoryId;
+	
+	}	
 	
 	@RequestMapping(value = "/wiki/stock-products/{id}/delete", method = RequestMethod.GET)
 	public String deleteSupplierStockProduct(@PathVariable("id") int id, Model model) {
@@ -403,7 +427,7 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/synchronize", method = RequestMethod.GET)
 	public String productsSynchronize(Model model, final RedirectAttributes redirectAttributes) {
 		logger.debug("productsSynchronize()");		
-		wikiService.getWiki().init();
+		wikiService.getWiki().init(false);
 		
 		redirectAttributes.addFlashAttribute("css", "success");
 		redirectAttributes.addFlashAttribute("msg", "Синхронизация остатков и цен по товарам выполнена");
