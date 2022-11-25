@@ -4,7 +4,6 @@ import java.util.Date;
 
 public abstract class AnyReportConditions extends AnyConditions {
 	
-
 	public AnyReportConditions() {
 		super();
 	}

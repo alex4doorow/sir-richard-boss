@@ -1,16 +1,33 @@
 package ru.sir.richard.boss.model.utils;
 
-import static org.junit.Assert.assertEquals;
-
 import java.math.BigDecimal;
 
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import ru.sir.richard.boss.model.types.CustomerTypes;
 
 public class TextUtilsTest {
 
-	private final Logger logger = LoggerFactory.getLogger(TextUtilsTest.class);
+	//private final Logger logger = LoggerFactory.getLogger(TextUtilsTest.class);
+	
+	@Test
+	public void testEnumConvertValuesToSplitedString() {
+		String result;
+		
+		/*
+		result = CustomerTypes.convertValuesToSplitedString(null);
+		assertEquals("", result);
+		*/
+		result = CustomerTypes.convertValuesToSplitedString(CustomerTypes.BUSINESSMAN);
+		assertEquals("3", result);
+		
+		result = CustomerTypes.convertValuesToSplitedString(CustomerTypes.BUSINESSMAN, CustomerTypes.COMPANY);
+		assertEquals("3,2", result);
+		
+		
+		
+	}
 	
 	@Test
 	public void testNumberToPhrase() {		
@@ -79,8 +96,66 @@ public class TextUtilsTest {
 		value = BigDecimal.valueOf(5801.43);		
 		assertEquals("Пять тысяч восемьсот один рубль 43 копейки", TextUtils.roublesToPhrase(value));				
 	}
+	
+	@Test
+	public void testCutCityFromAddress() {
+		String city;
+		
+		city = TextUtils.cutCityFromAddress("Владимир, пр-т Строителей, 15");
+		assertEquals("Владимир", city);
+		city = TextUtils.cutCityFromAddress("г.Челябинск, ул.Кирова 130/7, для доставки прошу смотреть по 2ГИС");
+		assertEquals("Челябинск", city);				
+		city = TextUtils.cutCityFromAddress("Санкт-Петербург, ул. Адмирала Трибуца, д.10");
+		assertEquals("Санкт-Петербург", city);
+		
+	}
+	
+	@Test
+	public void testCutStreetFromAddress() {
+		String street;
+		street = TextUtils.cutStreetFromAddress("Владимир, пр-т Строителей, 15");
+		assertEquals("пр-т Строителей, 15", street);
+		
+		street = TextUtils.cutStreetFromAddress("Санкт-Петербург, ул. Адмирала Трибуца, д.10");
+		assertEquals("ул. Адмирала Трибуца, д.10", street);
 
+	}
 	
 	@Test
 	public void testFormatPhoneNumber() {
+		String s = "";
+		String r = "";
+		
+		s = "+79057809641";
+		r = TextUtils.formatPhoneNumber(s);
+		assertEquals("(905) 780-96-41", r);
+		
+		s = "89177962825";
+		r = TextUtils.formatPhoneNumber(s);
+		assertEquals("(917) 796-28-25", r);
+		
+		s = "8(916)609-81-84";
+		r = TextUtils.formatPhoneNumber(s);
+		assertEquals("(916) 609-81-84", r);
+		
+		s = "89086650244";
+		r = TextUtils.formatPhoneNumber(s);
+		assertEquals("(908) 665-02-44", r);
+		
+		s = "9263361624";
+		r = TextUtils.formatPhoneNumber(s);
+		assertEquals("(926) 336-16-24", r);
+		
+		s = "8-910-450-86-80";
+		r = TextUtils.formatPhoneNumber(s);
+		assertEquals("(910) 450-86-80", r);
+		
+		s = "79057809641";
+		r = TextUtils.formatPhoneNumber(s);
+		assertEquals("(905) 780-96-41", r);		
+		
+		s ="989 612 28 82";
+		r = TextUtils.formatPhoneNumber(s);
+		assertEquals("(989) 612-28-82", r);		
+	}
 }

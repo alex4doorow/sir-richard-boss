@@ -8,11 +8,14 @@
     <script src="${urlResources}assets/js/vendor/jquery-3.3.1.min.js" ></script>    
     <script src="${urlResources}assets/js/vendor/popper.min.js"></script>
     <script src="${urlResources}js/bootstrap.min.js"></script>
+    
     <script src="${urlResources}js/bootstrap-datepicker.min.js"></script>
 	<script src="${urlResources}locales/bootstrap-datepicker.ru.min.js"></script>
+	<script src="${urlResources}js/datatables.js"></script>
+	
 	<script src="${urlResources}js/jquery.mask.min.js"></script>
 	<script src="${urlResources}js/hello.js"></script>
-    <!-- <script src="${urlResources}js/feather.min.js"></script>  -->
+
     <!-- CDEK -->    
     <script type="text/javascript" src="https://www.cdek.ru/website/edostavka/template/js/widjet.js" id="ISDEKscript" ></script>
     

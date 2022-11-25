@@ -1,7 +1,10 @@
 package ru.sir.richard.boss.web.config;
 
 import java.util.Locale;
+import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.ApplicationContext;
@@ -16,7 +19,9 @@ import org.springframework.jmx.support.RegistrationPolicy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -25,13 +30,13 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @EnableWebMvc
 @EnableScheduling
-@ComponentScan({"ru.sir.richard.boss.web.controller", "ru.sir.richard.boss.web.validator", "ru.sir.richard.boss.web.service", 
-	"ru.sir.richard.boss.dao", "ru.sir.richard.boss.crm"})
-@PropertySource(value= {"classpath:application.properties"})
+@ComponentScan(basePackages = {"ru.sir.richard.boss.web", "ru.sir.richard.boss.dao", "ru.sir.richard.boss.crm", "ru.sir.richard.boss.api", "ru.sir.richard.boss.converter"})
+@PropertySource(value="classpath:application.properties", encoding="UTF-8")
+//@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
+@PropertySource(value="classpath:application-test.properties", encoding="UTF-8")
 public class MvcWebConfig implements WebMvcConfigurer {
-
-	//@Autowired
-	//private ApplicationContext applicationContext;
+	
+	private final Logger logger = LoggerFactory.getLogger(MvcWebConfig.class);
 	
 	@Value("${application.name}")
 	private String applicationName;
@@ -47,11 +52,6 @@ public class MvcWebConfig implements WebMvcConfigurer {
 		return applicationVersion;
 	}
 		
-	@Override	
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-	}
-
 	@Bean
 	public InternalResourceViewResolver viewResolver() {
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -71,7 +71,7 @@ public class MvcWebConfig implements WebMvcConfigurer {
 	@Bean
 	public SessionLocaleResolver localeResolver() {
 	    SessionLocaleResolver slr = new SessionLocaleResolver();
-	    slr.setDefaultLocale(new Locale("ru_RU")); //slr.setDefaultLocale(Locale.US); // 
+	    slr.setDefaultLocale(new Locale("ru_RU")); 
 	    return slr;
 	}
 	
@@ -94,5 +94,49 @@ public class MvcWebConfig implements WebMvcConfigurer {
     public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+	
+	@Bean(name = "simpleMappingExceptionResolver")
+	public SimpleMappingExceptionResolver createSimpleMappingExceptionResolver() {
+		logger.info("Creating SimpleMappingExceptionResolver");
+		SimpleMappingExceptionResolver r = new SimpleMappingExceptionResolver();
 
+		Properties mappings = new Properties();
+		mappings.setProperty("RuntimeException", "runtimeException");
+		
+		r.setExceptionMappings(mappings); // None by default
+		r.setExceptionAttribute("ex"); // Default is "exception"
+		r.setWarnLogCategory("sir.richard.boss.ExceptionLogger"); // No default
+
+		/*
+		 * Normally Spring MVC has no default error view and this class is the
+		 * only way to define one. A nice feature of Spring Boot is the ability
+		 * to provide a very basic default error view (otherwise the application
+		 * server typically returns a Java stack trace which is not acceptable
+		 * in production). See Blog for more details.
+		 * 
+		 * To stick with the Spring Boot approach, DO NOT set this property of
+		 * SimpleMappingExceptionResolver.
+		 * 
+		 * Here we are choosing to use SimpleMappingExceptionResolver since many
+		 * Spring applications have used the approach since Spring V1. Normally
+		 * we would specify the view as "error" to match Spring Boot, however so
+		 * you can see what is happening, we are using a different page.
+		 */
+		r.setDefaultErrorView("error/exception2page");
+		return r;
+	}	
+	
+	@Override	
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+	}	
+		
+	@Override
+    public void addViewControllers(ViewControllerRegistry registry) {        
+		registry.addViewController("/login");
+		registry.addViewController("/session-expired");
+        registry.addViewController("/invalid-session");		
+		registry.addViewController("/news");        
+        registry.addViewController("/anonymous");        
+    }
 }

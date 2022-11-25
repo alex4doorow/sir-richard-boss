@@ -1,10 +1,9 @@
 package ru.sir.richard.boss.model.calc;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
-
-import org.junit.Test;
 
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.data.OrderAmounts;
@@ -199,8 +198,7 @@ public class OrderTotalAmountsCalculatorTest {
 		assertEquals(new BigDecimal("4250"), amounts.getTotalWithDelivery()); // к оплате 4644
 		assertEquals(new BigDecimal("1158.13"), amounts.getMargin()); // прибыль = 1292		
 		assertEquals(new BigDecimal("3962.50"), amounts.getPostpay()); // наложенный платеж 4121,83 
-		assertEquals(new BigDecimal("0"), amounts.getDelivery()); // стоимость доставки
-				
+		assertEquals(new BigDecimal("0"), amounts.getDelivery()); // стоимость доставки				
 	}
 	
 	

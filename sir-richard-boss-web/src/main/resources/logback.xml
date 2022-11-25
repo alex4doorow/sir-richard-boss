@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+	<property name="LOG_PATH" value="../logs"/>
+	<property name="LOG_FILE" value="srbw" />
+	<property name="LOG_PATH_FILE" value="c:/server/apache-tomcat-9.0.12/logs/srbw.log"/>
+	<property name="LOG_PATH_FILE_1" value="../logs/srbw.log"/>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<Pattern>
@@ -8,36 +12,71 @@
 			</Pattern>
 		</layout>
 	</appender>
+	
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+	    <file>${LOG_PATH}/${LOG_FILE}.log</file>
+	    <append>true</append>
+	    <!-- set immediateFlush to false for much higher logging throughput -->
+	    <immediateFlush>true</immediateFlush>
+	    <!-- encoders are assigned the type
+	         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+	    <encoder>
+	      <pattern>%d{dd.MM.yyyy HH:mm:ss:SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+	    </encoder>
+	</appender>
+	
+	<appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <file>${LOG_PATH_FILE}</file>
+	    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	      <!-- daily rollover -->
+	      <fileNamePattern>${LOG_PATH_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>	
+	      <!-- keep 30 days' worth of history capped at 3GB total size -->
+	      <maxHistory>30</maxHistory>
+	      <totalSizeCap>3GB</totalSizeCap>	
+	    </rollingPolicy>	
+	    <encoder>	    			
+	      <pattern>%d{dd.MM.yyyy HH:mm:ss:SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+	    </encoder>
+	  </appender> 
+	
 
 	<logger name="org.springframework" level="error" additivity="false">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ROLLING_FILE" />		
 	</logger>
 	
 	<logger name="ru.sir.richard.boss.model" level="debug" additivity="false">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ROLLING_FILE" />
 	</logger>	
 	<logger name="ru.sir.richard.boss.model.calc" level="debug" additivity="false">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ROLLING_FILE" />
 	</logger>
 	
 	<logger name="ru.sir.richard.boss.dao" level="debug" additivity="false">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ROLLING_FILE" />
 	</logger>
 	
 	<logger name="ru.sir.richard.boss.crm" level="debug" additivity="false">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ROLLING_FILE" />
 	</logger>	
 	
 	<logger name="ru.sir.richard.boss.web" level="debug" additivity="false">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ROLLING_FILE" />
 	</logger>
 	
 	<logger name="ru.sir.richard.boss.api" level="debug" additivity="false">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ROLLING_FILE" />
 	</logger>
 
 	<root level="error">
 		<appender-ref ref="STDOUT" />
+		<appender-ref ref="ROLLING_FILE" />
 	</root>
 
 </configuration>

@@ -59,26 +59,36 @@ public class SalesFunnelReportBean extends AnyReportBean {
 	// ORDERS	
 	private int totalOrders;
 	private int personTotalOrders = 0;
+	private int marketPlaceTotalOrders = 0;
+	
 	private int companyTotalOrders = 0;
 		
 	private int myselfDeliveryOrders;
 	private int courierServiceDeliveryOrders;
 	private int postServiceDeliveryOrders;
+	private int marketPlaceDeliveryOrders;	
 	
 	private int cdekDeliveryOrders = 0;
 	private int dellinDeliveryOrders = 0;
 	
+	private int yandexGoDeliveryOrders = 0;
+	private int ozonRocketDeliveryOrders = 0;
+		
 	// доход
 	private BigDecimal myselfDeliveryOrdersAmount;
 	private BigDecimal courierServiceDeliveryOrdersAmount;
 	private BigDecimal postServiceDeliveryOrdersAmount;
+	private BigDecimal marketPlaceDeliveryOrdersAmount;
+	
 	
 	private BigDecimal personOrdersAmount;
+	private BigDecimal marketPlaceOrdersAmount;	
 	private BigDecimal companyOrdersAmount;
 					
 	// транспортные расходы
 	private BigDecimal courierServiceDeliveryOrdersCost;
-	private BigDecimal postServiceDeliveryOrdersCost;	
+	private BigDecimal postServiceDeliveryOrdersCost;
+	private BigDecimal marketPlaceDeliveryOrdersCost;	
 	
 	// MONEY	
 	private BigDecimal totalAmount;
@@ -86,6 +96,7 @@ public class SalesFunnelReportBean extends AnyReportBean {
 	private BigDecimal totalMarginAmount;
 	
 	private BigDecimal personMarginAmount;
+	private BigDecimal marketPlaceMarginAmount;
 	private BigDecimal companyMarginAmount;
 	
 	// ОСТАТКИ
@@ -386,12 +397,52 @@ public class SalesFunnelReportBean extends AnyReportBean {
 		this.dellinDeliveryOrders = dellinDeliveryOrders;
 	}
 
+	public int getYandexGoDeliveryOrders() {
+		return yandexGoDeliveryOrders;
+	}
+
+	public void setYandexGoDeliveryOrders(int yandexGoDeliveryOrders) {
+		this.yandexGoDeliveryOrders = yandexGoDeliveryOrders;
+	}
+
+	public int getOzonRocketDeliveryOrders() {
+		return ozonRocketDeliveryOrders;
+	}
+
+	public void setOzonRocketDeliveryOrders(int ozonRocketDeliveryOrders) {
+		this.ozonRocketDeliveryOrders = ozonRocketDeliveryOrders;
+	}
+
 	public int getCourierServiceDeliveryOrders() {
 		return courierServiceDeliveryOrders;
 	}
 
 	public void setCourierServiceDeliveryOrders(int courierServiceDeliveryOrders) {
 		this.courierServiceDeliveryOrders = courierServiceDeliveryOrders;
+	}
+
+	public int getMarketPlaceDeliveryOrders() {
+		return marketPlaceDeliveryOrders;
+	}
+
+	public void setMarketPlaceDeliveryOrders(int marketPlaceDeliveryOrders) {
+		this.marketPlaceDeliveryOrders = marketPlaceDeliveryOrders;
+	}
+
+	public BigDecimal getMarketPlaceDeliveryOrdersAmount() {
+		return marketPlaceDeliveryOrdersAmount;
+	}
+
+	public void setMarketPlaceDeliveryOrdersAmount(BigDecimal marketPlaceDeliveryOrdersAmount) {
+		this.marketPlaceDeliveryOrdersAmount = marketPlaceDeliveryOrdersAmount;
+	}
+
+	public BigDecimal getMarketPlaceDeliveryOrdersCost() {
+		return marketPlaceDeliveryOrdersCost;
+	}
+
+	public void setMarketPlaceDeliveryOrdersCost(BigDecimal marketPlaceDeliveryOrdersCost) {
+		this.marketPlaceDeliveryOrdersCost = marketPlaceDeliveryOrdersCost;
 	}
 
 	public int getPostServiceDeliveryOrders() {
@@ -468,6 +519,30 @@ public class SalesFunnelReportBean extends AnyReportBean {
 
 	public BigDecimal getCompanyMarginAmount() {
 		return companyMarginAmount;
+	}
+
+	public int getMarketPlaceTotalOrders() {
+		return marketPlaceTotalOrders;
+	}
+
+	public void setMarketPlaceTotalOrders(int marketPlaceTotalOrders) {
+		this.marketPlaceTotalOrders = marketPlaceTotalOrders;
+	}
+
+	public BigDecimal getMarketPlaceOrdersAmount() {
+		return marketPlaceOrdersAmount;
+	}
+
+	public void setMarketPlaceOrdersAmount(BigDecimal marketPlaceOrdersAmount) {
+		this.marketPlaceOrdersAmount = marketPlaceOrdersAmount;
+	}
+
+	public BigDecimal getMarketPlaceMarginAmount() {
+		return marketPlaceMarginAmount;
+	}
+
+	public void setMarketPlaceMarginAmount(BigDecimal marketPlaceMarginAmount) {
+		this.marketPlaceMarginAmount = marketPlaceMarginAmount;
 	}
 
 	public void setCompanyMarginAmount(BigDecimal companyMarginAmount) {
@@ -654,6 +729,14 @@ public class SalesFunnelReportBean extends AnyReportBean {
 		return getPersonOrdersAmount().divide(BigDecimal.valueOf(getPersonTotalOrders()), 2, RoundingMode.HALF_UP);
 	}
 	
+	public BigDecimal getMarketPlaceAverageBill() {
+		// средний чек	по маркетплейсам = суммарный доход / число заказов
+		if (getMarketPlaceTotalOrders() == 0) {
+			return BigDecimal.ZERO;
+		}
+		return getMarketPlaceOrdersAmount().divide(BigDecimal.valueOf(getMarketPlaceTotalOrders()), 2, RoundingMode.HALF_UP);
+	}
+	
 	public BigDecimal getCompanyAverageBill() {
 		// средний чек	по компании = суммарный доход / число заказов
 		if (getCompanyTotalOrders() == 0) {
@@ -668,6 +751,14 @@ public class SalesFunnelReportBean extends AnyReportBean {
 			return BigDecimal.ZERO;
 		}
 		return getPersonMarginAmount().divide(BigDecimal.valueOf(getPersonTotalOrders()), 2, RoundingMode.HALF_UP);
+	}
+	
+	public BigDecimal getMarketPlaceAverageMargin() {
+		// средняя прибыль по маркетплейсу = суммарный доход / число заказов
+		if (getMarketPlaceTotalOrders() == 0) {
+			return BigDecimal.ZERO;
+		}
+		return getMarketPlaceMarginAmount().divide(BigDecimal.valueOf(getMarketPlaceTotalOrders()), 2, RoundingMode.HALF_UP);
 	}
 	
 	public BigDecimal getCompanyAverageMargin() {

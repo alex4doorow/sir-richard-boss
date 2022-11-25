@@ -1,5 +1,6 @@
 # Compiled class file
 *.class
+*.bat
 
 # Log file
 *.log
@@ -26,3 +27,29 @@ hs_err_pid*
 *.project
 *.classpath
 *.settings
+
+/.idea/
+/thymeleaf/thymeleaf.iml
+/spring-boot/spring-boot.iml
+/java/java.iml
+/.metadata/
+**/target
+*.iml
+
+**/main/resources/application.properties
+**/main/resources/application-production.properties
+**/main/resources/application-test.properties
+**/test/resources/application-it.properties
+
+**/--load/*
+**/--save/*
+
+*.sql
+*.xlsx
+*.xls
+*.mwb
+
+**/--1-load
+**/--1-archive
+**/Servers
+**/spring-tutoral

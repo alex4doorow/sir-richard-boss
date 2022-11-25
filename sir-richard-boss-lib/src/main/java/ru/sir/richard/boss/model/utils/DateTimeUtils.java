@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,10 +19,30 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
 
+/**
+ * Набор утилитных методов для преобразования даты в строки и обратно
+ * @author alex4doorow
+ *
+ */
 public class DateTimeUtils {
 		
-	public static String DATE_FORMAT_dd_MM_yyyy = "dd.MM.yyyy";
-	public static String DATE_FORMAT_HH_mm = "HH:mm";
+	public static final String DATE_FORMAT_dd_MM_yyyy = "dd.MM.yyyy";
+	public static final String DATE_FORMAT_HH_mm = "HH:mm";	
+	public static final String DATA_FORMAT_UTC_Z = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+	public static final String DATE_FORMAT_OZON = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	public static final String DATE_FORMAT_CDEK = "yyyy-MM-dd'T'HH:mm:ssZ"; // "2022-11-21T09:05:06+0000"
+	
+	public static String defaultFormatDateTimeByTimeZone(Date date, String timeZoneId) {		
+		final SimpleDateFormat sdf = new SimpleDateFormat(DATA_FORMAT_UTC_Z);
+		sdf.setTimeZone(TimeZone.getTimeZone(timeZoneId));
+		return sdf.format(date);
+	}
+	
+	public static String defaultFormatTimeByTimeZone(Date date, String timeZoneId) {		
+		final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_HH_mm);
+		sdf.setTimeZone(TimeZone.getTimeZone(timeZoneId));
+		return sdf.format(date);
+	}
 
 	public static String formatDate(Date date, String dateFormatString) {
 		if (date == null) {
@@ -38,6 +59,10 @@ public class DateTimeUtils {
 	
 	public static String defaultFormatDate(Date date) {
 		return formatDate(date, DATE_FORMAT_dd_MM_yyyy);
+	}
+	
+	public static String defaultFormatTime(Date date) {
+		return formatDate(date, DATE_FORMAT_HH_mm);
 	}
 
 	public static int dateToShortYear(Date date) {		
@@ -131,15 +156,6 @@ public class DateTimeUtils {
 			}
 			i++;			
 		}
-		/*
-		
-		
-		String dayOfWeek = formatDate(result, "u");
-		if (dayOfWeek.equals("6")) {
-			result = afterAnyDate(result, 2);			
-		} else if (dayOfWeek.equals("7")) {
-			result = afterAnyDate(result, 1);			
-		}*/
 	    return result;
 	}
 	

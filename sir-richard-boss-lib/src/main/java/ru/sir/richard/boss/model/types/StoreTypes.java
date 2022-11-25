@@ -74,7 +74,5 @@ public enum StoreTypes {
 			return StoreTypes.PM;
 		} 	
 	}
-	
-	
 
 }

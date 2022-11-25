@@ -164,9 +164,28 @@ public enum CarrierStatuses {
 			return CarrierStatuses.OZON_RETURN_READY_FOR_SENDER;
 		} else if (code.equalsIgnoreCase("ReturnedToSender") && crmTypes == CrmTypes.OZON) {
 			return CarrierStatuses.OZON_RETURNED_TO_SENDER;
+		} else if (code.equalsIgnoreCase("DELIVERED") && crmTypes == CrmTypes.CDEK) {
+			return CarrierStatuses.CDEK_DELIVERED;
+		} else if (code.equalsIgnoreCase("ACCEPTED_AT_PICK_UP_POINT") && crmTypes == CrmTypes.CDEK) {
+			return CarrierStatuses.CDEK_READY_GIVE_AWAY_18;
+		} else if (code.equalsIgnoreCase("ACCEPTED_IN_RECIPIENT_CITY") && crmTypes == CrmTypes.CDEK) {
+			return CarrierStatuses.CDEK_DELIVERING_06;
+		} else if (code.equalsIgnoreCase("TAKEN_BY_TRANSPORTER_FROM_TRANSIT_CITY") && crmTypes == CrmTypes.CDEK) {
+			return CarrierStatuses.CDEK_DELIVERING_06;
+		} else if (code.equalsIgnoreCase("ACCEPTED_IN_TRANSIT_CITY") && crmTypes == CrmTypes.CDEK) {
+			return CarrierStatuses.CDEK_DELIVERING_06;
+		} else if (code.equalsIgnoreCase("ACCEPTED_AT_TRANSIT_WAREHOUSE") && crmTypes == CrmTypes.CDEK) {
+			return CarrierStatuses.CDEK_DELIVERING_06;
+		} else if (code.equalsIgnoreCase("READY_FOR_SHIPMENT_IN_SENDER_CITY") && crmTypes == CrmTypes.CDEK) {
+			return CarrierStatuses.CDEK_DELIVERING_06;
+		} else if (code.equalsIgnoreCase("RECEIVED_AT_SHIPMENT_WAREHOUSE") && crmTypes == CrmTypes.CDEK) {
+			return CarrierStatuses.CDEK_DELIVERING_06;
+		} else if (code.equalsIgnoreCase("ACCEPTED") && crmTypes == CrmTypes.CDEK) {
+			return CarrierStatuses.CDEK_CREATE;
+		} else if (code.equalsIgnoreCase("CREATED") && crmTypes == CrmTypes.CDEK) {
+			return CarrierStatuses.CDEK_CREATE;
 		} else {
 			return CarrierStatuses.UNKNOWN;
 		}		
 	}	
-
 }

@@ -55,7 +55,7 @@ public class OrderListController extends AnyController {
 
 	@Autowired
 	private DeliveryService deliveryService;
-
+	
 	@InitBinder
 	protected void initBinder(WebDataBinder binder, HttpServletRequest httpServletRequest) {
 
@@ -67,9 +67,8 @@ public class OrderListController extends AnyController {
 
 	@RequestMapping(value = "/orders/import-crm", method = RequestMethod.GET)
 	public String importCrm(Model model) {
-
 		logger.debug("importCrm(): start");
-		orderService.getCrmManager().setExecutorDate(DateTimeUtils.sysDate());
+		orderService.getCrmManager().setExecutorDate(DateTimeUtils.sysDate());		
 		orderService.getCrmManager().importRun();
 		logger.debug("importCrm(): end");
 		return "redirect:/orders";
@@ -218,7 +217,7 @@ public class OrderListController extends AnyController {
 		}		
 		if (id <= 0 && TextUtils.textIsEmail(dirtyConditions)) {
 			// 4) ищем по email физика
-			final String email = dirtyConditions.trim() + ".ru";
+			final String email = dirtyConditions.trim();
 			
 			orderConditions = new OrderConditions();
 			orderConditions.setPeriodExist(false);
@@ -232,7 +231,7 @@ public class OrderListController extends AnyController {
 		}		
 		if (id <= 0 && TextUtils.textIsEmail(dirtyConditions)) {
 			// 5) ищем по email юрика
-			final String email = dirtyConditions.trim() + ".ru";				
+			final String email = dirtyConditions.trim();				
 			orderConditions = new OrderConditions();
 			orderConditions.setPeriodExist(false);
 			customerConditions = new CustomerConditions();
@@ -322,6 +321,18 @@ public class OrderListController extends AnyController {
 		logger.debug("ordersStatusesReload(): end");
 				
 		return "redirect:/orders";
+	}
+	
+	@RequestMapping(value = "/orders/actualization-postpay", method = RequestMethod.GET)
+	public String ordersActualizationPostpay(Model model, final RedirectAttributes redirectAttributes) {
+		
+		logger.debug("ordersActualizationPostpay(): start");		
+		Date today = DateTimeUtils.sysDate();
+		String result = orderService.getCrmManager().actualizationPostpay(today);		
+		redirectAttributes.addFlashAttribute("css", "success");
+		redirectAttributes.addFlashAttribute("msg", result);
+		logger.debug("ordersActualizationPostpay(): end");
+		return "redirect:/orders";		
 	}
 	
 	@RequestMapping(value = "/orders/statuses/today", method = RequestMethod.GET)

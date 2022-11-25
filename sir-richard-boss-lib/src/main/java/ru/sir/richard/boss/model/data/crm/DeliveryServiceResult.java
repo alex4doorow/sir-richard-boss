@@ -20,11 +20,15 @@ public class DeliveryServiceResult {
 	private BigDecimal deliveryFullPrice; // стоимость доставки (прайс + все комиссии)
 	private BigDecimal deliveryCustomerSummary; // сколько берем с клиента за доставку
 	private BigDecimal deliverySellerSummary; // сколько берет c нас сдэк за доставку и инкассацию
+	
+	private Integer deliveryPeriodMin = 0;
+	private Integer deliveryPeriodMax = 0;
 			
 	private String termText;
 	private String to;
 	private String parcelType;
 	private String weightText;
+	private String localTimeText;
 	private String errorText;
 	
 	private List<Address> addresses;
@@ -40,8 +44,26 @@ public class DeliveryServiceResult {
 		deliveryFullPrice = BigDecimal.ZERO;
 		deliveryCustomerSummary = BigDecimal.ZERO;
 		deliverySellerSummary = BigDecimal.ZERO;
+		
+		this.localTimeText = "";
 			
 		addresses = new ArrayList<Address>();
+	}
+
+	public Integer getDeliveryPeriodMin() {
+		return deliveryPeriodMin;
+	}
+
+	public void setDeliveryPeriodMin(Integer deliveryPeriodMin) {
+		this.deliveryPeriodMin = deliveryPeriodMin;
+	}
+
+	public Integer getDeliveryPeriodMax() {
+		return deliveryPeriodMax;
+	}
+
+	public void setDeliveryPeriodMax(Integer deliveryPeriodMax) {
+		this.deliveryPeriodMax = deliveryPeriodMax;
 	}
 
 	public BigDecimal getPostpayAmount() {
@@ -116,6 +138,14 @@ public class DeliveryServiceResult {
 		this.termText = termText;
 	}
 	
+	public String getLocalTimeText() {
+		return localTimeText;
+	}
+
+	public void setLocalTimeText(String localTimeText) {
+		this.localTimeText = localTimeText;
+	}
+
 	public String getErrorText() {
 		return errorText;
 	}
@@ -152,6 +182,10 @@ public class DeliveryServiceResult {
 		String result;
 		if (StringUtils.isEmpty(errorText)) {
 			result = "доставляем: " + this.to + ", " + "срок: " + this.termText + ", " + "вес: " + this.weightText;
+			if (StringUtils.isNoneEmpty(this.localTimeText)) {
+				result += " сейчас в месте назначения: " + this.localTimeText;				
+			}
+			
 		} else {
 			result = errorText;
 		}				

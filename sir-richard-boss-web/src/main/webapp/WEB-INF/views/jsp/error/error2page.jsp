@@ -16,8 +16,6 @@
 <spring:url value="/resources/client/" var="urlResources"/>
 <spring:url value="/" var="urlHome"/>
 
-
-
 <!doctype html>
 <html lang="ru">
   <head>
@@ -38,8 +36,7 @@
 	<%@ include file = "../fragments/header2html2navbar2start.jsp" %>
 	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">   
 	<!-- local content -->            
-	<h1 class="h2">${errorHeader}</h1>
- 
+	<h1 class="h2">${errorHeader}</h1> 
 	<%@ include file = "../fragments/header2html2navbar2finish.jsp" %>
 
 <div class="container-fluid">
@@ -57,8 +54,6 @@
 	 </div>		
 	</div>
 </div>
-
-
 	         
 	</div>    
 	<!-- alert block ets -->

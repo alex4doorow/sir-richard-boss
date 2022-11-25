@@ -5,6 +5,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix = "fn" uri = "http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%
 	request.setCharacterEncoding("UTF-8");
@@ -24,3 +25,5 @@
 <spring:url value="/wiki" var="urlWiki"/>
 <spring:url value="/report" var="urReport"/>
 <spring:url value="/alarm" var="urlAlarm"/>
+
+<spring:url value="/wiki-rest" var="urlWikiRest"/>

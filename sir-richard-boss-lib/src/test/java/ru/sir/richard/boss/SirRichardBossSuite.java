@@ -1,24 +1,16 @@
 package ru.sir.richard.boss;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+/*
+import org.junit.platform.suite.api.IncludeClassNamePatterns;
+import org.junit.platform.suite.api.SelectPackages;
+import org.junit.platform.suite.api.Suite;
+import org.junit.platform.suite.api.SuiteDisplayName;
 
-import ru.sir.richard.boss.api.cdek.CdekApiTest;
-import ru.sir.richard.boss.model.calc.OrderTotalAmountsCalculatorTest;
-import ru.sir.richard.boss.model.data.CloneableTest;
-import ru.sir.richard.boss.model.data.OrderTest;
-import ru.sir.richard.boss.model.utils.TextUtilsTest;
-
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ 
-	TextUtilsTest.class, 
-	CloneableTest.class,
-	OrderTest.class,
-	//CdekApiTest.class,
-	OrderTotalAmountsCalculatorTest.class	
-})
+@Suite
+@SuiteDisplayName("JUnit 5 Platform Suite")
+@SelectPackages("ru.sir.richard.boss")
+@IncludeClassNamePatterns(".*Tests")
+*/
 public class SirRichardBossSuite {
 
 }

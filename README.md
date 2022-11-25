@@ -1,4 +1,30 @@
-# sir-richard-boss
+# sir-richard-boss 
+проект перенесен со spring 2.0.1 на 2.7.4
+выполнена адаптация проекта под новый SPRING.
+
+реальные application.properties в проект не заложены из-за соображений безопасности. в них присутствуют параметры интеграций с CDEK, OZON, Яндекс Маркет и т.п.
+в git залиты пустые application-etalon.properties, в которых данные вычищены.
+нужно скопипастить application-etalon.properties в application.properties и заполнить данными для настроек.
+
+Настройки для подключения к MySQL находятся: 
+application-production.properties боевая
+application-test.properties тестовая
+<!--
+#application
+application.production = false
+
+#jdbc
+jdbc.jndi = java:comp/env/jdbc/sirRichardBoss
+jdbc.ds.pm.url = jdbc:mysql://127.0.0.1:3306/************?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+jdbc.ds.pm.user = ************
+jdbc.ds.pm.password = ************
+-->
+В application-production.properties находится важный парамер: application.production = true
+Если он в true, то запускаются шедулеры и обращаются через интеграцию во внешние системы: передают данные, обновляют данные.
+Для тестовой среды этот параметр сброшен
+
+--2-db находятся файлы построения бд. структура данных разработана для mysql
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Web приложение "Бэк офис интернет-магазина"
 
 Бэкофис интернет магазина «приборМАСТЕР» является приложением полного цикла.  Приложение обеспечивает ввод заявок, контроль и расход товарных остатков склада. 

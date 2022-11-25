@@ -1,5 +1,8 @@
 package ru.sir.richard.boss.model.data;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
 public abstract class AnyId implements Cloneable {
 		
 	private int id;
@@ -35,28 +38,6 @@ public abstract class AnyId implements Cloneable {
 	
 	protected void clear() {
 		//
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AnyId other = (AnyId) obj;
-		if (id != other.id)
-			return false;
-		return true;
 	}
 
 	@Override

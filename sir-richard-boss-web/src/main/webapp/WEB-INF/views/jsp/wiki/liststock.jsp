@@ -66,10 +66,9 @@
 			    <button id="button-add" type="button" class="btn btn-sm btn-light" onclick="onClickAddSupplierStockProduct()"><fmt:message key="main.btn.add" /></button>
 			    <button id="button-update" type="button" class="btn btn-sm btn-light" disabled onclick="onClickUpdateSupplierStockProduct()"><fmt:message key="main.btn.update" /></button>
 			    <button id="button-delete" type="button" class="btn btn-sm btn-danger" disabled onclick="onClickDeleteSupplierStockProduct()"><fmt:message key="main.btn.delete"/></button>
-			    
-			    
+			    			    
 			    <button id="button-products-synchronize" type="button" class="btn btn-sm btn-light"><fmt:message key="wiki.stock.btn.synchronizing"/></button>
-		
+			    <button id="button-price-reload" type="button" class="btn btn-sm btn-light"><fmt:message key="wiki.stock.btn.price.reload"/></button>
 			    		
 		</div>
 		<br/>
@@ -156,6 +155,12 @@
 			window.location.href = '${urlWiki}/stock-products/suppliers/' + $('#select-stock-supplier').val() + '/product-categories/' + $('#select-stock-category').val();
 		});
 		
+		if ($('#select-stock-supplier').val() == 1) {
+			$('#button-price-reload').prop('hidden', false);
+		} else {
+			$('#button-price-reload').prop('hidden', true);
+		}
+		
 		function onClickAddSupplierStockProduct() {
 			console.log('${urlWiki}/stock-products/add');			
 			window.location = '${urlWiki}/stock-products/add';
@@ -172,6 +177,11 @@
 		
 		$('#button-products-synchronize').click(function() {
 			window.location.href = '${urlWiki}/products/synchronize';
+		});
+
+		
+		$('#button-price-reload').click(function() {
+			window.location.href = '${urlWiki}/stock-products/suppliers/sititek/price/reload';
 		});
 		
 		

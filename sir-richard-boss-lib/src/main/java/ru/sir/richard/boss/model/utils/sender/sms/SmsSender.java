@@ -26,13 +26,16 @@ public class SmsSender implements AnySender {
 	
 	public SmsSender(PropertyResolver environment) {
 		super();
-		this.textGenerator = new SmsSenderTextGenerator();
 		this.environment = environment;
+		this.textGenerator = new SmsSenderTextGenerator();
 	}
-	
+
 	@Override
 	public SendingResponseStatus sendOrder(Order order) {
 		
+		if (StringUtils.isNotEmpty(order.getCustomer().getEmail())) {			
+			return SmsSendingResponseStatus.createEmpty();
+		}	
 		if (StringUtils.isEmpty(order.getDelivery().getTrackCode())) {			
 			return SmsSendingResponseStatus.createEmpty();
 		}				
@@ -45,9 +48,6 @@ public class SmsSender implements AnySender {
 		}		
 		SmsApi apiSms = new SmsApi(environment);
 	    String phone = "7" + TextUtils.phoneNumberDigit(order.getCustomer().getViewPhoneNumber());
-	    
-	    // TODO
-	    //phone = "79161699099";
 	    
 	    logger.debug("sms text:{}", smsText);
 		logger.debug("sms recepient:{}", phone);			    

@@ -1,42 +1,38 @@
 package ru.sir.richard.boss.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 
 public abstract class AnyDaoImpl {
-	
+
 	private final Logger logger = LoggerFactory.getLogger(AnyDaoImpl.class);
-			
-	@Autowired  
+
+	@Autowired
+	protected DataSource dataSource;
+
+	@Autowired
 	protected JdbcTemplate jdbcTemplate;
-	
-	@Autowired  
-	protected JdbcTemplate jdbcTemplateSlave;
-	
+
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
-		this.jdbcTemplateSlave = new JdbcTemplate(dataSource);
 	}
-	
-	protected int getLastInsert() {	
-		final String sqlSelectLastInsert = "SELECT LAST_INSERT_ID() AS LAST_ID";
-		Integer result = this.jdbcTemplate.queryForObject(sqlSelectLastInsert,
-		        new Object[]{},
-		        new RowMapper<Integer>() {
-		            public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-		            	Integer result = rs.getInt("LAST_ID");
-		            	logger.debug("getLastInsert():{}", result.intValue());
-		                return result.intValue();
-		            }
-		        });
-		return result.intValue();
+
+	@SuppressWarnings("unused")
+	private int getLastInsert(String tableName) {
+		int result = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID() AS LAST_ID from " + tableName + " LIMIT 1", Integer.class);
+		logger.debug("getLastInsert(): {}", result);
+		return result;
 	}
+
+	protected int getLastInsertByGeneratedKeyHolder(GeneratedKeyHolder generatedKeyHolder, int rowsAffected) {
+		final int result = generatedKeyHolder.getKey().intValue();
+		logger.info("rowsAffected={}, id={}", rowsAffected, result);
+		return result;
+	}
+
 }

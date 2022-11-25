@@ -7,8 +7,6 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,7 +20,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -41,7 +38,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import ru.sir.richard.boss.api.AnyApi;
-import ru.sir.richard.boss.model.data.CarrierInfo;
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.data.OrderExternalCrm;
 import ru.sir.richard.boss.model.data.crm.CdekOrderBean;
@@ -122,14 +118,13 @@ public class CdekApi implements AnyApi {
 				
 		logger.debug("test input.xml:{}", inputXml);			
 		
-		HttpClient httpClient = HttpClientBuilder.create().build();
-		
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build();		
 		try {
 			HttpPost post = new HttpPost(url);	
 			List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
 		    postParameters.add(new BasicNameValuePair("xml_request", inputXml));		    
 		    post.setEntity(new UrlEncodedFormEntity(postParameters, "utf-8"));
-			HttpResponse response = httpClient.execute(post);
+		    org.apache.http.HttpResponse response = httpClient.execute(post);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "utf-8"));
 
 			StringBuffer result = new StringBuffer();
@@ -163,8 +158,12 @@ public class CdekApi implements AnyApi {
 
 		} catch (Exception ex) {
 			logger.error("Exception: ", ex);
-		} finally {
-			//httpClient.close();
+		} finally {			
+			try {
+				httpClient.close();
+			} catch (IOException e) {
+				logger.error("IOException: ", e);
+			}
 		}
 		return trackCode;
 	}	
@@ -185,7 +184,7 @@ public class CdekApi implements AnyApi {
 				+ "</StatusReport>";
 		logger.debug("test input.xml:{}", inputXml);			
 		
-		HttpClient httpClient = HttpClientBuilder.create().build();
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 		List<Order> modifiedOrders = new ArrayList<Order>();
 		try {
 			HttpPost post = new HttpPost(url);			
@@ -238,7 +237,11 @@ public class CdekApi implements AnyApi {
 		} catch (Exception ex) {
 			logger.error("Exception: ", ex);
 		} finally {
-			//httpClient.close();
+			try {
+				httpClient.close();
+			} catch (IOException e) {
+				logger.error("IOException: ", e);
+			}
 		}			
 		return modifiedOrders;		
 	}	
@@ -267,7 +270,7 @@ public class CdekApi implements AnyApi {
 		if (fullDataOrder.getAdvertType() == OrderAdvertTypes.CDEK_MARKET) {
 			OrderExternalCrm orderExternalCrm = new OrderExternalCrm(result);
 			orderExternalCrm.setCrm(CrmTypes.CDEK);
-			orderExternalCrm.setParentId(dispatchNumber);
+			orderExternalCrm.setParentId(Long.valueOf(dispatchNumber));
 			orderExternalCrm.setParentCode(orderNumber);
 			orderExternalCrm.setStatus(CrmStatuses.SUCCESS);
 			result.getExternalCrms().add(orderExternalCrm);			
@@ -343,8 +346,8 @@ public class CdekApi implements AnyApi {
 		BigDecimal deliveryInsurance = BigDecimal.ZERO;
 		BigDecimal deliveryPostpayFee = BigDecimal.ZERO;
 		BigDecimal postpayAmount = BigDecimal.ZERO;
-		int deliveryPeriodMin = 0;
-		int deliveryPeriodMax = 0;
+		Integer deliveryPeriodMin = 0;
+		Integer deliveryPeriodMax = 0;
 		String errorText = "";
 		
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -433,7 +436,11 @@ public class CdekApi implements AnyApi {
 		    	logger.error("Exception: ", ex);
 		    }
 		} finally {
-			httpClient.close();
+			try {
+				httpClient.close();
+			} catch (IOException e) {
+				logger.error("IOException: ", e);
+			}
 		}		
 		DeliveryServiceResult result = new DeliveryServiceResult();
 		result.setDeliveryAmount(deliveryCustomerSummary);
@@ -446,6 +453,9 @@ public class CdekApi implements AnyApi {
 		result.setDeliverySellerSummary(deliverySellerSummary);
 		result.setDeliveryCustomerSummary(deliveryCustomerSummary);
 		
+		result.setDeliveryPeriodMin(deliveryPeriodMin);
+		result.setDeliveryPeriodMax(deliveryPeriodMax);
+				
 		result.setPostpayAmount(postpayAmount);
 						
 		if (deliveryPeriodMin == deliveryPeriodMax) {
@@ -453,154 +463,10 @@ public class CdekApi implements AnyApi {
 		} else {
 			result.setTermText(deliveryPeriodMin + "-" + deliveryPeriodMax + " дн.");
 		}
-		result.setParcelType("tariffId: " + tariffId); // TODO
-		result.setTo("receiverCityId: " + receiverCityId); // TODO
+		result.setParcelType("tariffId: " + tariffId); 
+		result.setTo("receiverCityId: " + receiverCityId); 
 		result.setWeightText(weightOfKg.toPlainString() + " кг.");
 		result.setErrorText(errorText);
-		return result;
-	}
-	
-	public JSONObject getCities(String cityContext) throws IOException, SAXException, ParserConfigurationException {
-		
-		logger.debug("getCities():{}", cityContext);
-		
-		final String url = "http://api.cdek.ru/city/getListByTerm/json.php?q=" + cityContext + "&name_startsWith=" + cityContext;
-		String errorText = "";
-					
-		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-		JSONObject myResponse = null;
-		try {
-
-			HttpPost post = new HttpPost(url);			
-			post.setHeader("Content-type", "application/json");
-			HttpResponse response = httpClient.execute(post);
-			
-			if (response != null) {
-                InputStream inS = response.getEntity().getContent(); //Get the data in the entity
-                
-                BufferedReader in = new BufferedReader(new InputStreamReader(inS, "utf-8"));
-        	    String inputLine;
-        	    StringBuffer responseB = new StringBuffer();
-        	    while ((inputLine = in.readLine()) != null) {
-        	     	responseB.append(inputLine);
-        	    }
-        	    in.close();                
-        	    
-        	    myResponse = new JSONObject(responseB.toString());
-        	    logger.debug("cdekCalc() jsonResponse:{}", myResponse.toString());
-        	    
-            }
-
-		} catch (Exception ex) {
-			
-			if (myResponse != null) {				
-				JSONArray parcelDataError = (JSONArray) myResponse.get("error");
-		    	errorText = "";
-		    	for (int i = 0; i < parcelDataError.length(); i++) {
-		    		JSONObject iObj = parcelDataError.getJSONObject(i);
-		    		String iObj2 = (String) iObj.get("text");
-		    		errorText += iObj2 + " "; 
-		    	}
-		    	errorText = errorText.trim(); 
-		    } else {
-		    	logger.error("Exception: ", ex);
-		    }
-		} finally {
-			httpClient.close();
-		}		
-		return myResponse;
-	}
-	
-	public List<CarrierInfo> getPvzs(int cityId) throws IOException, SAXException, ParserConfigurationException {		
-		logger.debug("getPvzList():{}", cityId);
-				
-		String urlString = "http://integration.cdek.ru/pvzlist/v1/xml?cityid=" + cityId + "&lang=rus&type=\"PVZ\"";		
-		URL obj = new URL(urlString);	    
-	    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-	    
-	    con.setRequestProperty("Content-Type", "text/xml;charset=UTF-8");
-	    //con.setRequestProperty("Content-Language", "ru-RU");
-	    //con.setRequestProperty("Accept-Language", "ru,en;q=0.9");
-	    //con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36");
-			    
-	    int responseCode = con.getResponseCode();
-	    logger.debug("getPvzList() responseCode:{}", responseCode);
-	    logger.debug("getPvzList() sending 'GET' request to URL:{}", urlString);
-	    
-	    BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
-	    String inputLine;
-	    StringBuffer response = new StringBuffer();
-	    while ((inputLine = in.readLine()) != null) {
-	     	response.append(inputLine);
-	    }
-	    in.close();
-	    String xmlSource = new String(response);
-	    Document doc = XmlUtils.stringToDom(xmlSource);
-	    //logger.debug("getPvzList() result:{}", doc.getFirstChild().getNodeName());
-	    List<CarrierInfo> pvzs = new ArrayList<CarrierInfo>();
-		try {
-			doc.getDocumentElement().normalize();
-			NodeList nList = doc.getElementsByTagName("Pvz");
-			for (int i = 0; i < nList.getLength(); i++) {
-
-				Node nNode = nList.item(i);
-				//logger.debug("getPvzList() current element:{}", nNode.getNodeName());
-				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element eElement = (Element) nNode;
-					logger.debug("getPvzList() pvz:{}", eElement.getAttribute("Code"));
-									
-					CarrierInfo cdekInfo = new CarrierInfo();					
-					cdekInfo.setPvz(eElement.getAttribute("Code"));
-
-					cdekInfo.setRegion(new String(eElement.getAttribute("RegionName")));
-					cdekInfo.setCityContext(new String(eElement.getAttribute("City")));
-					cdekInfo.setShortAddress(new String(eElement.getAttribute("Address")));
-					cdekInfo.setFullAddress(new String(eElement.getAttribute("FullAddress")));
-					cdekInfo.setAddressComment(new String(eElement.getAttribute("AddressComment")));					
-					cdekInfo.setPhone(new String(eElement.getAttribute("Phone")));
-					cdekInfo.setEmail(new String(eElement.getAttribute("Email")));
-					cdekInfo.setNote(new String(eElement.getAttribute("Note")));
-					cdekInfo.setPvzType(new String(eElement.getAttribute("Type")));
-					cdekInfo.setHaveCash(new String(eElement.getAttribute("HaveCash")));
-					cdekInfo.setAllowedCod(new String(eElement.getAttribute("AllowedCod")));					
-					cdekInfo.setNearestStation(new String(eElement.getAttribute("NearestStation")));
-					cdekInfo.setMetroStation(new String(eElement.getAttribute("MetroStation")));
-					
-					if (eElement.getElementsByTagName("OfficeImage").getLength() > 0) {
-						Element officialImageElement = (Element) eElement.getElementsByTagName("OfficeImage").item(0);	
-						cdekInfo.setUrl(new String(officialImageElement.getAttribute("url")));
-					}
-					if (eElement.getElementsByTagName("WeightLimit").getLength() > 0) {
-						Element weightLimiteElement = (Element) eElement.getElementsByTagName("WeightLimit").item(0);
-						int weightMax = Integer.valueOf(new String(weightLimiteElement.getAttribute("WeightMax")));
-						if (weightMax < 30) {
-							cdekInfo.setWeightMax("вес <= " + weightMax  + " кг.");
-						}
-					}		
-					
-					if (StringUtils.isNotEmpty(cdekInfo.getPvzType()) && cdekInfo.getPvzType().toUpperCase().contains("POSTAMAT")) {
-						continue;
-					}					
-					pvzs.add(cdekInfo);					
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-		return pvzs;
-	}	
-		
-	public CarrierInfo getPvz(int cityId, String pvzCode) throws IOException, SAXException, ParserConfigurationException {
-		List<CarrierInfo> pvzs = getPvzs(cityId);
-		if (pvzs == null || pvzs.size() == 0) {
-			return null;
-		}
-		CarrierInfo result = null;
-		for (CarrierInfo cdekInfo : pvzs) {
-			if (StringUtils.equals(pvzCode, cdekInfo.getPvz())) {
-				return cdekInfo;
-			}
-		}		
 		return result;
 	}
 	

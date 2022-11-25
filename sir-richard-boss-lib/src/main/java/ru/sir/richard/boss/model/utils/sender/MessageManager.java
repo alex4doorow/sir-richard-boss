@@ -16,7 +16,7 @@ public class MessageManager {
 	private List<AnySender> senders = new ArrayList<AnySender>();
 	
 	public MessageManager(PropertyResolver environment) {
-		senders.add(new SmsSender(environment));
+		senders.add(new SmsSender(environment));		
 		senders.add(new EmailSender(environment));
 	}
 	

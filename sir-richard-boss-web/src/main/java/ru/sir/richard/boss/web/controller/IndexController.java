@@ -25,5 +25,6 @@ public class IndexController extends AnyController {
 		logger.debug("index()");
 		model.addAttribute("orderConditionsByNoForm", new OrderConditions());
 		return "index";
-	}	
+	}
+
 }
