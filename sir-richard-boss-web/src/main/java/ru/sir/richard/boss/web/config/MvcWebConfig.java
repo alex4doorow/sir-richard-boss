@@ -1,13 +1,9 @@
 package ru.sir.richard.boss.web.config;
 
-import java.util.Locale;
-import java.util.Properties;
-
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +23,10 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import java.util.Locale;
+import java.util.Properties;
+
+@Log4j2
 @Configuration
 @EnableWebMvc
 @EnableScheduling
@@ -35,9 +35,7 @@ import org.springframework.web.servlet.view.JstlView;
 //@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
 @PropertySource(value="classpath:application-test.properties", encoding="UTF-8")
 public class MvcWebConfig implements WebMvcConfigurer {
-	
-	private final Logger logger = LoggerFactory.getLogger(MvcWebConfig.class);
-	
+
 	@Value("${application.name}")
 	private String applicationName;
 	
@@ -97,7 +95,7 @@ public class MvcWebConfig implements WebMvcConfigurer {
 	
 	@Bean(name = "simpleMappingExceptionResolver")
 	public SimpleMappingExceptionResolver createSimpleMappingExceptionResolver() {
-		logger.info("Creating SimpleMappingExceptionResolver");
+		log.info("Creating SimpleMappingExceptionResolver");
 		SimpleMappingExceptionResolver r = new SimpleMappingExceptionResolver();
 
 		Properties mappings = new Properties();
