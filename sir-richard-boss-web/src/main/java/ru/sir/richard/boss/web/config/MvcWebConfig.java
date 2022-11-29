@@ -1,8 +1,6 @@
 package ru.sir.richard.boss.web.config;
 
 import lombok.extern.log4j.Log4j2;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -32,8 +30,8 @@ import java.util.Properties;
 @EnableScheduling
 @ComponentScan(basePackages = {"ru.sir.richard.boss.web", "ru.sir.richard.boss.dao", "ru.sir.richard.boss.crm", "ru.sir.richard.boss.api", "ru.sir.richard.boss.converter"})
 @PropertySource(value="classpath:application.properties", encoding="UTF-8")
-//@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
-@PropertySource(value="classpath:application-test.properties", encoding="UTF-8")
+@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
+//@PropertySource(value="classpath:application-test.properties", encoding="UTF-8")
 public class MvcWebConfig implements WebMvcConfigurer {
 
 	@Value("${application.name}")

@@ -37,9 +37,9 @@ hs_err_pid*
 *.iml
 
 **/main/resources/application.properties
-**/main/resources/application-production.properties
-**/main/resources/application-test.properties
 **/test/resources/application-it.properties
+**/test/resources/application-production.properties
+**/test/resources/application-test.properties
 
 **/--load/*
 **/--save/*

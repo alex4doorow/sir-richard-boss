@@ -8,12 +8,6 @@ import org.springframework.stereotype.Component;
 @PropertySource(value="classpath:application-it.properties", encoding="UTF-8")
 public class PropertySourceResolver {
 
-    @Value("${example.firstProperty}") 
-    private String firstProperty;
-    
-    @Value("${example.secondProperty}") 
-    private String secondProperty;
-    
     @Value("${jdbc.ds.pm.url}") 
     private String jdbcDsPmUrl;
     
@@ -22,14 +16,6 @@ public class PropertySourceResolver {
     
     @Value("${jdbc.ds.pm.password}") 
     private String jdbcDsPmPassword;
-             
-    public String getFirstProperty() {
-        return firstProperty;
-    }
-
-    public String getSecondProperty() {
-        return secondProperty;
-    }
 
 	public String getJdbcDsPmUrl() {
 		return jdbcDsPmUrl;
@@ -42,5 +28,4 @@ public class PropertySourceResolver {
 	public String getJdbcDsPmPassword() {
 		return jdbcDsPmPassword;
 	}
-	
 }
