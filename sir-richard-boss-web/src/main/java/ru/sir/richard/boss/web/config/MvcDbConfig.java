@@ -9,9 +9,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jndi.JndiTemplate;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.util.Properties;
 
 @Log4j2
 @Configuration
@@ -21,11 +24,8 @@ public class MvcDbConfig {
 	@Autowired
 	private Environment environment;
 
-	@Autowired
-	DataSource dataSource;
-
 	@Bean
-	public DataSource getDataSource() {
+	public DataSource dataSource() {
 		if (StringUtils.isNotEmpty(environment.getProperty("jdbc.ds.pm.url"))) {
 			// test config db settings
 			DriverManagerDataSource dataSource;
@@ -41,18 +41,42 @@ public class MvcDbConfig {
 				dataSource.setPassword(environment.getProperty("jdbc.ds.pm.password"));
 				return dataSource;
 			} catch (Exception e2) {
-				log.error("Exception: {}", e2);
+				log.error("Exception:", e2);
 			}
 			return null;
 		}
 		// main jndi
-		JndiTemplate jndi = new JndiTemplate();
-		log.info("DB connection JNDI: \"{}\"", environment.getProperty("jdbc.jndi"));
-		try {
-			dataSource = jndi.lookup(environment.getProperty("jdbc.jndi"), DataSource.class);
-		} catch (NamingException e) {
-			log.error("NamingException for " + environment.getProperty("jdbc.jndi"), e);
+		if (StringUtils.isNotEmpty(environment.getProperty("jdbc.jndi"))) {
+			JndiTemplate jndi = new JndiTemplate();
+			log.info("DB connection JNDI: \"{}\"", environment.getProperty("jdbc.jndi"));
+			DataSource dataSource = null;
+			try {
+				dataSource = jndi.lookup(environment.getProperty("jdbc.jndi"), DataSource.class);
+			} catch (NamingException e) {
+				log.error("NamingException for " + environment.getProperty("jdbc.jndi"), e);
+			}
+			return dataSource;
+		} else {
+			throw new RuntimeException("dataSource is not configured!");
 		}
-		return dataSource;
+	}
+
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+		em.setDataSource(dataSource());
+		em.setPackagesToScan("ru.sir.richard.boss.model.entity");
+
+		final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+		em.setJpaVendorAdapter(vendorAdapter);
+		em.setJpaProperties(additionalProperties());
+		return em;
+	}
+
+	final Properties additionalProperties() {
+		final Properties hibernateProperties = new Properties();
+		hibernateProperties.setProperty("hibernate.hbm2ddl.auto", environment.getProperty("hibernate.hbm2ddl.auto"));
+		hibernateProperties.setProperty("hibernate.dialect", environment.getProperty("hibernate.dialect"));
+		return hibernateProperties;
 	}
 }

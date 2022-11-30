@@ -11,6 +11,33 @@ CREATE TABLE sr_sys_config (
 	PRIMARY KEY(code)
 );
 
+/* users web security */
+CREATE TABLE sr_sys_user (
+    id INT NOT NULL AUTO_INCREMENT, /* идентификатор */
+	user_name VARCHAR(50) NOT NULL,
+	password VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NULL,
+	enabled TINYINT NOT NULL DEFAULT 1,
+	PRIMARY KEY (id)
+);
+
+CREATE UNIQUE INDEX sr_sys_user_index on sr_sys_user (user_name);
+
+/* autorities web security */
+CREATE TABLE sr_sys_authority (
+	id INT NOT NULL AUTO_INCREMENT, /* идентификатор */
+	user_name VARCHAR(50) NOT NULL,
+	authority VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id),
+	FOREIGN KEY (id) REFERENCES sr_sys_user(id)
+);
+
+CREATE UNIQUE INDEX sr_sys_authority_index on sr_sys_authority (user_name, authority);
+
+-- User user/pass
+INSERT INTO sr_sys_user(user_name, password, enabled) values ('user', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a', 1);
+INSERT INTO sr_sys_authority(user_name, authority) values ('user', 'ROLE_USER');
+
 /* внешние показатели для расчетов */
 CREATE TABLE sr_sys_total_amount (
 	id SMALLINT NOT NULL, /* идентификатор */

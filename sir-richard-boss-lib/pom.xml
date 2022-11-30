@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>ru.sir.richard.boss</groupId>
 		<artifactId>sir-richard-boss</artifactId>
-		<version>4.1.0-SNAPSHOT</version>
+		<version>4.2.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent> 	 	
 	<properties>
@@ -32,6 +32,19 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -59,7 +72,7 @@
 		<dependency>
 		    <groupId>org.json</groupId>
 		    <artifactId>json</artifactId>
-		    <version>20180813</version>
+		    <version>${org.json.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>jstl</groupId>
@@ -82,7 +95,7 @@
 		<dependency>
 		    <groupId>org.modelmapper</groupId>
 		    <artifactId>modelmapper</artifactId>
-		    <version>2.4.5</version>
+		    <version>${org.modelmapper.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -101,11 +114,13 @@
 		    <artifactId>commons-codec</artifactId>
 		</dependency>
 		<dependency>
+			<!-- TODO 5.2.2 -->
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>${org.apache.poi.version}</version>
 		</dependency>
 		<dependency>
+			<!-- TODO 5.2.2 -->
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>${org.apache.poi.version}</version>
@@ -113,13 +128,14 @@
 		<dependency>
 		    <groupId>org.apache.pdfbox</groupId>
 		    <artifactId>pdfbox</artifactId>
-		    <version>2.0.26</version>
+		    <version>${org.apache.pdfbox.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>httpclient</artifactId>
 		</dependency>
 		<dependency>
+			<!-- TODO 72.1 -->
 			<groupId>com.ibm.icu</groupId>
 			<artifactId>icu4j</artifactId>
 			<version>${icu4j.version}</version>
@@ -127,7 +143,7 @@
 		<dependency>
 		    <groupId>com.mashape.unirest</groupId>
 		    <artifactId>unirest-java</artifactId>
-		    <version>1.4.9</version>
+		    <version>${com.mashape.unirest.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.sun.mail</groupId>
@@ -153,19 +169,21 @@
 		    <groupId>org.mockito</groupId>
 		    <artifactId>mockito-junit-jupiter</artifactId>
 		    <scope>test</scope>
-		</dependency>		
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
+		<!-- TODO idea warnings -->
 		<dependency>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-help-plugin</artifactId>
-		    <version>3.3.0</version>
-		</dependency>							
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-help-plugin</artifactId>
+			<version>${maven-help-plugin.version}</version>
+		</dependency>
 	</dependencies>		
 	<build>
 		<plugins>		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 			    <artifactId>maven-surefire-plugin</artifactId>
-			    <version>2.22.2</version>			    
+			    <version>${maven-surefire-plugin.version}</version>
 			</plugin>			
 		</plugins>
 	</build>

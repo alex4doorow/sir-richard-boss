@@ -6,6 +6,7 @@ import static org.springframework.security.web.header.writers.ClearSiteDataHeade
 import static org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive.STORAGE;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,11 +41,13 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 	
 // https://habr.com/ru/post/482552/
 // https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto.data-access
+// https://www.baeldung.com/spring-security-jdbc-authentication
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class MvcWebSecurityConfig {
-	
+
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.inMemoryAuthentication()			
@@ -67,8 +70,14 @@ public class MvcWebSecurityConfig {
         .formLogin()    
         .successHandler(new RefererAuthenticationSuccessHandler())
     return http.build();
-*/  	
-    	
+*/
+		/*
+		appUserRepository = applicationContext.getBean(AppUserRepository.class);
+		List<AppUser> users = appUserRepository.findByName("user");
+		log.info("users: {}", users);
+		*/
+
+
     	http
 	        .csrf().disable()
 	        .authorizeRequests()
