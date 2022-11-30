@@ -142,8 +142,6 @@ public abstract class AnyController {
 		allViewSuppliers.add(SupplierTypes.RUSONAR.getAnnotation());		
 		allViewSuppliers.add(SupplierTypes.CAMPING_2000.getAnnotation());
 		allViewSuppliers.add(SupplierTypes.T4L.getAnnotation());
-		model.addAttribute("allViewSuppliers", allViewSuppliers);	
-		
+		model.addAttribute("allViewSuppliers", allViewSuppliers);
 	}
-
 }
