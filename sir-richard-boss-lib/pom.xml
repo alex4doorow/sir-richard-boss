@@ -114,13 +114,11 @@
 		    <artifactId>commons-codec</artifactId>
 		</dependency>
 		<dependency>
-			<!-- TODO 5.2.2 -->
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>${org.apache.poi.version}</version>
 		</dependency>
 		<dependency>
-			<!-- TODO 5.2.2 -->
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>${org.apache.poi.version}</version>
@@ -135,7 +133,6 @@
 		    <artifactId>httpclient</artifactId>
 		</dependency>
 		<dependency>
-			<!-- TODO 72.1 -->
 			<groupId>com.ibm.icu</groupId>
 			<artifactId>icu4j</artifactId>
 			<version>${icu4j.version}</version>
@@ -170,8 +167,8 @@
 		    <artifactId>mockito-junit-jupiter</artifactId>
 		    <scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 		<!-- TODO idea warnings -->
+		<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-help-plugin -->
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-help-plugin</artifactId>
