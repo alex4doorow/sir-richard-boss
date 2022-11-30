@@ -44,7 +44,7 @@ hs_err_pid*
 **/--load/*
 **/--save/*
 
-*.sql
+
 *.xlsx
 *.xls
 *.mwb
@@ -53,3 +53,10 @@ hs_err_pid*
 **/--1-archive
 **/Servers
 **/spring-tutoral
+
+# resources, template and example sources ets
+**/db/sql
+**/db/yandex-market
+**/x-resources/feather
+**/x-resources/html-pilot
+**/x-resources/jasperreports
