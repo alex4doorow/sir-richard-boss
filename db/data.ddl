@@ -20,7 +20,8 @@ INSERT INTO sr_sys_user(id, user_name, password, enabled) values (1, 'al', '$2a$
 
 CREATE TABLE sr_sys_role (
 	id INT NOT NULL AUTO_INCREMENT, /* идентификатор */
-	name VARCHAR(50) NOT NULL
+	name VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id)
 );
 
 INSERT INTO sr_sys_role(id, name) VALUES (1, 'ROLE_USER'); 
@@ -29,7 +30,8 @@ INSERT INTO sr_sys_role(id, name) VALUES (2, 'ROLE_ADMIN');
 CREATE TABLE sr_sys_user_roles (
 	id INT NOT NULL AUTO_INCREMENT, /* идентификатор */
 	user_id INT NOT NULL,
-	role_id INT NOT NULL
+	role_id INT NOT NULL,
+    PRIMARY KEY (id)
 );
 
 INSERT INTO sr_sys_user_roles(user_id, role_id) values (1, 1);
