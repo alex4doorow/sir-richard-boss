@@ -3,14 +3,6 @@
 /*                         СИСТЕМНЫЕ СПРАВОЧНИКИ               */
 /*-------------------------------------------------------------*/
 
-/* конфигуратор */
-CREATE TABLE sr_sys_config (
-	code VARCHAR(255) NOT NULL, /* параметр */
-	value VARCHAR(255) NOT NULL /* значение */,
-	annotation VARCHAR(255) NOT NULL /* описание */,
-	PRIMARY KEY(code)
-);
-
 /* users web security */
 CREATE TABLE sr_sys_user (
     id INT NOT NULL AUTO_INCREMENT, /* идентификатор */
@@ -18,25 +10,38 @@ CREATE TABLE sr_sys_user (
 	password VARCHAR(100) NOT NULL,
     email VARCHAR(100) NULL,
 	enabled TINYINT NOT NULL DEFAULT 1,
+    last_login DATE NULL,
 	PRIMARY KEY (id)
 );
 
 CREATE UNIQUE INDEX sr_sys_user_index on sr_sys_user (user_name);
 
-/* autorities web security */
-CREATE TABLE sr_sys_authority (
+INSERT INTO sr_sys_user(id, user_name, password, enabled) values (1, 'al', '$2a$10$fCGXaogbOuxCAWgKc7WDCeGFgrebZE0eQyfv5b8PuSvwvOrI94EVi', 1);
+
+CREATE TABLE sr_sys_role (
 	id INT NOT NULL AUTO_INCREMENT, /* идентификатор */
-	user_name VARCHAR(50) NOT NULL,
-	authority VARCHAR(50) NOT NULL,
-    PRIMARY KEY (id),
-	FOREIGN KEY (id) REFERENCES sr_sys_user(id)
+	name VARCHAR(50) NOT NULL
 );
 
-CREATE UNIQUE INDEX sr_sys_authority_index on sr_sys_authority (user_name, authority);
+INSERT INTO sr_sys_role(id, name) VALUES (1, 'ROLE_USER'); 
+INSERT INTO sr_sys_role(id, name) VALUES (2, 'ROLE_ADMIN'); 
 
--- User user/pass
-INSERT INTO sr_sys_user(user_name, password, enabled) values ('user', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a', 1);
-INSERT INTO sr_sys_authority(user_name, authority) values ('user', 'ROLE_USER');
+CREATE TABLE sr_sys_user_roles (
+	id INT NOT NULL AUTO_INCREMENT, /* идентификатор */
+	user_id INT NOT NULL,
+	role_id INT NOT NULL
+);
+
+INSERT INTO sr_sys_user_roles(user_id, role_id) values (1, 1);
+INSERT INTO sr_sys_user_roles(user_id, role_id) values (1, 2);
+
+/* конфигуратор */
+CREATE TABLE sr_sys_config (
+	code VARCHAR(255) NOT NULL, /* параметр */
+	value VARCHAR(255) NOT NULL /* значение */,
+	annotation VARCHAR(255) NOT NULL /* описание */,
+	PRIMARY KEY(code)
+);
 
 /* внешние показатели для расчетов */
 CREATE TABLE sr_sys_total_amount (

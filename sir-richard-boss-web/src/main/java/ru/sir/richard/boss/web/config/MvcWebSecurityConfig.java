@@ -1,11 +1,5 @@
 package ru.sir.richard.boss.web.config;
 
-import javax.servlet.http.HttpServletResponse;
-import static org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive.CACHE;
-import static org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive.COOKIES;
-import static org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive.STORAGE;
-
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +18,11 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import ru.sir.richard.boss.web.service.UserService;
+
+import javax.servlet.http.HttpServletResponse;
+
+import static org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive.*;
 
 // https://www.baeldung.com/spring-security-basic-authentication
 // https://www.baeldung.com/spring-security-login-error-handling-localization
@@ -49,35 +48,20 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 public class MvcWebSecurityConfig {
 
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication()			
-        	.withUser("al").password(passwordEncoder().encode("q1969as$")).roles("USER", "ADMIN")
-   		.and()
-        	.withUser("lara").password(passwordEncoder().encode("Ocean1970")).roles("USER");
+	UserService userService;
 
+	@Autowired
+	protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-/*
-    	
-    	http.authorizeRequests()
-        .antMatchers("/login*")
-        .permitAll()
-        .anyRequest()
-        .authenticated()
-        .and()
-        .formLogin()    
-        .successHandler(new RefererAuthenticationSuccessHandler())
-    return http.build();
-*/
-		/*
-		appUserRepository = applicationContext.getBean(AppUserRepository.class);
-		List<AppUser> users = appUserRepository.findByName("user");
-		log.info("users: {}", users);
-		*/
-
-
     	http
 	        .csrf().disable()
 	        .authorizeRequests()
@@ -108,11 +92,6 @@ public class MvcWebSecurityConfig {
 	        	.maximumSessions(2)
 	        	.expiredUrl("/session-expired");
     	 return http.build();   
-    }
-    
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
     
     @Bean
