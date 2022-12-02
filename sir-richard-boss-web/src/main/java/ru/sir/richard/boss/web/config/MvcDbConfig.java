@@ -19,6 +19,7 @@ import java.util.Properties;
 @Log4j2
 @Configuration
 @PropertySource(value="classpath:application.properties", encoding="UTF-8")
+//@EntityScan("ru.sir.richard.boss.web.entity")
 public class MvcDbConfig {
 
 	@Autowired
@@ -65,7 +66,7 @@ public class MvcDbConfig {
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 		em.setDataSource(dataSource());
-		em.setPackagesToScan("ru.sir.richard.boss.model.entity");
+		em.setPackagesToScan("ru.sir.richard.boss.web.entity");
 
 		final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);

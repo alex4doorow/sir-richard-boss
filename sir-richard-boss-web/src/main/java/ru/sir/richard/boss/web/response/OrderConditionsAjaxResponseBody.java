@@ -118,5 +118,4 @@ public class OrderConditionsAjaxResponseBody extends AnyAjaxResponseBody {
 			this.reportPeriodYear = reportPeriodYear;
 		}		
 	}
-
 }
