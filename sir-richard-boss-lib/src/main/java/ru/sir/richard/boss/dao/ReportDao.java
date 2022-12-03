@@ -1,23 +1,10 @@
 package ru.sir.richard.boss.dao;
 
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.data.ProductCategory;
 import ru.sir.richard.boss.model.data.SupplierStock;
@@ -25,23 +12,19 @@ import ru.sir.richard.boss.model.data.conditions.OrderConditions;
 import ru.sir.richard.boss.model.data.conditions.ProductSalesReportConditions;
 import ru.sir.richard.boss.model.data.report.ProductSalesReportBean;
 import ru.sir.richard.boss.model.data.report.SalesFunnelReportBean;
-import ru.sir.richard.boss.model.types.CustomerTypes;
-import ru.sir.richard.boss.model.types.DeliveryTypes;
-import ru.sir.richard.boss.model.types.OrderAdvertTypes;
-import ru.sir.richard.boss.model.types.OrderAmountTypes;
-import ru.sir.richard.boss.model.types.OrderSourceTypes;
-import ru.sir.richard.boss.model.types.OrderStatuses;
-import ru.sir.richard.boss.model.types.OrderTypes;
-import ru.sir.richard.boss.model.types.PaymentTypes;
-import ru.sir.richard.boss.model.types.ReportPeriodTypes;
-import ru.sir.richard.boss.model.types.ReportQueryNames;
+import ru.sir.richard.boss.model.types.*;
 import ru.sir.richard.boss.model.utils.Pair;
 
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.*;
+
 @Repository
+@Slf4j
 public class ReportDao extends AnyDaoImpl {
-	
-	private final Logger logger = LoggerFactory.getLogger(ReportDao.class);
-	
+
 	@Autowired
 	private WikiDao wikiDao;
 	
@@ -49,7 +32,7 @@ public class ReportDao extends AnyDaoImpl {
 	private OrderDao orderDao;
 	
 	public List<ProductSalesReportBean> productSales(Pair<Date> period) {
-		logger.debug("productSales():{}", period);
+		log.debug("productSales():{}", period);
 		final String sqlSelectProductSales = "SELECT p.product_id, MAX(p.name) product_name, MAX(p.category_annotation) category_annotation, SUM(oi.quantity) quantity, SUM(oi.amount) amount" + 
 				"		  FROM sr_v_order o, sr_order_item oi, sr_v_product p" + 
 				"		  WHERE (o.id = oi.order_id) AND" + 
@@ -140,7 +123,7 @@ public class ReportDao extends AnyDaoImpl {
 		}		
 		sqlSelectProductSales += " GROUP BY category_annotation, p.product_id";
 		
-		logger.debug("productSalesByQuery sql: {}", sqlSelectProductSales);		
+		log.debug("productSalesByQuery sql: {}", sqlSelectProductSales);
 		List<ProductSalesReportBean> beans = this.jdbcTemplate.query(sqlSelectProductSales,
 				new Object[] { conditions.getPeriod().getStart(), conditions.getPeriod().getEnd() },
 				new int[] { Types.DATE, Types.DATE },
@@ -231,7 +214,7 @@ public class ReportDao extends AnyDaoImpl {
 		}		
 		sqlSelectProductSales += " GROUP BY category_annotation, p.product_id";
 				
-		logger.debug("productSalesByQueryName sql: {}", sqlSelectProductSales);		
+		log.debug("productSalesByQueryName sql: {}", sqlSelectProductSales);
 		List<ProductSalesReportBean> beans = this.jdbcTemplate.query(sqlSelectProductSales,
 				new Object[]{conditions.getPeriod().getStart(), conditions.getPeriod().getEnd()},
 				new int[] {Types.DATE, Types.DATE },
@@ -413,7 +396,7 @@ public class ReportDao extends AnyDaoImpl {
 				if (order.getDelivery().getDeliveryType().isCourier()) {
 					myselfDeliveryOrders++;
 					myselfDeliveryOrdersAmount = myselfDeliveryOrdersAmount.add(order.getAmounts().getBill());	
-				} else if (order.getDelivery().getDeliveryType().isСdek() || (order.getDelivery().getDeliveryType() == DeliveryTypes.DELLIN) || order.getDelivery().getDeliveryType().isOzonRocket() || order.getDelivery().getDeliveryType() == DeliveryTypes.YANDEX_GO) {
+				} else if (order.getDelivery().getDeliveryType().isCdek() || (order.getDelivery().getDeliveryType() == DeliveryTypes.DELLIN) || order.getDelivery().getDeliveryType().isOzonRocket() || order.getDelivery().getDeliveryType() == DeliveryTypes.YANDEX_GO) {
 					courierServiceDeliveryOrders++;
 					courierServiceDeliveryOrdersAmount = courierServiceDeliveryOrdersAmount.add(order.getAmounts().getBill());
 					// расходы (транспорт + ккм + налоги) = доход - маржа - закупка					
@@ -433,7 +416,7 @@ public class ReportDao extends AnyDaoImpl {
 					courierServiceDeliveryOrdersCost = courierServiceDeliveryOrdersCost.add(order.getDelivery().getPrice());
 				}
 				
-				if (order.getDelivery().getDeliveryType().isСdek()) {
+				if (order.getDelivery().getDeliveryType().isCdek()) {
 					cdekServiceDeliveryOrders++;
 				} else if (order.getDelivery().getDeliveryType() == DeliveryTypes.DELLIN) {
 					dellinServiceDeliveryOrders++;
@@ -608,7 +591,7 @@ public class ReportDao extends AnyDaoImpl {
 				+ средняя прибыль = суммарная прибыль / число заказов  
 		*/	
 		
-		List<SalesFunnelReportBean> results = new ArrayList<SalesFunnelReportBean>();
+		List<SalesFunnelReportBean> results = new ArrayList<>();
 		results.add(bean);
 		return results;
 	}

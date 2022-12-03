@@ -1,26 +1,23 @@
 package ru.sir.richard.boss.dao;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+import ru.sir.richard.boss.api.alert.AlarmApi;
+import ru.sir.richard.boss.model.data.AlarmMessage;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
-import ru.sir.richard.boss.api.alert.AlarmApi;
-import ru.sir.richard.boss.model.data.AlarmMessage;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-
 @Repository
+@Slf4j
 public class AlarmDao extends AnyDaoImpl {
 
     public static final String CAR_MODULE = "car";
-
-    private final Logger logger = LoggerFactory.getLogger(AnyDaoImpl.class);
 
     /**
      * 0 - выключена 1 - поставлена на охрану 2 - снята с охраны 3 - сработка
@@ -51,7 +48,7 @@ public class AlarmDao extends AnyDaoImpl {
     }
 
     public List<AlarmMessage> listSystemMessageLog(String module) {
-	logger.debug("listSystemMessageLog(): {}", module);
+	log.debug("listSystemMessageLog(): {}", module);
 
 	final String sqlSelectListSystemMessage = "SELECT * FROM sr_sys_message_log " + "  WHERE module = ? "
 		+ "  ORDER BY id DESC LIMIT 30";

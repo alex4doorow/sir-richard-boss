@@ -3,6 +3,8 @@ package ru.sir.richard.boss.model.data;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.sir.richard.boss.model.utils.Pair;
 
 /**
@@ -11,46 +13,15 @@ import ru.sir.richard.boss.model.utils.Pair;
  * @author alex4doorow
  *
  */
+@Data
+@NoArgsConstructor
 public class ProductSpecialPrice extends AnyId {
 	
 	private int priority;
 	private BigDecimal price;
 	private Pair<Date> period;
-	
-	public ProductSpecialPrice() {
-		super();
-	}
 
 	public ProductSpecialPrice(int id) {
 		super(id);
 	}
-
-	public int getPriority() {
-		return priority;
-	}
-
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
-
-	public BigDecimal getPrice() {
-		return price;
-	}
-
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-
-	public Pair<Date> getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(Pair<Date> period) {
-		this.period = period;
-	}
-	
-	
-	
-	
-
 }

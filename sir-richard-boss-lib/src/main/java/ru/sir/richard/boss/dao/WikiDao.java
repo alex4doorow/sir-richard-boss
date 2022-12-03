@@ -1,61 +1,37 @@
 package ru.sir.richard.boss.dao;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import lombok.Data;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
-
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import ru.sir.richard.boss.model.data.Address;
-import ru.sir.richard.boss.model.data.Product;
-import ru.sir.richard.boss.model.data.ProductCategory;
-import ru.sir.richard.boss.model.data.SupplierStock;
-import ru.sir.richard.boss.model.data.SupplierStockProduct;
+import ru.sir.richard.boss.model.data.*;
 import ru.sir.richard.boss.model.data.conditions.ConditionResult;
 import ru.sir.richard.boss.model.data.conditions.ProductConditions;
-import ru.sir.richard.boss.model.types.CrmTypes;
-import ru.sir.richard.boss.model.types.OrderAmountTypes;
-import ru.sir.richard.boss.model.types.OrderStatuses;
-import ru.sir.richard.boss.model.types.PaymentDeliveryMethods;
-import ru.sir.richard.boss.model.types.ProductTypes;
-import ru.sir.richard.boss.model.types.SupplierTypes;
+import ru.sir.richard.boss.model.types.*;
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.model.utils.Pair;
 import ru.sir.richard.boss.model.utils.TextUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.*;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.*;
+
 @Repository
+@Slf4j
 public class WikiDao extends AnyDaoImpl {
 	
 	private final int COMPOSYTE_TYPE = 1;
 
-	private final Logger logger = LoggerFactory.getLogger(WikiDao.class);
-	
-	private List<ProductCategory> categories = new ArrayList<ProductCategory>();
-	private List<Product> products = new ArrayList<Product>();
+	private List<ProductCategory> categories = new ArrayList<>();
+	private List<Product> products = new ArrayList<>();
 
 	public void init(boolean isSheduller) {
 		
@@ -67,7 +43,7 @@ public class WikiDao extends AnyDaoImpl {
 		instanceProductsSpecialPrice();
 		instanceProductsYandexOffer();
 		instanceProductsOzonOffer();		
-		logger.debug("products.size(): {}", products.size());	
+		log.debug("products.size(): {}", products.size());
 		
 		//products.forEach(item -> logger.debug("product():{},{},{}", item.getId(), item.getName(), item.getPrice()));
 		/*
@@ -76,7 +52,7 @@ public class WikiDao extends AnyDaoImpl {
 		}
 		*/	
 		clearSession();
-		logger.debug("WikiDaoImpl.init() done");
+		log.debug("WikiDaoImpl.init() done");
 	}
 
 	public List<ProductCategory> getCategories() {
@@ -251,7 +227,7 @@ public class WikiDao extends AnyDaoImpl {
 		        });
 		       
 		if (countProduct == 0) {
-			logger.error("countProduct == 0: {}", productId);
+			log.error("countProduct == 0: {}", productId);
 			return null;
 		}		
 		
@@ -345,12 +321,12 @@ public class WikiDao extends AnyDaoImpl {
 		result += " ORDER BY product_id";
 		conditionResult.setPeriodExist(false);
 		conditionResult.setConditionText(result);		
-		logger.debug("createSQLQueryListProductsByConditions: {}", result);
+		log.debug("createSQLQueryListProductsByConditions: {}", result);
 		return conditionResult;	
 	}
 	
 	public List<Product> listProductsByConditions(ProductConditions productConditions) {
-		logger.debug("listProductsByConditions(): {}", productConditions);
+		log.debug("listProductsByConditions(): {}", productConditions);
 
 		ConditionResult conditionResult = createSQLQueryListProductsByConditions(productConditions);
 		final String sqlSelectProducts = conditionResult.getConditionText();
@@ -388,7 +364,7 @@ public class WikiDao extends AnyDaoImpl {
 		result += " ORDER BY ybo.marketplace_seller desc, p.supplier_id, p.category_id, p.sku";
 		conditionResult.setPeriodExist(false);
 		conditionResult.setConditionText(result);		
-		logger.debug("createSQLQueryListOzonProductsByConditions: {}", result);
+		log.debug("createSQLQueryListOzonProductsByConditions: {}", result);
 		return conditionResult;	
 		
 	}
@@ -413,12 +389,12 @@ public class WikiDao extends AnyDaoImpl {
 		result += " ORDER BY ybo.marketplace_seller desc, p.supplier_id, p.category_id, p.sku";
 		conditionResult.setPeriodExist(false);
 		conditionResult.setConditionText(result);		
-		logger.debug("createSQLQueryListYmProductsByConditions: {}", result);
+		log.debug("createSQLQueryListYmProductsByConditions: {}", result);
 		return conditionResult;	
 	}
 	
 	public List<Product> listYmProductsByConditions(ProductConditions productConditions) {	
-		logger.debug("listYmProductsByConditions(): {}", productConditions);
+		log.debug("listYmProductsByConditions(): {}", productConditions);
 	
 		ConditionResult conditionResult = createSQLQueryListYmProductsByConditions(productConditions);
 		final String sqlSelectProducts = conditionResult.getConditionText();
@@ -438,7 +414,7 @@ public class WikiDao extends AnyDaoImpl {
 						
 						product.setQuantity(rs.getInt("PRODUCT_QUANTITY"));						
 						product.setStockQuantity(rs.getInt("STOCK_QUANTITY"));
-							
+
 						if (rs.getInt("P_STATUS") == 1) {
 							product.setVisible(true);
 						} else {
@@ -463,7 +439,7 @@ public class WikiDao extends AnyDaoImpl {
 	}	
 	
 	public List<Product> listOzonProductsByConditions(ProductConditions productConditions) {	
-		logger.debug("listOzonProductsByConditions(): {}", productConditions);
+		log.debug("listOzonProductsByConditions(): {}", productConditions);
 		
 		ConditionResult conditionResult = createSQLQueryListOzonProductsByConditions(productConditions);
 		final String sqlSelectProducts = conditionResult.getConditionText();
@@ -687,7 +663,7 @@ public class WikiDao extends AnyDaoImpl {
 	 * @param product
 	 * @param deltaQuantity
 	 * @param crmType [CrmTypes.YANDEX_MARKET, CrmTypes.OZON, обычный лид]
-	 * @param orderStatus [заявка маркета, OrderStatuses.BID, OrderStatuses.APPROVED]
+	 * @param phase [заявка маркета, OrderStatuses.BID, OrderStatuses.APPROVED]
 	 */
 	public void updateDeltaQuantityProduct(Product product, 
 			int deltaQuantity, 
@@ -699,7 +675,7 @@ public class WikiDao extends AnyDaoImpl {
 	}
 	
 	public void updatePriceAndQuantityProduct(Product product) {
-		logger.debug("updatePriceAndQuantityProduct(): {}", product);
+		log.debug("updatePriceAndQuantityProduct(): {}", product);
 		
 		final String sqlUpdateProductPrice = "UPDATE oc_product "
 				+ "	SET quantity = ?, "
@@ -815,13 +791,7 @@ public class WikiDao extends AnyDaoImpl {
 			
 			updateDbProductPrice(cheaterProduct.getId(), cheaterPrice);
 			cheaterProduct.setPrice(cheaterPrice);
-			/*
-			cheaterProduct = getDbProductById(cheaterProduct.getId());
-			Product p = getProductById(cheaterProduct.getId());
-			p = cheaterProduct;
-			*/
-			
-		}	
+		}
 		return cheaterProducts;
 	}
 	
@@ -938,7 +908,7 @@ public class WikiDao extends AnyDaoImpl {
 	}
 	
 	public void updateProductDescriptionMeta(Product product) {
-		logger.debug("updateProductDescriptionMeta():{}", product);
+		log.debug("updateProductDescriptionMeta():{}", product);
 				
 		final String sqlUpdateProduct = "UPDATE oc_product "
 				+ "	SET sku = ?,"
@@ -1016,11 +986,11 @@ public class WikiDao extends AnyDaoImpl {
 		}	
 		
 		if (metaTitle.length() < 40 || metaTitle.length() > 70) {
-			logger.info("title({}): {}", metaTitle.length(), metaTitle);	
-			logger.info("description({}): {}", metaDescription.length(), metaDescription);		
+			log.info("title({}): {}", metaTitle.length(), metaTitle);
+			log.info("description({}): {}", metaDescription.length(), metaDescription);
 		}
 		if (metaDescription.length() < 150 || metaDescription.length() > 250) {
-			logger.info("description({}): {}", metaDescription.length(), metaDescription);				
+			log.info("description({}): {}", metaDescription.length(), metaDescription);
 		}	
 		
 		product.getStore().setMetaTitle(metaTitle);
@@ -1039,12 +1009,10 @@ public class WikiDao extends AnyDaoImpl {
 	// реализовано только для 1-го склада
 	public void updateSupplierStockPrice(Product product) {
 		
-		logger.debug("updateStockSupplierPrice():{}", product);
-		
+		log.debug("updateStockSupplierPrice():{}", product);
 		if (product.getMainSupplier() == null) {
 			return;
 		}
-		
 		final String sqlSelectMaxIdStock = "SELECT MAX(id) id FROM sr_stock s "
 				+ "WHERE s.product_id = ? "
 				+ "AND s.stock_id = 1 AND s.supplier_id = ?";
@@ -1105,7 +1073,6 @@ public class WikiDao extends AnyDaoImpl {
 		            }
 		        });
 		return supplierStockProducts;
-		
 	}
 	
 	private SupplierStockProduct supplierStockProductFindByObjectId(int objectId, String sqlSelectSupplier) {
@@ -1145,7 +1112,6 @@ public class WikiDao extends AnyDaoImpl {
 	public SupplierStock getSupplierStocks() {
 		
 		final String sqlSelectAllSupplierStockProducts = "SELECT * FROM sr_v_stock s ORDER BY s.category_group, s.category_annotation, s.product_id";
-		
 		List<SupplierStockProduct> allSupplierStockProducts = this.jdbcTemplate.query(sqlSelectAllSupplierStockProducts,
 				new Object[] { },
 				new int[] { },
@@ -1206,18 +1172,7 @@ public class WikiDao extends AnyDaoImpl {
             return preparedStatement;	            
         }, generatedKeyHolder);
 		final int result = getLastInsertByGeneratedKeyHolder(generatedKeyHolder, rowsAffected);
-		
-		/*
-		this.jdbcTemplate.update(sqlInsertSupplierStockProduct, new Object[] { 				
-				supplierStockProduct.getProduct().getId(),
-				1,
-				supplierStockProduct.getSupplier().getId(),
-				supplierStockProduct.getProduct().getSupplierPrice(),
-				supplierStockProduct.getProduct().getSupplierQuantity(),
-				supplierStockProduct.getProduct().getStockQuantity(),
-				supplierStockProduct.getComment()});		
-		final int result = getLastInsert("sr_stock");
-		*/				
+
 		final String sqlUpdateProduct = "UPDATE oc_product "
 				+ "	SET category_group_id = ?"
 				+ "	WHERE product_id = ?";		
@@ -1324,7 +1279,7 @@ public class WikiDao extends AnyDaoImpl {
 	
 	private List<ProductCategory> instanceCategories() {
 
-		logger.debug("instanceCategories()");
+		log.debug("instanceCategories()");
 					
 		final String sqlSelectCategories = "SELECT * FROM sr_wiki_category_product where id > 0 ORDER BY annotation";
 		List<ProductCategory> categories = this.jdbcTemplate.query(sqlSelectCategories,
@@ -1346,7 +1301,7 @@ public class WikiDao extends AnyDaoImpl {
 	
 	private List<Product> instanceProducts() {
 
-		logger.debug("instanceProducts()");
+		log.debug("instanceProducts()");
 		final String sqlSelectProducts = "SELECT p.* FROM sr_v_product p ORDER BY p.product_id";
 
 		List<Product> products = this.jdbcTemplate.query(sqlSelectProducts,
@@ -1369,7 +1324,7 @@ public class WikiDao extends AnyDaoImpl {
 	
 	private List<Product> instanceProductsYandexOffer() {
 		
-		logger.debug("instanceProductsYandexOffer()");
+		log.debug("instanceProductsYandexOffer()");
 		final String sqlSelectSpecialPrices = "SELECT * FROM sr_marketpace_offer ybo WHERE marketplace_type = 4"
 				+ "  ORDER BY PRODUCT_ID";	
 		List<Product> specialProducts = this.jdbcTemplate.query(sqlSelectSpecialPrices,
@@ -1396,7 +1351,7 @@ public class WikiDao extends AnyDaoImpl {
 	
 	private List<Product> instanceProductsOzonOffer() {
 		
-		logger.debug("instanceProductsOzonOffer()");
+		log.debug("instanceProductsOzonOffer()");
 		final String sqlSelectSpecialPrices = "SELECT PRODUCT_ID, SUPPLIER_STOCK, MARKETPLACE_SELLER, market_sku, special_price"
 				+ " FROM sr_marketpace_offer WHERE marketplace_type = 5";	
 		List<Product> specialProducts = this.jdbcTemplate.query(sqlSelectSpecialPrices,
@@ -1422,7 +1377,7 @@ public class WikiDao extends AnyDaoImpl {
 	}
 	
 	private void clearSession() {
-		logger.debug("clearSession(): {}", DateTimeUtils.sysDate());	
+		log.debug("clearSession(): {}", DateTimeUtils.sysDate());
 		final String sqlDeleteSessions = "DELETE FROM oc_session WHERE expire < (sysdate() - INTERVAL 1 DAY)";
 		this.jdbcTemplate.update(sqlDeleteSessions, new Object[] {});
 	}
@@ -1451,7 +1406,7 @@ public class WikiDao extends AnyDaoImpl {
 	
 	private List<Product> instanceProductsSpecialPrice() {
 		
-		logger.debug("setProductsSpecialPrice()");
+		log.debug("setProductsSpecialPrice()");
 		final String sqlSelectSpecialPrices = "SELECT * FROM oc_product_special ps"
 				+ "  WHERE (((date_start is null or date_start < ?) and (date_end is null or date_end < ?))"
 				+ "      OR ((date_start is null or date_start < ?) and (date_end > ?))"
@@ -1477,7 +1432,7 @@ public class WikiDao extends AnyDaoImpl {
 						BigDecimal specialPrice = rs.getBigDecimal("PRICE");
 				
 						if (specialPrice != null && specialPrice != BigDecimal.ZERO && item != null) {
-							logger.debug("setProductsSpecialPrice():{},{},{}", item.getId(), item.getName(), specialPrice);
+							log.debug("setProductsSpecialPrice():{},{},{}", item.getId(), item.getName(), specialPrice);
 							
 							item.setPriceWithoutDiscount(item.getPrice());
 							item.setPriceWithDiscount(specialPrice);							
@@ -1509,7 +1464,7 @@ public class WikiDao extends AnyDaoImpl {
 		if (StringUtils.isEmpty(city)) {
 			return "";
 		}		
-		logger.debug("findCodeCdekPvzByAddress()");		
+		log.debug("findCodeCdekPvzByAddress()");
 		final String sqlSelectSingleCityCdekPvz = "SELECT COUNT(code) count, MIN(code) single_code FROM sr_wiki_cdek_pvz w"
 				+ "  WHERE w.city = ?";		
 		ProductCategory pvz = this.jdbcTemplate.queryForObject(sqlSelectSingleCityCdekPvz,
@@ -1569,7 +1524,6 @@ public class WikiDao extends AnyDaoImpl {
 			}			
 			i++;			
 		}
-		
 		Collections.sort(results, new Comparator<Product>() {
 		    @Override
 		    public int compare(Product lhs, Product rhs) {
@@ -1577,7 +1531,6 @@ public class WikiDao extends AnyDaoImpl {
 
 		    }
 		});
-		
 		return results;
 	}
 	
@@ -1607,23 +1560,17 @@ public class WikiDao extends AnyDaoImpl {
 		
 	/**
 	 * Контейнер параметров для метода списания остатков товара с фронта и бэка
-	 * @author alex4
+	 * @author alex4doorow
 	 *
 	 */
-	@Setter
-	@Getter
-	@NoArgsConstructor
-	@EqualsAndHashCode
+	@Data
 	@ToString
-	private class Result4UpdateProductStock {
-		
+	private static class Result4UpdateProductStock {
 		// товар на фронте и бэке (как одиночный, так и комплект)
 		private boolean isProductFront;
 		private boolean isProductBack;		
 		// элемент комплекта на фронте и бэке (только для комплекта)		
 		private boolean isSlaveFront;
 		private boolean isSlaveBack;
-		
 	}
-
 }

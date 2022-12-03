@@ -107,7 +107,7 @@ public enum DeliveryTypes {
 		}
 	}
 	
-	public boolean isСdek() {
+	public boolean isCdek() {
 		if (this == DeliveryTypes.PICKUP || this == DeliveryTypes.CDEK_PVZ_TYPICAL || this == DeliveryTypes.CDEK_PVZ_ECONOMY || this == DeliveryTypes.CDEK_COURIER || this == DeliveryTypes.CDEK_COURIER_ECONOMY) {
 			return true;
 		} else {

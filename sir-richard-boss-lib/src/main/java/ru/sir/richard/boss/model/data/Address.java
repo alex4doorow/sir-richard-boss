@@ -121,7 +121,7 @@ public class Address extends AnyId {
 		Address clone = (Address) super.clone();
 		clone.addressType = this.addressType;
 		clone.country = this.country;
-		clone.carrierInfo = this.carrierInfo == null ? null : (CarrierInfo) this.getCarrierInfo().clone();
+		clone.carrierInfo = this.carrierInfo == null ? null : carrierInfo.clone();
 		clone.address = this.address == null ? null : new String(this.address);
 		clone.annotation = this.annotation == null ? null : new String(this.annotation);
 		return clone;

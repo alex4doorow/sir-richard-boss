@@ -45,7 +45,7 @@ public class SmsSenderTextGenerator extends SenderTextGenerator {
 			// частное лицо и оплата при получении
 			ForeignerCustomer customer = (ForeignerCustomer) order.getCustomer();					
 			String amountText = NumberUtils.formatNumber(order.getAmounts().getTotalWithDelivery(), "###.##");
-			if (order.getStatus().equals(OrderStatuses.DELIVERING) && (order.getDelivery().getDeliveryType().isСdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+			if (order.getStatus().equals(OrderStatuses.DELIVERING) && (order.getDelivery().getDeliveryType().isCdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 				// статус "доставляется", указан трэккод и это сдэк
 				messageBody = customer.getFirstName() + "! Заказ интернет-магазина " + order.getStore().getSite() + " " + order.getDelivery().getTrackCode() + " (" + order.getNo() + ") отправлен. Сумма к оплате " + amountText + " руб. Отследить заказ можно здесь https://www.cdek.ru/track.html?order_id=" + order.getDelivery().getTrackCode();
 			} else if (order.getStatus().equals(OrderStatuses.DELIVERING) && order.getDelivery().getDeliveryType().isPost() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
@@ -57,7 +57,7 @@ public class SmsSenderTextGenerator extends SenderTextGenerator {
 			} else if (order.getStatus().equals(OrderStatuses.READY_GIVE_AWAY) && (order.getDelivery().getDeliveryType() == DeliveryTypes.CDEK_COURIER || order.getDelivery().getDeliveryType() == DeliveryTypes.CDEK_COURIER_ECONOMY) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 				// статус "прибыл", указан трэккод и это курьер сдэка
 				//messageBody = customer.getFirstName() + "! Заказ интернет-магазина " + order.getStore().getSite() + " " + order.getDelivery().getTrackCode() + " (" + order.getNo() + ") прибыл в место назначения. Курьер доставит по адресу " + order.getDelivery().getAddress().getAddress() + ". Сумма к оплате " + amountText + " руб. Отследить заказ можно здесь https://www.cdek.ru/track.html?order_id=" + order.getDelivery().getTrackCode();
-			} else if (order.getStatus().equals(OrderStatuses.READY_GIVE_AWAY) && order.getDelivery().getDeliveryType().isСdek() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+			} else if (order.getStatus().equals(OrderStatuses.READY_GIVE_AWAY) && order.getDelivery().getDeliveryType().isCdek() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 				// статус "прибыл", указан трэккод и это сдэк пвз
 				//messageBody = customer.getFirstName() + "! Заказ интернет-магазина " + order.getStore().getSite() + " " + order.getDelivery().getTrackCode() + " (" + order.getNo() + ") прибыл на пункт выдачи " + order.getDelivery().getAddress().getAddress() + ". Сумма к оплате "+ amountText +" руб. Отследить заказ можно здесь https://www.cdek.ru/track.html?order_id=" + order.getDelivery().getTrackCode();
 			} else if (order.getStatus().equals(OrderStatuses.READY_GIVE_AWAY) && order.getDelivery().getDeliveryType().isPost() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
@@ -66,7 +66,7 @@ public class SmsSenderTextGenerator extends SenderTextGenerator {
 			} else if (order.getStatus().equals(OrderStatuses.READY_GIVE_AWAY_TROUBLE) && (order.getDelivery().getDeliveryType() == DeliveryTypes.PICKUP) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 				// статус "давно не забирают", указан трэккод и это самовывоз
 				messageBody = customer.getFirstName() + "! Срок хранения заказа интернет-магазина " + order.getStore().getSite() + " " + order.getDelivery().getTrackCode() + " (" + order.getNo() + ") заканчивается. Убедительная просьба оперативно получить заказ. После истечения срока хранения будет осуществлен возврат. Заказ готов к выдаче для самовывоза г.Москва, Щелковское Шоссе д.29, СДЭК. Сумма к оплате " + amountText +" руб. Отследить заказ можно здесь https://www.cdek.ru/track.html?order_id=" + order.getDelivery().getTrackCode();
-			} else if (order.getStatus().equals(OrderStatuses.READY_GIVE_AWAY_TROUBLE) && order.getDelivery().getDeliveryType().isСdek() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+			} else if (order.getStatus().equals(OrderStatuses.READY_GIVE_AWAY_TROUBLE) && order.getDelivery().getDeliveryType().isCdek() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 				// статус "давно не забирают", указан трэккод и это сдэк пвз
 				messageBody = customer.getFirstName() + "! Срок хранения заказа интернет-магазина " + order.getStore().getSite() + " " + order.getDelivery().getTrackCode() + " (" + order.getNo() + ") заканчивается. Убедительная просьба оперативно получить заказ. После истечения срока хранения, посылка будет отправлена обратно. Сумма к оплате " + amountText + " руб. Отследить заказ можно здесь https://www.cdek.ru/track.html?order_id=" + order.getDelivery().getTrackCode();
 			} else if (order.getStatus().equals(OrderStatuses.READY_GIVE_AWAY_TROUBLE) && order.getDelivery().getDeliveryType().isPost() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
@@ -75,7 +75,7 @@ public class SmsSenderTextGenerator extends SenderTextGenerator {
 			} 
 		} else if (order.getCustomer().isPerson() && order.isPrepayment()) {
 			ForeignerCustomer customer = (ForeignerCustomer) order.getCustomer();		
-			if (order.getStatus().equals(OrderStatuses.DELIVERING) && order.getDelivery().getDeliveryType().isСdek() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+			if (order.getStatus().equals(OrderStatuses.DELIVERING) && order.getDelivery().getDeliveryType().isCdek() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 				messageBody = customer.getFirstName() + "! Заказ интернет-магазина " + order.getStore().getSite() + " " + order.getDelivery().getTrackCode() + " (" + order.getNo() + ") отправлен. Отследить заказ можно здесь www.cdek.ru.";				
 			} else if (order.getStatus().equals(OrderStatuses.DELIVERING) && order.getDelivery().getDeliveryType().isPost() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 				// статус "доставляется", указан трэккод и это почта

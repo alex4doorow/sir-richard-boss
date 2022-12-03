@@ -37,7 +37,7 @@ public class OrderTotalAmountsCalculatorFactory {
 				return new YandexGoOrderTotalAmountsCalculator(order);
 			} else if (order.getDelivery().getDeliveryType() == DeliveryTypes.PICKUP) {
 				return new PickupOrderTotalAmountsCalculator(order);
-			} else if (order.getDelivery().getDeliveryType().isСdek()) {
+			} else if (order.getDelivery().getDeliveryType().isCdek()) {
 				return new СdekOrderTotalAmountsCalculator(order);			
 			} else if (order.getDelivery().getDeliveryType().isOzonRocket()) {
 				return new OzonRocketOrderTotalAmountsCalculator(order);			

@@ -1,9 +1,13 @@
 package ru.sir.richard.boss.model.data;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 import ru.sir.richard.boss.model.types.Countries;
 
+@ToString
+@EqualsAndHashCode(callSuper = false)
 public class Contact extends AnyId implements Person {
 	
 	private int personId; 
@@ -105,63 +109,4 @@ public class Contact extends AnyId implements Person {
 		clone.middleName = this.middleName == null ? null : new String(this.middleName);
 		return clone;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((country == null) ? 0 : country.hashCode());
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-		result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
-		result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Contact other = (Contact) obj;
-		if (country != other.country)
-			return false;
-		if (email == null) {
-			if (other.email != null)
-				return false;
-		} else if (!email.equals(other.email))
-			return false;
-		if (firstName == null) {
-			if (other.firstName != null)
-				return false;
-		} else if (!firstName.equals(other.firstName))
-			return false;
-		if (lastName == null) {
-			if (other.lastName != null)
-				return false;
-		} else if (!lastName.equals(other.lastName))
-			return false;
-		if (middleName == null) {
-			if (other.middleName != null)
-				return false;
-		} else if (!middleName.equals(other.middleName))
-			return false;
-		if (phoneNumber == null) {
-			if (other.phoneNumber != null)
-				return false;
-		} else if (!phoneNumber.equals(other.phoneNumber))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "Contact [country=" + country + ", phoneNumber=" + phoneNumber + ", email=" + email + ", firstName="
-				+ firstName + ", lastName=" + lastName + ", middleName=" + middleName + "]";
-	}
-
 }

@@ -2,6 +2,8 @@ package ru.sir.richard.boss.model.data;
 
 import java.util.Date;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.OrderTypes;
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
@@ -11,6 +13,7 @@ import ru.sir.richard.boss.model.utils.DateTimeUtils;
  * @author alex4doorow
  *
  */
+@Data
 public class OrderOffer {
 	
 	private int countDay;
@@ -23,22 +26,6 @@ public class OrderOffer {
 		this.parent = parent;
 	}
 
-	public int getCountDay() {
-		return countDay;
-	}
-
-	public void setCountDay(int countDay) {
-		this.countDay = countDay;
-	}
-
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-	
 	public Date getExpiredDate() {
 		if (parent == null) {
 			return DateTimeUtils.sysDate();

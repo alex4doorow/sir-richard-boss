@@ -1,26 +1,12 @@
 package ru.sir.richard.boss.dao;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import ru.sir.richard.boss.model.data.Address;
-import ru.sir.richard.boss.model.data.AnyCustomer;
-import ru.sir.richard.boss.model.data.Contact;
-import ru.sir.richard.boss.model.data.ForeignerCompanyCustomer;
-import ru.sir.richard.boss.model.data.ForeignerCustomer;
-import ru.sir.richard.boss.model.data.Person;
+import ru.sir.richard.boss.model.data.*;
 import ru.sir.richard.boss.model.data.conditions.CustomerConditions;
 import ru.sir.richard.boss.model.factories.CustomersFactory;
 import ru.sir.richard.boss.model.types.AddressTypes;
@@ -29,11 +15,13 @@ import ru.sir.richard.boss.model.types.CustomerStatuses;
 import ru.sir.richard.boss.model.types.CustomerTypes;
 import ru.sir.richard.boss.model.utils.TextUtils;
 
+import java.sql.*;
+import java.util.List;
+
 @Repository
+@Slf4j
 public class CustomerDao extends AnyDaoImpl {
 
-	private final Logger logger = LoggerFactory.getLogger(CustomerDao.class);
-	
 	public AnyCustomer findById(int id) {
 		
 		final String sqlSelectCustomer = "SELECT * FROM sr_v_customer WHERE id = ?";
@@ -102,7 +90,7 @@ public class CustomerDao extends AnyDaoImpl {
 	}	
 
 	private AnyCustomer findCustomerByPhoneNumber(String inputPhoneNumber) {
-		logger.debug("findByPhoneNumber():{}", inputPhoneNumber);
+		log.debug("findByPhoneNumber():{}", inputPhoneNumber);
 
 		if (StringUtils.isEmpty(inputPhoneNumber)) {
 			return null;
@@ -128,7 +116,7 @@ public class CustomerDao extends AnyDaoImpl {
 	}
 	
 	private Contact findContactByConditions(String inputPhoneNumber, String inputEmail) {
-		logger.debug("findContactByConditions():{}, {}", inputPhoneNumber, inputEmail);
+		log.debug("findContactByConditions():{}, {}", inputPhoneNumber, inputEmail);
 
 		if (StringUtils.isEmpty(inputPhoneNumber) && StringUtils.isEmpty(inputEmail)) {
 			return null;
@@ -208,7 +196,7 @@ public class CustomerDao extends AnyDaoImpl {
 	}
 
 	public AnyCustomer findByConditions(CustomerConditions customerConditions) {
-		logger.debug("findByConditions():{}", customerConditions);		
+		log.debug("findByConditions():{}", customerConditions);
 		Integer customerId = 0;
 		if (customerConditions.getCustomerType() == CustomerTypes.CUSTOMER) {
 			return findCustomerByPhoneNumber(customerConditions.getPersonPhoneNumber());
@@ -406,7 +394,7 @@ public class CustomerDao extends AnyDaoImpl {
 			return 0;
 		}		
 		String textAddress = StringUtils.truncate(address.getAddress().trim(), 255);
-		logger.debug("addAddress(): {}", address);
+		log.debug("addAddress(): {}", address);
 		GeneratedKeyHolder generatedKeyHolder = new GeneratedKeyHolder();	
 		final String sqlInsertAddress = "INSERT INTO sr_address"
 				+ " (type, country_iso_code_2,"
@@ -437,21 +425,10 @@ public class CustomerDao extends AnyDaoImpl {
             
         }, generatedKeyHolder);
 		return getLastInsertByGeneratedKeyHolder(generatedKeyHolder, rowsAffected);					
-                		
-		/*
-		this.jdbcTemplate.update(sqlInsertAddress,
-				new Object[] {address.getAddressType().getId(), address.getCountry().getCode(),
-						address.getCarrierInfo().getCityId(), address.getCarrierInfo().getCityContext(), address.getCarrierInfo().getPvz(), String.valueOf(address.getCarrierInfo().getDeliveryVariantId()),
-						address.getCarrierInfo().getStreet(), address.getCarrierInfo().getHouse(), address.getCarrierInfo().getFlat(),
-						address.getPostCode(), textAddress, address.getCarrierInfo().getMetroStation(),
-						address.getAnnotation()});
-		int addressId = getLastInsert("sr_address");		
-		return addressId;
-		*/
 	}
 
 	public void updateAddress(int addressId, Address address) {
-		logger.debug("updateAddress():{}", address);
+		log.debug("updateAddress():{}", address);
 		if (addressId == 0) {
 			return;
 		}
@@ -498,16 +475,6 @@ public class CustomerDao extends AnyDaoImpl {
             return preparedStatement;	            
         }, generatedKeyHolder);
 		return getLastInsertByGeneratedKeyHolder(generatedKeyHolder, rowsAffected);
-		/*
-		this.jdbcTemplate.update(sqlInsertPerson,
-				new Object[] {person.getFirstName(), 
-						person.getLastName(),
-						person.getMiddleName(), 
-						person.getCountry().getCode(),
-						person.getPhoneNumber(), 
-						person.getEmail()});
-		return getLastInsert("sr_person");
-		*/		
 	}
 
 	public void updatePerson(int personId, Person person) {
@@ -532,7 +499,7 @@ public class CustomerDao extends AnyDaoImpl {
 	
 	@Transactional
 	public int addCustomer(AnyCustomer customer) {
-		logger.debug("addCustomer():{}", customer);
+		log.debug("addCustomer():{}", customer);
 
 		final String sqlInsertPerson = "INSERT INTO sr_person"
 				+ " (first_name, last_name, middle_name, country_iso_code_2, phone_number, email)" 
@@ -564,19 +531,7 @@ public class CustomerDao extends AnyDaoImpl {
 	            return preparedStatement;	            
 	        }, generatedKeyHolder);
 			personId = getLastInsertByGeneratedKeyHolder(generatedKeyHolder, rowsAffected);
-					
-			/*
-			this.jdbcTemplate.update(sqlInsertPerson,
-					new Object[] {personCustomer.getFirstName(), 
-							personCustomer.getLastName(),
-							personCustomer.getMiddleName(), 
-							personCustomer.getCountry().getCode(),
-							personCustomer.getPhoneNumber(), 
-							personCustomer.getEmail()});
-			personId = getLastInsert("sr_person");
-			*/
-
-			final String sqlInsertCustomer = "INSERT INTO sr_customer" 
+			final String sqlInsertCustomer = "INSERT INTO sr_customer"
 					+ " (type, person_id, status)" 
 					+ " VALUES"
 					+ " (?, ?, ?)";
@@ -590,14 +545,6 @@ public class CustomerDao extends AnyDaoImpl {
 	            return preparedStatement;	            
 	        }, generatedKeyHolder);
 			customerId = getLastInsertByGeneratedKeyHolder(generatedKeyHolder, rowsAffected);
-			
-			/*
-			this.jdbcTemplate.update(sqlInsertCustomer,
-					new Object[] {customer.getType().getId(), 
-							personId, 
-							CustomerStatuses.PROCEED.getId() });
-			customerId = getLastInsert("sr_customer");
-			*/
 
 		} else {
 			final String sqlInsertCompany = "INSERT INTO sr_customer" 
@@ -614,11 +561,7 @@ public class CustomerDao extends AnyDaoImpl {
 	            return preparedStatement;	            
 	        }, generatedKeyHolder);
 			customerId = getLastInsertByGeneratedKeyHolder(generatedKeyHolder, rowsAffected);
-			/*
-			this.jdbcTemplate.update(sqlInsertCompany,
-					new Object[] {customer.getType().getId(), CustomerStatuses.PROCEED.getId()});
-			customerId = getLastInsert("sr_customer");					
-			*/
+
 			final String sqlInsertCompanyCustomer = "INSERT INTO sr_customer_company"
 					+ " (customer_id, country_iso_code_2, inn, short_name, long_name)" 
 					+ " VALUES"
@@ -663,7 +606,6 @@ public class CustomerDao extends AnyDaoImpl {
 						new Object[] {customerId, 
 								personContactId});												
 			}
-
 		}
 		for (Address address : customer.getAddresses()) {
 			int addressId = addAddress(address);
@@ -722,8 +664,7 @@ public class CustomerDao extends AnyDaoImpl {
 			} else {
 				updateAddress(address.getId(), address);
 			}
-		}		 
-
+		}
 	}
 
 	public void eraseCustomer(int customerId) {
@@ -760,7 +701,6 @@ public class CustomerDao extends AnyDaoImpl {
 		if (addressId == 0) {
 			return;
 		}
-
 		final String sqlInsertCustomerAddress = "INSERT INTO sr_customer_address" 
 				+ " (address_id, customer_id)"
 				+ " VALUES" 
@@ -769,5 +709,4 @@ public class CustomerDao extends AnyDaoImpl {
 		this.jdbcTemplate.update(sqlInsertCustomerAddress, new Object[] {addressId, 
 				customerId});
 	}
-
 }

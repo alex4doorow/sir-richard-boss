@@ -83,7 +83,7 @@ public class DeliveryService extends AnyDaoImpl {
 	public String addCdekParcelOrder(Order order) {
 		DeliveryTypes deliveryType = order.getDelivery().getDeliveryType();
 		String trackCode = "";
-		if (deliveryType.isСdek()) {
+		if (deliveryType.isCdek()) {
 			CdekApi cdek = new CdekApi(environment);			
 			// добавляем накладную в сдэк
 			
@@ -215,7 +215,7 @@ public class DeliveryService extends AnyDaoImpl {
 			} catch (IOException e) {
 				logger.error("IOException", e);
 			}			
-		} else if (deliveryType.isСdek()) {
+		} else if (deliveryType.isCdek()) {
 			try {
 				result = cdekCalc(order, totalAmount, deliveryType, to);
 				

@@ -1,27 +1,22 @@
 package ru.sir.richard.boss.model.types;
 
+import lombok.Getter;
+
+@Getter
 public enum AddressTypes {
 		
 	MAIN(1, "основной"),
 	ADDITIONAL(2, "дополнительный"),
 	UNKNOWN(3, "неизвестный");
 
-	private int id;
-    private String annotation;
+	private final int id;
+    private final String annotation;
 
     AddressTypes(int id, String annotation) {
     	this.id = id;
         this.annotation = annotation;
     }
 
-    public String getAnnotation() {
-        return annotation;
-    }
-
-	public int getId() {
-		return id;
-	}
-	
 	public static AddressTypes getValueById(int value) {
 		if (value == 1) {
 			return AddressTypes.MAIN;
@@ -30,8 +25,5 @@ public enum AddressTypes {
 		} else {
 			return AddressTypes.UNKNOWN;
 		}
-		
 	}
-    
-
 }

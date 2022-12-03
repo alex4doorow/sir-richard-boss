@@ -15,36 +15,36 @@ import ru.sir.richard.boss.model.utils.NumberUtils;
 public class Product extends AnyCatalog {
 
 	private String model;
-	private String sku;	
-	
+	private String sku;
+
 	private String deliveryName;
-	
+
 	private int quantity;
 	private BigDecimal price; // фактическая цена
-	
+
 	private BigDecimal priceWithoutDiscount; // цена без дисконта
 	private BigDecimal priceWithDiscount; // цена c дисконтом
-	
+
 	private BigDecimal supplierPrice;
 	private int supplierQuantity;
-	private int stockQuantity;	
+	private int stockQuantity;
 	private int slaveQuantity;
 	private ProductCategory category;
 	private PaymentDeliveryMethods deliveryMethod;
 	private boolean optionalExist;
 	private int linkId;
-	
+
 	private SupplierTypes mainSupplier;
 	private ProductTypes type;
-			
+
 	private boolean composite; // комплект
 	private Set<Product> kitComponents;
-		
+
 	private boolean visible; // видимость (да, нет)
 	private ProductStore store;	// фронт
 
 	private Set<ProductMarket> markets;
-		 	
+
 	public Product(int id, String name) {
 		super(id, name);
 		this.quantity = 1;
@@ -52,14 +52,14 @@ public class Product extends AnyCatalog {
 		this.slaveQuantity = -1;
 		this.supplierPrice = BigDecimal.ZERO;
 		this.price = BigDecimal.ZERO;
-		
+
 		this.priceWithoutDiscount = BigDecimal.ZERO;
 		this.priceWithDiscount = BigDecimal.ZERO;
-		
+
 		this.model = "";
 		this.sku = "";
 		this.optionalExist = false;
-		this.linkId = -1;		
+		this.linkId = -1;
 		this.mainSupplier = null;
 		this.composite = false;
 		this.kitComponents = new HashSet<Product>();
@@ -67,19 +67,19 @@ public class Product extends AnyCatalog {
 		this.type = ProductTypes.MAIN;
 		this.visible = true;
 		this.store = new ProductStore();
-		
+
 		this.markets = new HashSet<ProductMarket>();
-		
-		ProductMarket ozon = new ProductMarket(CrmTypes.OZON);		
-		this.markets.add(ozon);		
-		ProductMarket yandex = new ProductMarket(CrmTypes.YANDEX_MARKET);		
+
+		ProductMarket ozon = new ProductMarket(CrmTypes.OZON);
+		this.markets.add(ozon);
+		ProductMarket yandex = new ProductMarket(CrmTypes.YANDEX_MARKET);
 		this.markets.add(yandex);
 	}
-	
+
 	public Product() {
-		this(0, "");		
+		this(0, "");
 	}
-	
+
 	public String getDeliveryName() {
 		return deliveryName;
 	}
@@ -94,7 +94,7 @@ public class Product extends AnyCatalog {
 
 	public void setComposite(boolean composite) {
 		this.composite = composite;
-	}	
+	}
 
 	public Set<Product> getKitComponents() {
 		return kitComponents;
@@ -103,17 +103,17 @@ public class Product extends AnyCatalog {
 	public void setKitComponents(Set<Product> kitComponents) {
 		this.kitComponents = kitComponents;
 	}
-	
+
 	public String getViewSKU() {
 		String result = "";
 		if (StringUtils.isEmpty(this.sku)) {
 			result = StringUtils.truncate(this.model.trim(), 3);
 		} else {
 			result = this.sku;
-		} 
+		}
 		return StringUtils.upperCase(result);
 	}
-	
+
 	public ProductTypes getType() {
 		return type;
 	}
@@ -129,17 +129,17 @@ public class Product extends AnyCatalog {
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
-	
+
 	public boolean isSKUVisible() {
 		if (this.type == ProductTypes.MAIN) {
-			return visible;			
+			return visible;
 		} else if (this.type == ProductTypes.ADDITIONAL) {
-			return true;			
+			return true;
 		} else {
 			return visible;
-		}		
+		}
 	}
-	
+
 	public String getViewName() {
 		final int MAX_VIEW_LENGTH = 139;
 		String result = "";
@@ -147,7 +147,7 @@ public class Product extends AnyCatalog {
 			result = "[" + StringUtils.upperCase(this.sku) + "] " + this.getName();
 		} else {
 			result = this.getName();
-		}		
+		}
 		int index = Math.min(result.length(), MAX_VIEW_LENGTH);
 		if (index < result.length()) {
 			return result.substring(0, index) + "...";
@@ -155,7 +155,7 @@ public class Product extends AnyCatalog {
 			return result.substring(0, index);
 		}
 	}
-	
+
 	public String getViewNameShort() {
 		if (getName() != null) {
 			final int MAX_VIEW_LENGTH = 120;
@@ -168,7 +168,7 @@ public class Product extends AnyCatalog {
 		}
 		return null;
 	}
-	
+
 	public String getViewModelShort() {
 		if (getModel() != null) {
 			final int MAX_VIEW_LENGTH = 45;
@@ -181,11 +181,11 @@ public class Product extends AnyCatalog {
 		}
 		return null;
 	}
-	
+
 	public void setModel(String model) {
 		this.model = model;
 	}
-	
+
 	public String getModel() {
 		return model;
 	}
@@ -196,7 +196,7 @@ public class Product extends AnyCatalog {
 
 	public void setSku(String sku) {
 		this.sku = sku;
-	}	
+	}
 
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
@@ -205,7 +205,7 @@ public class Product extends AnyCatalog {
 	public int getQuantity() {
 		return quantity;
 	}
-	
+
 	public int getSupplierQuantity() {
 		return supplierQuantity;
 	}
@@ -217,11 +217,11 @@ public class Product extends AnyCatalog {
 	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
-	
+
 	public BigDecimal getPrice() {
 		return price;
-	}	
-	
+	}
+
 	public BigDecimal getPriceWithoutDiscount() {
 		return priceWithoutDiscount;
 	}
@@ -249,11 +249,11 @@ public class Product extends AnyCatalog {
 	public int getStockQuantity() {
 		return stockQuantity;
 	}
-	
+
 	public void setStockQuantity(int stockQuantity) {
 		this.stockQuantity = stockQuantity;
 	}
-	
+
 	public int getSlaveQuantity() {
 		return slaveQuantity;
 	}
@@ -262,23 +262,23 @@ public class Product extends AnyCatalog {
 		this.slaveQuantity = slaveQuantity;
 	}
 
-	public int getCompositeStockQuantity() {		
+	public int getCompositeStockQuantity() {
 		if (this.isComposite()) {
 			int result = -1;
 			for (Product slave : this.kitComponents) {
 				if (result == -1) {
 					result = slave.getStockQuantity();
 				} else {
-					int quantity = slave.getStockQuantity() / slave.getSlaveQuantity(); 
-					result = Math.min(result, quantity);				
+					int quantity = slave.getStockQuantity() / slave.getSlaveQuantity();
+					result = Math.min(result, quantity);
 				}
-			}	
+			}
 			return result;
 		} else {
 			return this.getStockQuantity();
-		}		
+		}
 	}
-			
+
 	public ProductCategory getCategory() {
 		return category;
 	}
@@ -286,7 +286,7 @@ public class Product extends AnyCatalog {
 	public void setCategory(ProductCategory category) {
 		this.category = category;
 	}
-	
+
 	public PaymentDeliveryMethods getDeliveryMethod() {
 		return deliveryMethod;
 	}
@@ -309,7 +309,7 @@ public class Product extends AnyCatalog {
 
 	public void setOptionalExist(boolean optionalExist) {
 		this.optionalExist = optionalExist;
-	}	
+	}
 
 	public SupplierTypes getMainSupplier() {
 		return mainSupplier;
@@ -322,7 +322,7 @@ public class Product extends AnyCatalog {
 	public ProductStore getStore() {
 		return store;
 	}
-	
+
 	public void setStore(ProductStore value) {
 		this.store = value;
 	}
@@ -330,12 +330,12 @@ public class Product extends AnyCatalog {
 	public ProductYandexMarket getYm() {
 		return ym;
 	}
-	
+
 	public void setYm(ProductYandexMarket value) {
 		this.ym = value;
 	}
 	*/
-	
+
 	public Set<ProductMarket> getMarkets() {
 		return markets;
 	}
@@ -355,88 +355,88 @@ public class Product extends AnyCatalog {
 		}
 		return null;
 	}
-		
+
 	public String getViewStockQuantityText() {
-	
+
 		String weightText = "";
 		String supplierAnnotation = "";
 		String ymExist = "";
-		
+
 		if (this.getCompositeStockQuantity() >= 1) {
 			supplierAnnotation = "";
 		} else {
-			supplierAnnotation = ", уточнить наличие";					
+			supplierAnnotation = ", уточнить наличие";
 		}
-		
+
 		if (this.getMarket(CrmTypes.YANDEX_MARKET).isMarketSeller()) {
 			ymExist = "размещен на \"ЯНДЕКС МАРКЕТ\", ";
 		}
-		
+
 		if (this.getStore().getWeight().compareTo(BigDecimal.ONE) < 0) {
 			weightText = "";
 		} else {
 			weightText = ", вес " + NumberUtils.formatNumber(this.getStore().getWeight(), "#,##0") + " кг";
-		}	
-		
+		}
+
 		if (this.getId() <= 0) {
-			return "";				
+			return "";
 		} else if (this.getMainSupplier() == null) {
-			return "На складе: 0 ("+ ymExist + "на сайте: " + this.getQuantity() + ", уточнить наличие" + weightText + ")";				
+			return "На складе: 0 ("+ ymExist + "на сайте: " + this.getQuantity() + ", уточнить наличие" + weightText + ")";
 		} else if (this.getMainSupplier() == SupplierTypes.SITITEK) {
-			return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "всего: " + this.getQuantity() + ", поставщик " + this.getMainSupplier().getAnnotation() + ": " + this.getSupplierQuantity() + weightText + ")";			
+			return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "всего: " + this.getQuantity() + ", поставщик " + this.getMainSupplier().getAnnotation() + ": " + this.getSupplierQuantity() + weightText + ")";
 		} else if (this.getMainSupplier() == SupplierTypes.LADIA) {
-			return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "поставщик " + this.getMainSupplier().getAnnotation() + ", на сайте: " + this.getQuantity() + weightText + ")";			
+			return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "поставщик " + this.getMainSupplier().getAnnotation() + ", на сайте: " + this.getQuantity() + weightText + ")";
 		} else {
 			if (this.getQuantity() <= 0) {
-				return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "поставщик " + this.getMainSupplier().getAnnotation() + ", на сайте: \"нет в наличии\")";				
+				return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "поставщик " + this.getMainSupplier().getAnnotation() + ", на сайте: \"нет в наличии\")";
 			} else {
-				return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "поставщик " + this.getMainSupplier().getAnnotation() + ", на сайте: " + this.getQuantity() + supplierAnnotation + weightText + ")";								
-			}						
+				return "На складе: " + this.getCompositeStockQuantity() + " (" + ymExist + "поставщик " + this.getMainSupplier().getAnnotation() + ", на сайте: " + this.getQuantity() + supplierAnnotation + weightText + ")";
+			}
 		}
 	}
-	
-	public String getViewStockQuantityClass() {		
+
+	public String getViewStockQuantityClass() {
 		if (this.getId() <= 0) {
-			return "light";			
+			return "light";
 		} else if (this.getMainSupplier() == null) {
-			return "danger";				
+			return "danger";
 		} else if (this.getMainSupplier() == SupplierTypes.SITITEK) {
 			if (this.getCompositeStockQuantity() <= 0 && this.getQuantity() <= 0) {
 				return "danger";
 			} else if (this.getCompositeStockQuantity() > 0 && this.getQuantity() <= 0) {
-				return "warning"; 	
+				return "warning";
 			} else if (this.getCompositeStockQuantity() <= 0 && this.getQuantity() > 0) {
-				return "warning";				
+				return "warning";
 			} else {
-				return "light";				
-			}						
+				return "light";
+			}
 		} else {
 			if (this.getCompositeStockQuantity() <= 0 && this.getQuantity() <= 0) {
 				return "danger";
 			} else if (this.getQuantity() <= 0) {
 				return "warning";
 			} else if (this.getCompositeStockQuantity() > 0) {
-				return "light"; 	
+				return "light";
 			} else {
 				return "warning";
 			}
 		}
 	}
-		
+
 	@Override
 	public Product clone() throws CloneNotSupportedException  {
-		Product clone = (Product) super.clone();		
+		Product clone = (Product) super.clone();
 		clone.model = this.model == null ? null : new String(this.model);
 		clone.sku = this.sku == null ? null : new String(this.sku);
-		clone.quantity = this.quantity;		
+		clone.quantity = this.quantity;
 		clone.price = this.price == null ? null : new BigDecimal(this.price.toString());
 		clone.supplierPrice = this.supplierPrice == null ? null : new BigDecimal(this.supplierPrice.toString());
 		clone.supplierQuantity = this.supplierQuantity;
-		
-		clone.stockQuantity = this.stockQuantity;		
+
+		clone.stockQuantity = this.stockQuantity;
 		clone.category = this.category == null ? null : this.category;
 		clone.optionalExist = this.optionalExist;
-		clone.linkId = this.linkId;	
+		clone.linkId = this.linkId;
 		/*
 		clone.getStore().getWeight() = this.getStore().getWeight() == null ? null : new BigDecimal(this.weight.toString());
 		clone.height = this.height;
@@ -444,8 +444,8 @@ public class Product extends AnyCatalog {
 		clone.width = this.width;
 		*/
 		return clone;
-	}	
-	
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -453,15 +453,15 @@ public class Product extends AnyCatalog {
 		result = prime * result + ((category == null) ? 0 : category.hashCode());
 		result = prime * result + (composite ? 1231 : 1237);
 		result = prime * result + ((deliveryMethod == null) ? 0 : deliveryMethod.hashCode());
-		
-		
+
+
 		result = prime * result + ((kitComponents == null) ? 0 : kitComponents.hashCode());
-		
+
 		result = prime * result + linkId;
 		result = prime * result + ((mainSupplier == null) ? 0 : mainSupplier.hashCode());
 		result = prime * result + ((model == null) ? 0 : model.hashCode());
 		result = prime * result + (optionalExist ? 1231 : 1237);
-		
+
 		result = prime * result + ((price == null) ? 0 : price.hashCode());
 		result = prime * result + quantity;
 		result = prime * result + ((sku == null) ? 0 : sku.hashCode());
@@ -470,9 +470,9 @@ public class Product extends AnyCatalog {
 		result = prime * result + ((store == null) ? 0 : store.hashCode());
 		result = prime * result + ((supplierPrice == null) ? 0 : supplierPrice.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		
+
 		result = prime * result + (visible ? 1231 : 1237);
-		
+
 		return result;
 	}
 
@@ -538,22 +538,22 @@ public class Product extends AnyCatalog {
 			return false;
 		if (type != other.type)
 			return false;
-		
+
 		if (visible != other.visible)
 			return false;
-		
+
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "Product [id=" + getId() + ", name=" + getName() 
-				 //+ ", model=" + model 
-				 + ", sku=" + sku 
-				//+ ", quantity=" + quantity 
-				+ ", price=" + price 
+		return "Product [id=" + getId() + ", name=" + getName()
+				//+ ", model=" + model
+				+ ", sku=" + sku
+				//+ ", quantity=" + quantity
+				+ ", price=" + price
 				//+ ", stockQuantity: " + stockQuantity + ", supplierPrice: " + supplierPrice
-				//+ ", category=" + category 
+				//+ ", category=" + category
 				+ "]";
 	}
 
@@ -563,5 +563,4 @@ public class Product extends AnyCatalog {
 		result.setName("");
 		return result;
 	}
-
 }
