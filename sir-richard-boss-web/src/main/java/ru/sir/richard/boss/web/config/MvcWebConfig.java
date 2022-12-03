@@ -29,7 +29,8 @@ import java.util.Properties;
 @EnableWebMvc
 @EnableScheduling
 @ComponentScan(basePackages = {"ru.sir.richard.boss.web",
-        "ru.sir.richard.boss.dao", "ru.sir.richard.boss.crm", "ru.sir.richard.boss.api", "ru.sir.richard.boss.converter"})
+        "ru.sir.richard.boss.repository", "ru.sir.richard.boss.dao", "ru.sir.richard.boss.crm", "ru.sir.richard.boss.api",
+        "ru.sir.richard.boss.converter"})
 @PropertySource(value = "classpath:application.properties", encoding = "UTF-8")
 //@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
 @PropertySource(value = "classpath:application-test.properties", encoding = "UTF-8")
@@ -61,7 +62,7 @@ public class MvcWebConfig implements WebMvcConfigurer {
     @Bean
     public ResourceBundleMessageSource messageSource() {
         ResourceBundleMessageSource rb = new ResourceBundleMessageSource();
-        rb.setBasenames(new String[]{"messages/messages", "messages/validation"});
+        rb.setBasenames("messages/messages", "messages/validation");
         return rb;
     }
 

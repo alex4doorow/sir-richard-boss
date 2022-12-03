@@ -10,13 +10,11 @@ CREATE TABLE sr_sys_user (
 	password VARCHAR(100) NOT NULL,
     email VARCHAR(100) NULL,
 	enabled TINYINT NOT NULL DEFAULT 1,
-    last_login DATE NULL,
+    last_login DATETIME NULL,
 	PRIMARY KEY (id)
 );
 
 CREATE UNIQUE INDEX sr_sys_user_index on sr_sys_user (user_name);
-
-INSERT INTO sr_sys_user(id, user_name, password, enabled) values (1, 'al', '$2a$10$fCGXaogbOuxCAWgKc7WDCeGFgrebZE0eQyfv5b8PuSvwvOrI94EVi', 1);
 
 CREATE TABLE sr_sys_role (
 	id INT NOT NULL AUTO_INCREMENT, /* идентификатор */
@@ -24,15 +22,17 @@ CREATE TABLE sr_sys_role (
     PRIMARY KEY (id)
 );
 
-INSERT INTO sr_sys_role(id, name) VALUES (1, 'ROLE_USER'); 
-INSERT INTO sr_sys_role(id, name) VALUES (2, 'ROLE_ADMIN'); 
-
 CREATE TABLE sr_sys_user_roles (
 	id INT NOT NULL AUTO_INCREMENT, /* идентификатор */
 	user_id INT NOT NULL,
 	role_id INT NOT NULL,
     PRIMARY KEY (id)
 );
+
+INSERT INTO sr_sys_user(id, user_name, password, email, last_login, enabled) values (1, 'al', '$2a$10$fCGXaogbOuxCAWgKc7WDCeGFgrebZE0eQyfv5b8PuSvwvOrI94EVi', "alex@doorow@gmail.com", now(), 1);
+
+INSERT INTO sr_sys_role(id, name) VALUES (1, 'ROLE_USER'); 
+INSERT INTO sr_sys_role(id, name) VALUES (2, 'ROLE_ADMIN'); 
 
 INSERT INTO sr_sys_user_roles(user_id, role_id) values (1, 1);
 INSERT INTO sr_sys_user_roles(user_id, role_id) values (1, 2);
