@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>ru.sir.richard.boss</groupId>
 		<artifactId>sir-richard-boss</artifactId>
-		<version>4.2.0-SNAPSHOT</version>
+		<version>4.3.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent> 	
 	<properties>
