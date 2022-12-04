@@ -3,11 +3,15 @@ package ru.sir.richard.boss.model.data;
 import java.text.ParseException;
 import java.util.Date;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.model.utils.Pair;
 
+@EqualsAndHashCode
+@ToString
 public class CourierInfo extends Pair<Date> {
 		
 	private Date deliveryDate;	
@@ -89,38 +93,4 @@ public class CourierInfo extends Pair<Date> {
 		clone.deliveryDate = this.deliveryDate == null ? null : (Date) deliveryDate.clone();				
 		return clone;
 	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((deliveryDate == null) ? 0 : deliveryDate.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CourierInfo other = (CourierInfo) obj;
-		if (deliveryDate == null) {
-			if (other.deliveryDate != null)
-				return false;
-		} else if (!deliveryDate.equals(other.deliveryDate))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "CourierInfo ["
-				+ "deliveryDate=" + deliveryDate == null ? "" : deliveryDate + ", "
-				+ "timeInterval:" + timeInterval() + "]";
-	}
-	
-
 }

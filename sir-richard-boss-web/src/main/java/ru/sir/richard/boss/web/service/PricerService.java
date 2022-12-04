@@ -14,6 +14,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -32,13 +33,11 @@ import ru.sir.richard.boss.model.types.SupplierTypes;
 import ru.sir.richard.boss.model.utils.PricerUtils;
 
 @Service
+@Slf4j
 public class PricerService {
 	
-private static final int BUFFER_SIZE = 4096;
-	
-	private final Logger logger = LoggerFactory.getLogger(PricerService.class);
-	
-	private Map<String, Product> translator;	
+	private static final int BUFFER_SIZE = 4096;
+	private Map<String, Product> translator;
 	
 	@Autowired
 	private WikiDao wikiDao;
@@ -48,23 +47,19 @@ private static final int BUFFER_SIZE = 4096;
 			
 	public void runSititek() {
 		
-		logger.info("run(): {}, {}", SupplierTypes.SITITEK.getAnnotation(), "start");
+		log.info("run(): {}, {}", SupplierTypes.SITITEK.getAnnotation(), "start");
 	
 		try {
 			downloadFile();
 		} catch (IOException e) {
-			logger.error("IOException:", e);
+			log.error("IOException:", e);
 			return;
 		}
-
-		/*
-		wikiDao.init();
-		*/		
 		translator = PricerUtils.createSititekTranslatorData();
 		List<ProductDataRaw> raws = loadFromExcelSititek();
 		saveToDbSititek(raws);
 
-		logger.info("run(): {}, {}", SupplierTypes.SITITEK.getAnnotation(), "finish");
+		log.info("run(): {}, {}", SupplierTypes.SITITEK.getAnnotation(), "finish");
 		
 	}
 	
@@ -105,9 +100,9 @@ private static final int BUFFER_SIZE = 4096;
 			}			
 			myExcelBook.close();
 		} catch (FileNotFoundException e) {
-			logger.error("FileNotFoundException:", e);
+			log.error("FileNotFoundException:", e);
 		} catch (IOException e) {
-			logger.error("IOException:", e);			
+			log.error("IOException:", e);
 		}
 		return outputData;	
 	}
@@ -149,7 +144,7 @@ private static final int BUFFER_SIZE = 4096;
 		try {
 			price = PricerUtils.getPrice(raw.getPrice());						
 		} catch (java.lang.NumberFormatException e) {
-			logger.error("PriceUtils.getPrice() price: <{}>, {}", raw.getPrice(), raw.getProductName());
+			log.error("PriceUtils.getPrice() price: <{}>, {}", raw.getPrice(), raw.getProductName());
 			price = BigDecimal.ZERO;
 		}		
 		
@@ -217,10 +212,10 @@ private static final int BUFFER_SIZE = 4096;
                 fileName = pricerFileName;
             }
  
-            logger.info("Content-Type = " + contentType);
-            logger.info("Content-Disposition = " + disposition);
-            logger.info("Content-Length = " + contentLength);
-            logger.info("fileName = " + fileName);
+            log.info("Content-Type = " + contentType);
+            log.info("Content-Disposition = " + disposition);
+            log.info("Content-Length = " + contentLength);
+            log.info("fileName = " + fileName);
  
             InputStream inputStream = httpConn.getInputStream();
             String saveFilePath = pricerFolderOut + File.separator + fileName;
@@ -234,9 +229,9 @@ private static final int BUFFER_SIZE = 4096;
             } 
             outputStream.close();
             inputStream.close(); 
-            logger.info("File downloaded");
+            log.info("File downloaded");
         } else {
-        	logger.info("No file to download. Server replied HTTP code: " + responseCode);
+        	log.info("No file to download. Server replied HTTP code: " + responseCode);
         }
         httpConn.disconnect();
     }	

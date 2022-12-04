@@ -1,17 +1,9 @@
 package ru.sir.richard.boss.web.service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import ru.sir.richard.boss.model.data.SupplierStock;
 import ru.sir.richard.boss.model.data.SupplierStockProduct;
 import ru.sir.richard.boss.model.data.comparators.SupplierStockProductComparators;
@@ -21,13 +13,18 @@ import ru.sir.richard.boss.model.paging.PagingRequest;
 import ru.sir.richard.boss.model.paging.SortingOrder;
 import ru.sir.richard.boss.model.types.SupplierTypes;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Service
+@Slf4j
 public class WikiRestService {
 	
 	private static final Comparator<SupplierStockProduct> EMPTY_COMPARATOR = (ssp1, ssp2) -> 0;
-	
-	private final Logger logger = LoggerFactory.getLogger(WikiRestService.class);
-	
+
 	@Autowired
 	protected WikiService wikiService;
 	
@@ -36,8 +33,8 @@ public class WikiRestService {
 		pagingRequest.setColumns(Stream.of("id", "no", "productName", "productCategoryName", "stockQuantity", "productQuantity", "supplierPrice", "productPrice")
                 .map(Column::new)
                 .collect(Collectors.toList()));
-	       
-		logger.info("getSupplierData: {}", pagingRequest);
+
+		log.info("getSupplierData: {}", pagingRequest);
 				
 		SupplierTypes supplier = SupplierTypes.SITITEK;
 		SupplierStock stock = wikiService.getWiki().getSupplierStock(supplier, null);	
@@ -96,7 +93,7 @@ public class WikiRestService {
             return comparator;
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
 
         return EMPTY_COMPARATOR;

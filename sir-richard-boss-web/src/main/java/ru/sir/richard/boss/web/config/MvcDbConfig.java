@@ -3,10 +3,12 @@ package ru.sir.richard.boss.web.config;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -19,7 +21,8 @@ import java.util.Properties;
 @Log4j2
 @Configuration
 @PropertySource(value="classpath:application.properties", encoding="UTF-8")
-//@EntityScan("ru.sir.richard.boss.web.entity")
+@EntityScan("ru.sir.richard.boss.web.entity")
+@EnableJpaRepositories(basePackages = "ru.sir.richard.boss.repository")
 public class MvcDbConfig {
 
 	@Autowired
@@ -66,7 +69,7 @@ public class MvcDbConfig {
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 		em.setDataSource(dataSource());
-		em.setPackagesToScan("ru.sir.richard.boss.web.entity");
+		em.setPackagesToScan("ru.sir.richard.boss.model.entity"); // TODO entity scan didn't work
 
 		final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);

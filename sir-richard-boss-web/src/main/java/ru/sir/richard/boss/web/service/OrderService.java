@@ -3,6 +3,7 @@ package ru.sir.richard.boss.web.service;
 import java.util.Date;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,9 @@ import ru.sir.richard.boss.model.utils.sender.email.EmailSenderTextGenerator;
 import ru.sir.richard.boss.web.data.FormCustomer;
 
 @Service
+@Slf4j
 public class OrderService {
-	
-	private final Logger logger = LoggerFactory.getLogger(OrderService.class);
-	
+
 	@Autowired
 	private Environment environment;
 		
@@ -57,7 +57,7 @@ public class OrderService {
 
 	@Transactional
 	public int saveOrUpdate(Order order) {
-		logger.debug("saveOrUpdate():{}", order);
+		log.debug("saveOrUpdate():{}", order);
 		int orderId;
 		if (order.isNew()) {			
 			orderId = orderDao.addOrder(order);
@@ -87,7 +87,7 @@ public class OrderService {
 	public String ordersSendFeedback(Date dateStart) {
 		List<Order> ordersForFeedback = orderDao.listOrdersForFeedback(dateStart);
 		
-		logger.debug("");
+		log.debug("");
 		String debugInfoItem = "";
 		String debugInfo = "";
 		int deliveredCount = 0;
@@ -102,7 +102,7 @@ public class OrderService {
 											
 			debugInfoItem = "- запрос на отзыв: " + currentOrder.getNo() + ", " + currentOrder.getCustomer().getViewShortName() + ", " + currentOrder.getDelivery().getAddress().getAddress();
 			debugInfo = debugInfo + debugInfoItem + "<br>";
-			logger.debug("запрос на отзыв: {}, {}, {}", currentOrder.getNo(), currentOrder.getCustomer().getViewShortName(), currentOrder.getDelivery().getAddress().getAddress());
+			log.debug("запрос на отзыв: {}, {}, {}", currentOrder.getNo(), currentOrder.getCustomer().getViewShortName(), currentOrder.getDelivery().getAddress().getAddress());
 			deliveredCount++;
 		}
 		
@@ -119,7 +119,7 @@ public class OrderService {
 		
 		List<Order> expiredBids = orderDao.listBidExpired(dateStart);
 		
-		logger.debug("");
+		log.debug("");
 		String debugInfoItem = "";
 		String debugInfo = "";
 		int expiredCount = 0;
@@ -139,7 +139,7 @@ public class OrderService {
 								
 			debugInfoItem = "- актуальность, " + currentOrder.getOrderType().getAnnotation()+ ": " + currentOrder.getNo() + ", " + currentOrder.getCustomer().getViewShortName() + ", срок: " + DateTimeUtils.defaultFormatDate(currentOrder.getOffer().getExpiredDate());
 			debugInfo = debugInfo + debugInfoItem + "<br>";
-			logger.debug("актуальность данных: {}, {}, {}", currentOrder.getNo(), currentOrder.getCustomer().getViewShortName(), DateTimeUtils.defaultFormatDate(currentOrder.getOffer().getExpiredDate()));
+			log.debug("актуальность данных: {}, {}, {}", currentOrder.getNo(), currentOrder.getCustomer().getViewShortName(), DateTimeUtils.defaultFormatDate(currentOrder.getOffer().getExpiredDate()));
 			expiredCount++;
 		}
 		

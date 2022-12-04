@@ -1,25 +1,7 @@
 package ru.sir.richard.boss.dao;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,50 +11,28 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import ru.sir.richard.boss.api.market.OzonMarketApiService;
 import ru.sir.richard.boss.api.market.YandexMarketApi;
-import ru.sir.richard.boss.model.data.Address;
-import ru.sir.richard.boss.model.data.AnyCustomer;
-import ru.sir.richard.boss.model.data.Comment;
-import ru.sir.richard.boss.model.data.ForeignerCompanyCustomer;
-import ru.sir.richard.boss.model.data.ForeignerCustomer;
-import ru.sir.richard.boss.model.data.Order;
-import ru.sir.richard.boss.model.data.OrderDelivery;
-import ru.sir.richard.boss.model.data.OrderExternalCrm;
-import ru.sir.richard.boss.model.data.OrderItem;
-import ru.sir.richard.boss.model.data.OrderStatusItem;
-import ru.sir.richard.boss.model.data.Person;
+import ru.sir.richard.boss.model.data.*;
 import ru.sir.richard.boss.model.data.conditions.ConditionResult;
 import ru.sir.richard.boss.model.data.conditions.CustomerConditions;
 import ru.sir.richard.boss.model.data.conditions.OrderConditions;
 import ru.sir.richard.boss.model.factories.CustomersFactory;
-import ru.sir.richard.boss.model.types.AddressTypes;
-import ru.sir.richard.boss.model.types.CommentTypes;
-import ru.sir.richard.boss.model.types.Countries;
-import ru.sir.richard.boss.model.types.CrmStatuses;
-import ru.sir.richard.boss.model.types.CrmTypes;
-import ru.sir.richard.boss.model.types.CustomerTypes;
-import ru.sir.richard.boss.model.types.DeliveryTypes;
-import ru.sir.richard.boss.model.types.OrderAdvertTypes;
-import ru.sir.richard.boss.model.types.OrderAmountTypes;
-import ru.sir.richard.boss.model.types.OrderEmailStatuses;
-import ru.sir.richard.boss.model.types.OrderSourceTypes;
-import ru.sir.richard.boss.model.types.OrderStatuses;
-import ru.sir.richard.boss.model.types.OrderTypes;
-import ru.sir.richard.boss.model.types.PaymentDeliveryTypes;
-import ru.sir.richard.boss.model.types.PaymentTypes;
-import ru.sir.richard.boss.model.types.ReportPeriodTypes;
-import ru.sir.richard.boss.model.types.StoreTypes;
+import ru.sir.richard.boss.model.types.*;
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.model.utils.Pair;
 import ru.sir.richard.boss.model.utils.TextUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.*;
+import java.util.Date;
+import java.util.*;
+
 @Repository
+@Slf4j
 public class OrderDao extends AnyDaoImpl {
-		
-	private final Logger logger = LoggerFactory.getLogger(OrderDao.class);
-	
+
 	@Autowired
 	private Environment environment;
 	
@@ -86,7 +46,7 @@ public class OrderDao extends AnyDaoImpl {
 	private WikiDao wikiDao;
 	
 	public List<Order> listOrdersByConditions(OrderConditions orderConditions) {
-		logger.debug("listOrdersByConditions():{}", orderConditions);
+		log.debug("listOrdersByConditions():{}", orderConditions);
 		
 		ConditionResult conditionResult = createSQLQueryListOrdersByConditions(orderConditions);
 		final String sqlSelectListOrders = conditionResult.getConditionText();
@@ -126,7 +86,6 @@ public class OrderDao extends AnyDaoImpl {
 		            	} else {
 		            		order.setStore(StoreTypes.SR);
 		            	}
-		                
 		                order.setNo(rs.getInt("ORDER_NO"));
 		                order.setSubNo(rs.getInt("ORDER_SUB_NO"));
 		                order.setOrderDate(rs.getTimestamp("ORDER_DATE"));
@@ -188,14 +147,14 @@ public class OrderDao extends AnyDaoImpl {
 	public List<Order> listOrdersForFeedback(Date dateStart) {
 		final int COUNT_DAY_TIMEOUT = 10;
 		
-		logger.debug("listOrdersForFeedback():{}", dateStart);
+		log.debug("listOrdersForFeedback():{}", dateStart);
 
 		final String sqlSelectListOrders = "SELECT * FROM sr_v_order o WHERE (o.customer_type in (1)) AND "
 				+ "(status in (8, 10)) AND "
 				+ "(status_email = 0) AND "
 				+ "((email is not null) and trim(email) <> '') "		
 		        + "ORDER BY order_no";		
-		logger.debug("createSQLQueryListOrdersForFeedback: {}", sqlSelectListOrders);
+		log.debug("createSQLQueryListOrdersForFeedback: {}", sqlSelectListOrders);
  
 		Date dateBeforeStart = null;		
 		dateBeforeStart = DateTimeUtils.beforeAnyDate(dateStart, COUNT_DAY_TIMEOUT);		
@@ -268,14 +227,14 @@ public class OrderDao extends AnyDaoImpl {
 	}	
 	
 	public List<Order> listBidExpired(Date dateStart) {
-		logger.debug("listBidExpired():{}", dateStart);
+		log.debug("listBidExpired():{}", dateStart);
 		
 		final String sqlSelectListOrders = "SELECT * FROM sr_v_order o "
 				+ "  WHERE (o.order_type in (2, 3)) AND "
 				+ "        (o.status in (1)) AND "
 				+ "        (o.offer_count_day > 0)"		
 		        + " ORDER BY order_no";		
-		logger.debug("createSQLQueryListOrdersForBidExpired: {}", sqlSelectListOrders);
+		log.debug("createSQLQueryListOrdersForBidExpired: {}", sqlSelectListOrders);
 					
 		Object[] conditionPeriod = new Object[] {};
 		int[] typesPeriod = new int[] {};
@@ -327,18 +286,18 @@ public class OrderDao extends AnyDaoImpl {
 	
 	/**
 	 * заказы за сегодня
-	 * @param dateStart
-	 * @return
+	 * @param dates
+	 * @return order's list
 	 */
 	public List<Order> listYeildOrders(Pair<Date> dates) {
 				
-		logger.debug("listYeildOrders():{}", dates.getStart());
+		log.debug("listYeildOrders():{}", dates.getStart());
 		
 		final String sqlSelectListOrders = "SELECT * FROM sr_v_order o WHERE (o.order_type in (1, 2)) "
 				+ "AND (o.status in (2, 3, 4, 5, 7, 12, 10, 8)) "
 				+ "AND (o.order_date between ? and ?) "		
 		        + "ORDER BY order_no";		
-		logger.debug("createSQLQuerylistYeildOrders: {}", sqlSelectListOrders);
+		log.debug("createSQLQuerylistYeildOrders: {}", sqlSelectListOrders);
 					
 		Object[] conditionPeriod = new Object[] { dates.getStart(), dates.getEnd() };
 		int[] typesPeriod = new int[] { Types.DATE, Types.DATE };
@@ -370,7 +329,6 @@ public class OrderDao extends AnyDaoImpl {
 		                return order;
 		            }
 		        });
-			
 		return beforeOrders;
 	}	
 
@@ -440,17 +398,7 @@ public class OrderDao extends AnyDaoImpl {
 				+ "AND status NOT IN (0, 1, 21, 22, 2, 4, 8, 13, 15, 16, 11)";
 		
 		java.sql.Date minOrderDate = jdbcTemplate.queryForObject(sqlSelectMinOrderDate, java.sql.Date.class);
-		
-/*
-		java.sql.Date minOrderDate = this.jdbcTemplate.queryForObject(sqlSelectMinOrderDate,
-		        new Object[]{},
-		        new RowMapper<java.sql.Date>() {
-					@Override
-		            public java.sql.Date mapRow(ResultSet rs, int rowNum) throws SQLException {
-		            	return rs.getDate("MIN_ORDER_DATE");	
-		            }
-		        });
-*/
+
 		final Map<OrderAmountTypes, BigDecimal> postpayAmounts = new HashMap<OrderAmountTypes, BigDecimal>();	
 		BigDecimal postpayAmount = BigDecimal.ZERO;
 		BigDecimal sDekPostpayAmount = BigDecimal.ZERO;
@@ -467,7 +415,7 @@ public class OrderDao extends AnyDaoImpl {
 					DateTimeUtils.lastDayOfMonth(DateTimeUtils.sysDate()));
 		} catch (Exception e) {	
 			postpayPeriod = new Pair<Date>();
-			logger.error("Exception:", e);
+			log.error("Exception:", e);
 		}
 
 		OrderConditions orderPostpayConditions = new OrderConditions();
@@ -484,7 +432,7 @@ public class OrderDao extends AnyDaoImpl {
 					ozonMarketPostpayAmount = ozonMarketPostpayAmount.add(order.getAmounts().getPostpay());					
 				} else if (order.getCustomer().isPerson() && (order.getDelivery().getDeliveryType().isOzonRocket())) {
 					ozonRocketPostpayAmount = ozonRocketPostpayAmount.add(order.getAmounts().getPostpay());					
-				} else if (order.getCustomer().isPerson() && (order.getDelivery().getDeliveryType().isСdek() || order.getDelivery().getDeliveryType() == DeliveryTypes.PICKUP)) {
+				} else if (order.getCustomer().isPerson() && (order.getDelivery().getDeliveryType().isCdek() || order.getDelivery().getDeliveryType() == DeliveryTypes.PICKUP)) {
 					sDekPostpayAmount = sDekPostpayAmount.add(order.getAmounts().getPostpay());
 				} else if (order.getCustomer().isPerson() && order.getDelivery().getDeliveryType().isPost()) {
 					postPostpayAmount = postPostpayAmount.add(order.getAmounts().getPostpay());
@@ -495,7 +443,7 @@ public class OrderDao extends AnyDaoImpl {
 				} else {
 					sDekPostpayAmount = sDekPostpayAmount.add(order.getAmounts().getPostpay());					
 				}
-				logger.debug("postpay: {}, {}, {}, [sdek:{}, post:{}, company:{}, ym:{}, ozon:{}, yGo:{}]", order.getNo(), order.getCustomer().getViewShortName(), order.getAmounts().getPostpay(),
+				log.debug("postpay: {}, {}, {}, [sdek:{}, post:{}, company:{}, ym:{}, ozon:{}, yGo:{}]", order.getNo(), order.getCustomer().getViewShortName(), order.getAmounts().getPostpay(),
 						sDekPostpayAmount, postPostpayAmount, companyPostpayAmount, 
 						yandexMarketPostpayAmount, ozonMarketPostpayAmount, yandexGoPostpayAmount);									
 			}
@@ -619,9 +567,7 @@ public class OrderDao extends AnyDaoImpl {
 				+ "   AND delivery_type in (403)"
 				+ " ORDER BY id";		
 		resultOrders = listTroubleOrdersByQuery(resultOrders, sqlSelectListOrders52, COUNT_DAY_TROUBLE_READY_GIVE_AWAY, false);
-				
 
-		
 		// КП и счета, заявки - протухает срок
 		final String sqlSelectListOrders6 = "SELECT id from sr_v_order"
 				+ " WHERE order_type in (2,3)"
@@ -875,7 +821,7 @@ public class OrderDao extends AnyDaoImpl {
 		result += " ORDER BY order_no DESC";
 		conditionResult.setPeriodExist(isPeriodCondition);
 		conditionResult.setConditionText(result);		
-		logger.debug("createSQLQueryListOrdersByConditions: {}", result);
+		log.debug("createSQLQueryListOrdersByConditions: {}", result);
 		return conditionResult;			
 	}
 	
@@ -959,7 +905,7 @@ public class OrderDao extends AnyDaoImpl {
 
 	@Transactional
 	public int addOrder(Order order) {
-			logger.debug("addOrder():{}", order);
+			log.debug("addOrder():{}", order);
 			
 			int customerId = 0;
 			AnyCustomer checkCustomer = null;
@@ -1052,17 +998,7 @@ public class OrderDao extends AnyDaoImpl {
 	            return preparedStatement;	            
 	        }, generatedKeyHolder);
 			final int orderId = getLastInsertByGeneratedKeyHolder(generatedKeyHolder, rowsAffected);						
-			/*
-			this.jdbcTemplate.update(sqlInsertOrder, new Object[] { 
-					order.getOrderType().getId(), order.getNo(), order.getSubNo(), DateTimeUtils.dateToShortYear(order.getOrderDate()), order.getOrderDate(),
-					order.getSourceType().getId(), order.getAdvertType().getId(), order.getPaymentType().getId(), order.getStore().getId(), 
-					order.getProductCategory().getId(), customerId, 
-					order.getAmounts().getTotalWithDelivery(), order.getAmounts().getTotal(), order.getAmounts().getBill(), order.getAmounts().getSupplier(), order.getAmounts().getMargin(), order.getAmounts().getPostpay(),
-					order.getAnnotation(), OrderStatuses.BID.getId(),
-					order.getOffer().getCountDay(), new Date()});
-			final int orderId = getLastInsert("sr_order");
-			*/
-			order.setId(orderId);			
+			order.setId(orderId);
 			addOrUpdateOrderItems(order, order.getItems(), true);
 			addOrUpdateOrderComments(orderId, order.getComments());
 
@@ -1135,10 +1071,9 @@ public class OrderDao extends AnyDaoImpl {
 	}
 
 	public void updateOrder(Order order) {
-		logger.debug("updateOrder():{}", order);
+		log.debug("updateOrder():{}", order);
 		
 		AnyCustomer checkCustomer = null;
-		
 		if (order.getCustomer().isPerson()) {
 			
 			ForeignerCustomer personCustomer = (ForeignerCustomer) order.getCustomer();				
@@ -1222,7 +1157,6 @@ public class OrderDao extends AnyDaoImpl {
 				order.getAnnotation(), 
 				order.getId()});
 		
-		
 		if (order.getDelivery().getDeliveryType() == DeliveryTypes.PICKUP) {
 			// добавляем адрес доставки
 			int deliveryAddressId = 0;
@@ -1247,7 +1181,6 @@ public class OrderDao extends AnyDaoImpl {
 				recipientId = customerDao.addPerson(newRecipient);	
 			}
 		}
-		
 		final String sqlUpdateOrderDelivery = "UPDATE sr_order_delivery"
 				+ "  SET delivery_type = ?, "
 				+ "      payment_delivery_type = ?,"
@@ -1285,17 +1218,6 @@ public class OrderDao extends AnyDaoImpl {
 		SqlParameterSource namedParameters = new MapSqlParameterSource().addValue("orderId", orderId);
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		Integer orderStatusId = namedParameterJdbcTemplate.queryForObject(sqlSelectOrder, namedParameters, Integer.class);
-				
-		/*
-		Integer orderStatusId = this.jdbcTemplate.queryForObject(sqlSelectOrder,
-		        new Object[]{orderId},
-		        new RowMapper<Integer>() {
-					@Override
-		            public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-		            	return rs.getInt("STATUS");
-		            }
-		        });
-		*/        
 		return OrderStatuses.getValueById(orderStatusId);
 	}	
 	
@@ -1444,7 +1366,7 @@ public class OrderDao extends AnyDaoImpl {
 				YandexMarketApi yandexMarketApi = new YandexMarketApi(this.environment);
 				yandexMarketApi.status(order);	
 			} else {
-				logger.error("Yandex.Market status not changed: sysDate != deliveryDate! sysDate:{}, deliveryDate:{}", DateTimeUtils.sysDate(), order.getDelivery().getAddress().getCarrierInfo().getCourierInfo().getDeliveryDate());
+				log.error("Yandex.Market status not changed: sysDate != deliveryDate! sysDate:{}, deliveryDate:{}", DateTimeUtils.sysDate(), order.getDelivery().getAddress().getCarrierInfo().getCourierInfo().getDeliveryDate());
 			}					
 			
 		} else if (order.getStatus() == OrderStatuses.READY_GIVE_AWAY || order.getStatus() == OrderStatuses.READY_GIVE_AWAY_TROUBLE) {
@@ -1673,7 +1595,7 @@ public class OrderDao extends AnyDaoImpl {
 
 	@Transactional
 	public void deleteOrder(int orderId) {
-		logger.debug("deleteOrder():{}", orderId);
+		log.debug("deleteOrder():{}", orderId);
 		/*
 		Order oldOrder = findById(orderId);		
 		changeStatusOrder(orderId, OrderStatuses.DELETED, oldOrder.getAnnotation(), oldOrder.getDelivery().getTrackCode());
@@ -1682,7 +1604,7 @@ public class OrderDao extends AnyDaoImpl {
 	
 	@Transactional
 	public void eraseOrder(int orderId, boolean isDeleteCustomer) {
-		logger.debug("eraseOrder():{}", orderId);
+		log.debug("eraseOrder():{}", orderId);
 		
 		final String sqlDeleteOrder = "DELETE FROM sr_order WHERE id = ?";
 		final String sqlDeleteOrderItem = "DELETE from sr_order_item WHERE order_id = ?";
@@ -1910,8 +1832,7 @@ public class OrderDao extends AnyDaoImpl {
 	public int addOrderTest(String value) {
 		
 		String maxValue = value;
-		if (StringUtils.isEmpty(value)) {	
-			
+		if (StringUtils.isEmpty(value)) {
 			int intMaxValue = jdbcTemplate.queryForObject("select max(id) max_id from sr_order_test", Integer.class);
 			intMaxValue++;
 			maxValue = String.valueOf(intMaxValue);
@@ -1930,16 +1851,6 @@ public class OrderDao extends AnyDaoImpl {
             
         }, generatedKeyHolder);
         return getLastInsertByGeneratedKeyHolder(generatedKeyHolder, rowsAffected);
-       		
-		/*		
-		final String sqlInsertOrderTest = "INSERT INTO sr_order_test (order_value) VALUES (?)";		
-		jdbcTemplate.update(sqlInsertOrderTest, new Object[] {						
-					maxValue
-					});			
-		int id = getLastInsert("sr_order_test");
-		
-		return id;
-		*/
 	}
 
 }

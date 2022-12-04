@@ -35,20 +35,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 			message.setFooter("");
 			return message;
 		}
-		
-		/*
-		if (!order.getCustomer().isPerson() || StringUtils.isEmpty(order.getCustomer().getEmail()) || order.getItems().size() == 0) {
-			Message message = new Message();		
-			String messageSubject = "empty"; 
-			String messageBody = "";
-			
-			message.setSubject(messageSubject);
-			message.setBody(messageBody);
-			message.setFooter("");
-			return message;
-		}
-		*/
-		
+
 		ForeignerCustomer customer = (ForeignerCustomer) order.getCustomer();
 		
 		String messageItems = "";
@@ -184,7 +171,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 						+ "Оплата по счету " + order.getNo() + " для компании " + customer.getViewShortName() + " получена. Спасибо.\r\n"
 						+ "Как только оборудование будет проверено, подготовлены сопроводительные документы, мы пришлем уведомление об отгрузке.\r\n";
 			} else if (order.getStatus() == OrderStatuses.DELIVERING) {				
-				if (order.getDelivery().getDeliveryType().isСdek() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+				if (order.getDelivery().getDeliveryType().isCdek() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 					// статус "доставляется", указан трэккод и это сдэк
 					messageBody = "Добрый день!\r\n"
 							+ "\r\n"
@@ -213,7 +200,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 							+ "Адрес получения ТК \"Деловые Линии\": " + order.getDelivery().getAddress().getAddress() + "\r\n";
 				}
 			} else if (order.getStatus() == OrderStatuses.READY_GIVE_AWAY) {				
-				if (order.getDelivery().getDeliveryType().isСdek() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+				if (order.getDelivery().getDeliveryType().isCdek() && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 					// статус "прибыл", указан трэккод и это сдэк
 					messageBody = "Добрый день!\r\n"
 							+ "\r\n"
@@ -274,8 +261,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 			}
 		} else if (order.getCustomer().isPerson()) {
 			ForeignerCustomer customer = (ForeignerCustomer) order.getCustomer();	
-			amountText = "";
-			
+
 			if (order.getStatus() == OrderStatuses.PAY_ON && order.getPaymentType() == PaymentTypes.PREPAYMENT) {
 				// статус "оплата получена" по счету
 				messageBody = "Добрый день, " + customer.getFirstName() + "!\r\n"
@@ -291,7 +277,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 			} else if (order.getPaymentType() == PaymentTypes.POSTPAY || order.getPaymentType() == PaymentTypes.PAYMENT_COURIER) {				
 				// частное лицо и оплата при получении				
 				amountText = NumberUtils.formatNumber(order.getAmounts().getTotalWithDelivery(), "###.##");
-				if (order.getStatus() == OrderStatuses.DELIVERING && (order.getDelivery().getDeliveryType().isСdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+				if (order.getStatus() == OrderStatuses.DELIVERING && (order.getDelivery().getDeliveryType().isCdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 					// статус "доставляется", указан трэккод и это сдэк
 					messageBody = "Добрый день, " + customer.getFirstName() + "!\r\n"
 							+ "\r\n" 
@@ -331,7 +317,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 							+ "г.Москва, Щелковское Шоссе д.29, СДЭК.\r\n"
 							+ "Сумма к оплате " + amountText +" руб.\r\n"
 							+ "Отследить посылку можно здесь: https://www.cdek.ru/track.html?order_id=" + order.getDelivery().getTrackCode() + "\r\n";
-				} else if (order.getStatus() == OrderStatuses.READY_GIVE_AWAY && (order.getDelivery().getDeliveryType().isСdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+				} else if (order.getStatus() == OrderStatuses.READY_GIVE_AWAY && (order.getDelivery().getDeliveryType().isCdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 					// статус "прибыл", указан трэккод и это сдэк пвз
 					messageBody = "Добрый день, " + customer.getFirstName() + "!\r\n"
 							+ "\r\n"
@@ -357,7 +343,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 							+ order.getDelivery().getAddress().getPostCode() + ".\r\n"
 							+ "Сумма наложенного платежа: "+ amountText +" руб.\r\n"
 							+ "Отследить посылку можно здесь: https://www.pochta.ru/tracking#" + order.getDelivery().getTrackCode() + "\r\n";
-				} else if (order.getStatus() == OrderStatuses.READY_GIVE_AWAY_TROUBLE && (order.getDelivery().getDeliveryType().isСdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+				} else if (order.getStatus() == OrderStatuses.READY_GIVE_AWAY_TROUBLE && (order.getDelivery().getDeliveryType().isCdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 					// статус "долго не забирают" и это сдэк
 					messageBody = "Добрый день, " + customer.getFirstName() + "\r\n"
 							+ "\r\n"
@@ -400,7 +386,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 							+ "\r\n"
 							+ "Сожалеем, что не смогли вам помочь.\r\n";
 					
-				} else if (order.getStatus() == OrderStatuses.REDELIVERY && (order.getDelivery().getDeliveryType().isСdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+				} else if (order.getStatus() == OrderStatuses.REDELIVERY && (order.getDelivery().getDeliveryType().isCdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 					// статус "отказ от вручения"
 					messageBody = "Добрый день, " + customer.getFirstName() + "\r\n"
 							+ "\r\n"
@@ -417,7 +403,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 				
 			} else if (order.getPaymentType() == PaymentTypes.PREPAYMENT) {
 				// предоплата физика					
-				if (order.getStatus() == OrderStatuses.DELIVERING && (order.getDelivery().getDeliveryType().isСdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {					
+				if (order.getStatus() == OrderStatuses.DELIVERING && (order.getDelivery().getDeliveryType().isCdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 					messageBody = "Добрый день, " + customer.getFirstName() + "!\r\n"
 								+ "\r\n"
 								+ "Заказ интернет-магазина www." + order.getStore().getSite() + " " + order.getDelivery().getTrackCode() + " (" + order.getNo() + ") отправлен.\r\n"
@@ -458,7 +444,7 @@ public class EmailSenderTextGenerator extends SenderTextGenerator {
 							+ "Заказ интернет-магазина www." + order.getStore().getSite() + " " + order.getDelivery().getTrackCode() + " (" + order.getNo() + ") готов к выдаче для самовывоза:\r\n"
 							+ "г.Москва, Щелковское Шоссе д.29, СДЭК.\r\n"
 							+ "Отследить заказ можно здесь: https://www.cdek.ru/track.html?order_id=" + order.getDelivery().getTrackCode() + "\r\n";
-				} else if (order.getStatus() == OrderStatuses.READY_GIVE_AWAY && (order.getDelivery().getDeliveryType().isСdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
+				} else if (order.getStatus() == OrderStatuses.READY_GIVE_AWAY && (order.getDelivery().getDeliveryType().isCdek()) && StringUtils.isNotEmpty(order.getDelivery().getTrackCode())) {
 					// статус "прибыл", указан трэккод и это сдэк пвз
 					messageBody = "Добрый день, " + customer.getFirstName() + "!\r\n"
 							+ "\r\n"

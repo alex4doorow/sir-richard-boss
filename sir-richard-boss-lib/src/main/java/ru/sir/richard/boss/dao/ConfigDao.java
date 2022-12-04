@@ -1,5 +1,19 @@
 package ru.sir.richard.boss.dao;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+import ru.sir.richard.boss.model.data.Product;
+import ru.sir.richard.boss.model.data.conditions.OrderConditions;
+import ru.sir.richard.boss.model.data.conditions.ProductConditions;
+import ru.sir.richard.boss.model.data.conditions.ProductSalesReportConditions;
+import ru.sir.richard.boss.model.types.*;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.TextUtils;
+
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,35 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
-import ru.sir.richard.boss.model.data.Product;
-import ru.sir.richard.boss.model.data.conditions.OrderConditions;
-import ru.sir.richard.boss.model.data.conditions.ProductConditions;
-import ru.sir.richard.boss.model.data.conditions.ProductSalesReportConditions;
-import ru.sir.richard.boss.model.types.CustomerTypes;
-import ru.sir.richard.boss.model.types.DeliveryTypes;
-import ru.sir.richard.boss.model.types.OrderAdvertTypes;
-import ru.sir.richard.boss.model.types.OrderStatuses;
-import ru.sir.richard.boss.model.types.OrderTypes;
-import ru.sir.richard.boss.model.types.PaymentTypes;
-import ru.sir.richard.boss.model.types.ReportPeriodTypes;
-import ru.sir.richard.boss.model.types.SupplierTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.TextUtils;
-
 @Repository
+@Slf4j
 public class ConfigDao extends AnyDaoImpl {
-	
-	private final Logger logger = LoggerFactory.getLogger(ConfigDao.class);
-	
+
 	private Map<String, String> config;
 	
 	@Autowired
@@ -46,7 +35,7 @@ public class ConfigDao extends AnyDaoImpl {
 		
 	@PostConstruct
 	public void init() {
-		logger.debug("ConfigDaoImpl.init()");
+		log.debug("ConfigDaoImpl.init()");
 		this.config = instanceConfig();
 	}
 		
@@ -60,7 +49,7 @@ public class ConfigDao extends AnyDaoImpl {
 	}
 	
 	private Map<String, String> instanceConfig() {
-		logger.debug("instanceConfig()");
+		log.debug("instanceConfig()");
 		
 		Map<String, String> result = new HashMap<String, String>();
 		
@@ -114,7 +103,7 @@ public class ConfigDao extends AnyDaoImpl {
 		try {
 			return StringUtils.isEmpty(value) ? defaultValue : DateTimeUtils.defaultFormatStringToDate(value);
 		} catch (ParseException e) {			
-			logger.error("error getFormDateValueByKey():{},{},{},{}", e, formCode, key, value);
+			log.error("error getFormDateValueByKey():{},{},{},{}", e, formCode, key, value);
 			return null;
 		}		
 	}
@@ -124,7 +113,7 @@ public class ConfigDao extends AnyDaoImpl {
 		try {
 			return StringUtils.isEmpty(value) ? defaultValue : Integer.parseInt(value);
 		} catch (Exception e) {			
-			logger.error("error getFormIntegerValueByKey():{},{},{},{}", e, formCode, key, value);
+			log.error("error getFormIntegerValueByKey():{},{},{},{}", e, formCode, key, value);
 			return defaultValue;
 		}		
 	}
@@ -143,7 +132,7 @@ public class ConfigDao extends AnyDaoImpl {
 		try {
 			return StringUtils.isEmpty(value) ? defaultValue : new BigDecimal(value);
 		} catch (Exception e) {			
-			logger.error("error getFormBigDecimalValueByKey():{},{},{},{}", e, formCode, key, value);
+			log.error("error getFormBigDecimalValueByKey():{},{},{},{}", e, formCode, key, value);
 			return defaultValue;
 		}	
 		

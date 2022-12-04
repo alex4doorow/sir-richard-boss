@@ -1,16 +1,12 @@
 package ru.sir.richard.boss.model.data;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
-@ToString
 public class AlarmMessage extends AnyId {
 	
 	private Date addedDate;

@@ -1,44 +1,22 @@
 package ru.sir.richard.boss.model.data;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import ru.sir.richard.boss.model.types.SupplierTypes;
 
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class SupplierStockProduct extends AnyId {
 	
 	private Product product;
-	private SupplierTypes supplier;
+	private SupplierTypes supplier = SupplierTypes.SITITEK;
 	private String comment;
-	
-	public SupplierStockProduct() {
-		this.product = new Product();
-		supplier = SupplierTypes.SITITEK;
-	}
-	
+
 	public SupplierStockProduct(Product product) {
+		this();
 		this.product = product;
-	}
-
-	public SupplierTypes getSupplier() {
-		return supplier;
-	}
-
-	public void setSupplier(SupplierTypes supplier) {
-		this.supplier = supplier;
-	}
-
-	public Product getProduct() {
-		return product;
-	}
-
-	public void setProduct(Product product) {
-		this.product = product;
-	}	
-	
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 
 	@Override
@@ -48,37 +26,4 @@ public class SupplierStockProduct extends AnyId {
 		clone.supplier = this.supplier;
 		return clone;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((product == null) ? 0 : product.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SupplierStockProduct other = (SupplierStockProduct) obj;
-		if (product == null) {
-			if (other.product != null)
-				return false;
-		} else if (!product.equals(other.product))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "SupplierStockProduct [product=" + product + ", supplier=" + supplier + "]";
-	}
-
-	
-
 }

@@ -1,23 +1,22 @@
 package ru.sir.richard.boss.web.validator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-
 import ru.sir.richard.boss.model.types.CustomerTypes;
 import ru.sir.richard.boss.web.data.FormOrder;
 import ru.sir.richard.boss.web.service.OrderService;
 
+import javax.validation.constraints.NotNull;
+
 @Component
+@Slf4j
 public class OrderFormValidator implements Validator {
-	
-	private final Logger logger = LoggerFactory.getLogger(OrderFormValidator.class);
-	
+
 	@Autowired
 	private OrderService orderService;
 	
@@ -30,13 +29,13 @@ public class OrderFormValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		
 		FormOrder order = (FormOrder) target;		
-		logger.debug("order validate():{}", order.getNo());
+		log.debug("order validate():{}", order.getNo());
 
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "no", "order.form.fields.notEmpty.no");
 		if (order.getNo() <= 0) {
 			errors.rejectValue("no", "order.form.fields.diff.no");
 		}
-		logger.debug("order checkNotUniqueOrderNo(id, no, year):{}, {}, {}", order.getId(), order.getNo(), order.getOrderYear());
+		log.debug("order checkNotUniqueOrderNo(id, no, year):{}, {}, {}", order.getId(), order.getNo(), order.getOrderYear());
 		if (orderService.getOrderDao().checkNotUniqueOrderNo(order.getId(), order.getNo(), order.getOrderYear())) {
 			errors.rejectValue("no", "order.form.fields.unique.no");
 		}
@@ -82,41 +81,6 @@ public class OrderFormValidator implements Validator {
 				errors.rejectValue("formCustomer.mainContact.phoneNumber", "order.form.fields.notEmpty.formCustomer.mainContact.phoneNumber");			
 			}
 		}
-		
-		/*
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "NotEmpty.userForm.email");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address", "NotEmpty.userForm.address");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty.userForm.password");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword","NotEmpty.userForm.confirmPassword");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "sex", "NotEmpty.userForm.sex");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "NotEmpty.userForm.country");
-
-		if(!emailValidator.valid(user.getEmail())){
-			errors.rejectValue("email", "Pattern.userForm.email");
-		}
-		
-		if(user.getNumber()==null || user.getNumber()<=0){
-			errors.rejectValue("number", "NotEmpty.userForm.number");
-		}
-		
-		if(user.getCountry().equalsIgnoreCase("none")){
-			errors.rejectValue("country", "NotEmpty.userForm.country");
-		}
-		
-		if (!user.getPassword().equals(user.getConfirmPassword())) {
-			errors.rejectValue("confirmPassword", "Diff.userform.confirmPassword");
-		}
-		
-		if (user.getFramework() == null || user.getFramework().size() < 2) {
-			errors.rejectValue("framework", "Valid.userForm.framework");
-		}
-
-		if (user.getSkill() == null || user.getSkill().size() < 3) {
-			errors.rejectValue("skill", "Valid.userForm.skill");
-		}
-		*/
-
-		
 	}
 
 }

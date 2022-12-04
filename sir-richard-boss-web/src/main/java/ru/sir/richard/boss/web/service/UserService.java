@@ -5,10 +5,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.sir.richard.boss.web.entity.WsRole;
-import ru.sir.richard.boss.web.entity.WsUser;
-import ru.sir.richard.boss.web.repository.WsRoleRepository;
-import ru.sir.richard.boss.web.repository.WsUserRepository;
+import ru.sir.richard.boss.model.entity.AppRole;
+import ru.sir.richard.boss.model.entity.AppUser;
+import ru.sir.richard.boss.repository.AppRoleRepository;
+import ru.sir.richard.boss.repository.AppUserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,37 +23,37 @@ public class UserService implements UserDetailsService {
     private EntityManager em;
 
     @Autowired
-    WsUserRepository wsUserRepository;
+    AppUserRepository wsUserRepository;
 
     @Autowired
-    WsRoleRepository wsRoleRepository;
+    AppRoleRepository wsRoleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        WsUser user = wsUserRepository.findByUsername(username);
+        AppUser user = wsUserRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
         return user;
     }
 
-    public WsUser findUserById(Long userId) {
-        Optional<WsUser> userFromDb = wsUserRepository.findById(userId);
-        return userFromDb.orElse(new WsUser());
+    public AppUser findUserById(Long userId) {
+        Optional<AppUser> userFromDb = wsUserRepository.findById(userId);
+        return userFromDb.orElse(new AppUser());
     }
 
-    public List<WsUser> allUsers() {
+    public List<AppUser> allUsers() {
         return wsUserRepository.findAll();
     }
 
-    public boolean saveUser(WsUser user) {
-        WsUser userFromDB = wsUserRepository.findByUsername(user.getUsername());
+    public boolean saveUser(AppUser user) {
+        AppUser userFromDB = wsUserRepository.findByUsername(user.getUsername());
 
         if (userFromDB != null) {
             return false;
         }
 
-        user.setRoles(Collections.singleton(new WsRole(1L, "ROLE_USER")));
+        user.setRoles(Collections.singleton(new AppRole(1L, "ROLE_USER")));
         //user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         wsUserRepository.save(user);
         return true;
@@ -67,8 +67,8 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public List<WsUser> usergtList(Long idMin) {
-        return em.createQuery("SELECT u FROM WsUser u WHERE u.id > :paramId", WsUser.class)
+    public List<AppUser> usergtList(Long idMin) {
+        return em.createQuery("SELECT u FROM AppUser u WHERE u.id > :paramId", AppUser.class)
                 .setParameter("paramId", idMin).getResultList();
     }
 }

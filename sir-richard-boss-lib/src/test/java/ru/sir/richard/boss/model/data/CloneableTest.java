@@ -7,6 +7,8 @@ import ru.sir.richard.boss.model.types.AddressTypes;
 import ru.sir.richard.boss.model.types.Countries;
 import ru.sir.richard.boss.model.types.CustomerTypes;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class CloneableTest {
 	
 	@Test
@@ -35,12 +37,14 @@ public class CloneableTest {
 		one.setCustomer(customerOne);
 		one.setId(1);
 		one.setNo(6001);
+		one.getDelivery().getAddress().getCarrierInfo().setPvz("MSK17");
 		
 		Order two = one.clone();		
 		two.setId(2);
 		two.setNo(6002);
 		two.getCustomer().getMainAddress().setAddress("г.Москва, ***");
-				
-	}
 
+		assertEquals("г.Москва, ***", two.getCustomer().getMainAddress().getAddress());
+		assertEquals("MSK17", two.getDelivery().getAddress().getCarrierInfo().getPvz());
+	}
 }
