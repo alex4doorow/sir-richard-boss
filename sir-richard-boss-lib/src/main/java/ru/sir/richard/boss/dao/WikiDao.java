@@ -798,7 +798,7 @@ public class WikiDao extends AnyDaoImpl {
 	public void updateYmOfferProduct(Product product) {
 		
 		final String sqlSelectYmOffer = "SELECT product_id from sr_marketpace_offer WHERE product_id = ? and marketplace_type = ?";		
-		final String sqlInsertYmOffer = "INSERT INTO sr_marketpace_offer (product_id, market_sku, supplier_stock, marketplace_seller, special_price, cheater_type, market_place_type) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		final String sqlInsertYmOffer = "INSERT INTO sr_marketpace_offer (product_id, market_sku, supplier_stock, marketplace_seller, special_price, cheater_type, marketplace_type) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		final String sqlUpdateYmOffer = "update sr_marketpace_offer set"
 				+ " market_sku = ?,"
 				+ " supplier_stock = ?,"

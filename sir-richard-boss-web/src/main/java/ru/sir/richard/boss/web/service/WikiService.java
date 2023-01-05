@@ -131,6 +131,10 @@ public class WikiService {
 		}			
 		return resultMessage;		
 	}
+
+	public void ozonReconnect() {
+		configDao.setConfigValue("ozon_enabled", String.valueOf(Boolean.TRUE));
+	}
 				
 	public String ozonDisconnect() {
 		

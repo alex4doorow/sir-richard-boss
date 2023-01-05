@@ -146,6 +146,15 @@ public class WikiController extends AnyController {
 
 		return "redirect:/wiki/products/ozon";
 	}
+
+	@RequestMapping(value = "/wiki/products/ozon/reconnect", method = RequestMethod.GET)
+	public String updateOfferPricesOzonReconnect(Model model, final RedirectAttributes redirectAttributes) {
+		wikiService.ozonReconnect();
+		redirectAttributes.addFlashAttribute("css", "success");
+		redirectAttributes.addFlashAttribute("msg", "");
+		populateDefaultModel(model);
+		return "redirect:/wiki/products/ozon";
+	}
 	
 	@RequestMapping(value = "/wiki/products/ozon/disconnect", method = RequestMethod.GET)
 	public String updateOfferPricesOzonDisconnect(Model model, final RedirectAttributes redirectAttributes) {

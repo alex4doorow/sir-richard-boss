@@ -71,9 +71,8 @@ public class ConfigDao extends AnyDaoImpl {
 	public void setConfigValue(String key, String value) {
 					
 		final String sqlUpdateValue = "UPDATE sr_sys_config SET value = ? where code = ?";	
-		this.jdbcTemplate.update(sqlUpdateValue, new Object[] {key, value});	
-		
-		instanceConfig();		
+		this.jdbcTemplate.update(sqlUpdateValue, new Object[] {value, key});
+		instanceConfig();
 	}
 	
 	public String getFormStringValueByKey(int userId, String formCode, String key, String defaultValue) {

@@ -522,6 +522,8 @@ order.form.modal.orders.actualization.postpay.text = Внимание! Изме�
 
 order.form.modal.ozon.disconnect.header = Отключить магазин на "ОЗОН"
 order.form.modal.ozon.disconnect.text = Внимание! Магазин на "ОЗОН" будет отключен! Продолжить выполнение операции?
+order.form.modal.ozon.reconnect.header = Включить магазин на "ОЗОН"
+order.form.modal.ozon.reconnect.text = Внимание! Магазин на "ОЗОН" будет включен! Продолжить выполнение операции?
 
 order.form.modal.delivery.ozon.rocket.header = Расчет доставки
 order.form.modal.delivery.ozon.rocket.fields.city.search = Город получателя
@@ -624,6 +626,7 @@ wiki.ozon.products.table.headers.ozonSeller = OZON
 wiki.ozon.products.btn.offerPrices = Передача цен и остатков
 wiki.ozon.products.btn.offerPricesFull = Передача цен и остатков (без фильтра)
 wiki.ozon.products.btn.disconnect = Отключить магазин
+wiki.ozon.products.btn.reconnect = Включить магазин
 
 wiki.ozon.products.conditions.form.filter.header = Фильтр просмотра товаров
 wiki.ozon.products.conditions.form.filter.title = Фильтр просмотра товаров

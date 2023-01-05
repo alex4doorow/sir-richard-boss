@@ -34,6 +34,7 @@
 			    <button id="button-offer-prices" type="button" class="btn btn-sm btn-light" onclick="onClickUpdateOfferPrices()"><fmt:message key="wiki.ozon.products.btn.offerPrices"/></button>  
 			    <button id="button-offer-prices-full" type="button" class="btn btn-sm btn-light" onclick="onClickUpdateOfferPricesFull()"><fmt:message key="wiki.ozon.products.btn.offerPricesFull"/></button>
 			    <button id="button-disconnect" type="button" class="btn btn-sm btn-danger" onclick="onClickDisconnect()"><fmt:message key="wiki.ozon.products.btn.disconnect"/></button>
+			    <button id="button-reconnect" type="button" class="btn btn-sm btn-light" onclick="onClickReconnect()"><fmt:message key="wiki.ozon.products.btn.reconnect"/></button>
 		</div>
 		<br/>
  
@@ -124,7 +125,8 @@
         </button>
       </div>
       <div class="modal-body">
-        <p><fmt:message key="order.form.modal.ozon.disconnect.text" /></p>
+        <p id="p-modal-body-text"><fmt:message key="order.form.modal.ozon.disconnect.text" /></p>
+		  <p id="p-modal-action" style="visibility: hidden"></p>
       </div>
       <div class="modal-footer">
         <button id="button-modal-confirm-cancel" type="button" class="btn btn-light" data-dismiss="modal"><fmt:message key="main.btn.cancel" /></button>
@@ -153,8 +155,19 @@
 	}
 	function onClickDisconnect() {
 		console.log('onClickDisconnect: ');
+		$('#confirm-modal-title').text('<fmt:message key="order.form.modal.ozon.disconnect.header" />');
+		$('#p-modal-body-text').text('<fmt:message key="order.form.modal.ozon.disconnect.text" />');
+		$('#p-modal-action').text('disconnect');
 		$('#confirm-modal').modal({keyboard: false});
-	}	
+	}
+	function onClickReconnect() {
+		$('#confirm-modal-title').text('<fmt:message key="order.form.modal.ozon.reconnect.header" />');
+		$('#p-modal-body-text').text('<fmt:message key="order.form.modal.ozon.reconnect.text" />');
+		$('#p-modal-action').text('reconnect');
+		console.log('onClickReconnect: ');
+		$('#confirm-modal').modal({keyboard: false});
+	}
+
 	function onClickConditionsFilter() {
 		window.location = '${urlWiki}/products/ozon/conditions/filter';			
 	}
@@ -179,12 +192,8 @@
 				
 				if ($(this).prop('checked')) {
 					productId = this.id.substring(9, this.id.length);
-					
-					updateHref = '${urlWiki}/products/' + productId + '/update/${listType}';  
-					
-
-					$('#button-update').removeAttr('disabled').attr('href', updateHref);        	
-    	        	    	
+					updateHref = '${urlWiki}/products/' + productId + '/update/${listType}';
+					$('#button-update').removeAttr('disabled').attr('href', updateHref);
         	    	console.log(updateHref);
     				    				  		
     			} else {
@@ -195,9 +204,14 @@
 		});	
 	
 	$('#button-modal-confirm-ok').click(function() {
-		console.log('#modal-confirm-ok click: products/ozon/disconnect');
-		window.location = '${urlWiki}/products/ozon/disconnect';
-					
+		var action = $('#p-modal-action').text();
+		if (action != null && action == 'reconnect') {
+			console.log('#modal-confirm-ok click: products/ozon/reconnect');
+			window.location = '${urlWiki}/products/ozon/reconnect';
+		} else {
+			console.log('#modal-confirm-ok click: products/ozon/disconnect');
+			window.location = '${urlWiki}/products/ozon/disconnect';
+		}
 	});
 		
 </script>   
