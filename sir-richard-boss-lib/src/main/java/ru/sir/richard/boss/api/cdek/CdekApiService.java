@@ -1,11 +1,6 @@
 package ru.sir.richard.boss.api.cdek;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -14,9 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import lombok.extern.slf4j.Slf4j;
 import ru.sir.richard.boss.converter.CdekConverter;
 import ru.sir.richard.boss.model.data.Address;
 import ru.sir.richard.boss.model.data.Order;
@@ -24,6 +18,11 @@ import ru.sir.richard.boss.model.dto.CdekAccessDto;
 import ru.sir.richard.boss.model.dto.CdekCityDto;
 import ru.sir.richard.boss.model.dto.CdekOrderDto;
 import ru.sir.richard.boss.model.dto.CdekPvzDto;
+
+import javax.annotation.PostConstruct;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -39,7 +38,12 @@ public class CdekApiService {
 
     @PostConstruct
     private void init() {
+        final int size = 16 * 1024 * 1024;
+        final ExchangeStrategies strategies = ExchangeStrategies.builder()
+                .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
+                .build();
         webClient = WebClient.builder()
+                .exchangeStrategies(strategies)
                 .defaultHeader(HttpHeaders.HOST, "api.cdek.ru")
                 .defaultHeader(HttpHeaders.ACCEPT_ENCODING, "gzip, deflate, br")
                 .defaultHeader(HttpHeaders.CONNECTION, "keep-alive")
