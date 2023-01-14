@@ -14,20 +14,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
-import ru.sir.richard.boss.api.cdek.CdekApi;
+import ru.sir.richard.boss.api.cdek.CdekApiService;
+import ru.sir.richard.boss.api.cdek.CdekUtils;
 import ru.sir.richard.boss.api.market.OzonMarketApiService;
 import ru.sir.richard.boss.api.market.YandexMarketApi;
 import ru.sir.richard.boss.api.postcalc.PostcalcApi;
@@ -46,6 +46,8 @@ import ru.sir.richard.boss.model.data.conditions.OrderConditions;
 import ru.sir.richard.boss.model.data.crm.CdekOrderBean;
 import ru.sir.richard.boss.model.data.crm.CdekOrderItemBean;
 import ru.sir.richard.boss.model.data.crm.DeliveryServiceResult;
+import ru.sir.richard.boss.model.dto.CdekAccessDto;
+import ru.sir.richard.boss.model.dto.CdekResponseOrderDto;
 import ru.sir.richard.boss.model.types.CarrierStatuses;
 import ru.sir.richard.boss.model.types.CrmStatuses;
 import ru.sir.richard.boss.model.types.CrmTypes;
@@ -59,42 +61,51 @@ import ru.sir.richard.boss.model.types.PaymentDeliveryTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.MathUtils;
 import ru.sir.richard.boss.model.utils.Pair;
 import ru.sir.richard.boss.model.utils.SingleExecutor;
 import ru.sir.richard.boss.model.utils.sender.MessageManager;
 
 @Service
+@Slf4j
 public class DeliveryService extends AnyDaoImpl {
-		
-	private final Logger logger = LoggerFactory.getLogger(DeliveryService.class);
-	
-	@Autowired
-	private Environment environment;
 
 	@Autowired
+	private Environment environment;
+	@Autowired
 	private WikiDao wikiDao;
-	
 	@Autowired
 	private OrderDao orderDao;
-	
 	@Autowired
 	private OzonMarketApiService ozonMarketApiService;
+		@Autowired
+	private CdekApiService cdekApiService;
 	
 	public String addCdekParcelOrder(Order order) {
 		DeliveryTypes deliveryType = order.getDelivery().getDeliveryType();
 		String trackCode = "";
 		if (deliveryType.isCdek()) {
-			CdekApi cdek = new CdekApi(environment);			
-			// добавляем накладную в сдэк
-			
-			CdekOrderBean cdekOrderBean = convert4CdekCrmExportBean(order);
-						
-			trackCode = cdek.addOrder(cdekOrderBean, CdekApi.getCdekTariffId(order.getDelivery().getDeliveryType()), calcTotalWeightG(order));
-			// обновляем трэккод на нашем заказе
-			if (StringUtils.isNoneEmpty(trackCode)) {
-				orderDao.changeStatusOrder(order.getId(), order.getStatus(), order.getAnnotation(), trackCode, null);
-			}	
-		}	
+			CdekAccessDto access = cdekApiService.authorization();
+			CdekResponseOrderDto addResult = cdekApiService.addOrder(order, calcTotalWeightG(order), access);
+			if (!addResult.isHaveErrors()) {
+				int repeatedIndex = 0;
+				while (StringUtils.isEmpty(trackCode)) {
+					Order orderByUUID = cdekApiService.getOrderByUUID(addResult.getEntity().getUuid(), access);
+					trackCode = orderByUUID.getDelivery().getTrackCode();
+					if (repeatedIndex > 10) {
+						break;
+					}
+					repeatedIndex++;
+				}
+				log.info("i:{}", repeatedIndex);
+				if (StringUtils.isEmpty(trackCode)) {
+					trackCode = addResult.getEntity().getUuid();
+				}
+				if (StringUtils.isNoneEmpty(trackCode)) {
+					orderDao.changeStatusOrder(order.getId(), order.getStatus(), order.getAnnotation(), trackCode, null);
+				}
+			}
+		}
 		return trackCode;
 	}
 
@@ -104,7 +115,7 @@ public class DeliveryService extends AnyDaoImpl {
 		BigDecimal MOSCOW_PICKUP_DELIVERY_PRICE = BigDecimal.valueOf(170);
 		BigDecimal MIN_GOOD_MOSCOW_PARCEL_IS_FREE = BigDecimal.valueOf(3000);
 		BigDecimal MIN_GOOD_MOSCOW_COURIER_IS_FREE = BigDecimal.valueOf(10000);
-		int MOSCOW_CITY_ID = 44;
+		final int MOSCOW_CITY_ID = Integer.parseInt(environment.getProperty("cdek.from.location"));
 		
 		boolean isDmcPvz = false;
 		boolean isDmcEconomyPvz = false;
@@ -127,7 +138,7 @@ public class DeliveryService extends AnyDaoImpl {
 					isDmcEconomyPvz = true;			
 				}
 			} catch (Exception e1) {
-				logger.error("Exception", e1);
+				log.error("Exception", e1);
 			}	
 		}
 		
@@ -213,7 +224,7 @@ public class DeliveryService extends AnyDaoImpl {
 				return result;
 				
 			} catch (IOException e) {
-				logger.error("IOException", e);
+				log.error("IOException", e);
 			}			
 		} else if (deliveryType.isCdek()) {
 			try {
@@ -282,7 +293,7 @@ public class DeliveryService extends AnyDaoImpl {
 				return result;
 				
 			} catch (Exception e) {
-				logger.error("Exception", e);
+				log.error("Exception", e);
 			}
 			
 		} else {
@@ -308,7 +319,7 @@ public class DeliveryService extends AnyDaoImpl {
 	public String ordersStatusesReload() {
 		SingleExecutor.DELIVERY_STATUS_CHANGE = true;
 								
-		CdekApi cdek = new CdekApi(environment);
+		//CdekApi cdek = new CdekApi(environment);
 		MessageManager messageManager = new MessageManager(environment);
 		
 		List<Order> cdekModifiedOrders = null;
@@ -345,10 +356,10 @@ public class DeliveryService extends AnyDaoImpl {
 								
 		try {
 			// cdek
-			if (Boolean.valueOf(environment.getProperty("application.production"))) {
-				cdekModifiedOrders = cdek.getStatuses(orders);			
+			if (Boolean.parseBoolean(environment.getProperty("application.production"))) {
+				cdekModifiedOrders = cdekApiService.getStatuses(orders);
 				updateCrmCdekMarketConnect(cdekModifiedOrders);			
-				logger.debug("cdek:");
+				log.debug("cdek:");
 				String debugInfoItem = "";			
 				for (Order currentStatusOrder : orders) {
 					Order cdekModifiedOrder = findModifiedOrderByTrackCode(cdekModifiedOrders, currentStatusOrder);
@@ -363,7 +374,7 @@ public class DeliveryService extends AnyDaoImpl {
 							
 							debugInfoItem = "- доставляется: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 							debugInfo = debugInfo + debugInfoItem + "<br>";						
-							logger.debug("доставляется: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+							log.debug("доставляется: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 							deliveringCount++;
 						} else if (currentStatus == OrderStatuses.PAY_ON && modifiedSdekStatus.getOrderStatus() == OrderStatuses.DELIVERING) {
 							// посылка по предоплате прибыла в сдэк на отправку и поехала --> DELIVERING
@@ -372,7 +383,7 @@ public class DeliveryService extends AnyDaoImpl {
 							
 							debugInfoItem = "- доставляется: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 							debugInfo = debugInfo + debugInfoItem + "<br>";
-							logger.debug("доставляется: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+							log.debug("доставляется: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 							deliveringCount++;
 						} else if (currentStatus == OrderStatuses.APPROVED && modifiedSdekStatus.getOrderStatus() == OrderStatuses.READY_GIVE_AWAY) {
 							// посылка готова к выдаче --> READY_GIVE_AWAY
@@ -381,7 +392,7 @@ public class DeliveryService extends AnyDaoImpl {
 							
 							debugInfoItem = "- прибыл: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 							debugInfo = debugInfo + debugInfoItem + "<br>";
-							logger.debug("прибыл: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+							log.debug("прибыл: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 							readyGiveAwayCount++;
 						} else if (currentStatus == OrderStatuses.APPROVED && modifiedSdekStatus.getOrderStatus() == OrderStatuses.DELIVERED) {
 							// посылка доставлена --> DELIVERED
@@ -390,7 +401,7 @@ public class DeliveryService extends AnyDaoImpl {
 							
 							debugInfoItem = "- доставлен: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 							debugInfo = debugInfo + debugInfoItem + "<br>";
-							logger.debug("доставлен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+							log.debug("доставлен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 							deliveredCount++;
 						} else if (currentStatus == OrderStatuses.DELIVERING && modifiedSdekStatus.getOrderStatus() == OrderStatuses.READY_GIVE_AWAY) {
 							// посылка доставляется --> READY_GIVE_AWAY
@@ -399,7 +410,7 @@ public class DeliveryService extends AnyDaoImpl {
 							
 							debugInfoItem = "- прибыл: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 							debugInfo = debugInfo + debugInfoItem + "<br>";
-							logger.debug("прибыл: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+							log.debug("прибыл: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 							readyGiveAwayCount++;
 						} else if (currentStatus == OrderStatuses.DELIVERING && modifiedSdekStatus.getOrderStatus() == OrderStatuses.DELIVERED) {
 							// посылка доставляется --> DELIVERED
@@ -408,7 +419,7 @@ public class DeliveryService extends AnyDaoImpl {
 							
 							debugInfoItem = "- доставлен: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 							debugInfo = debugInfo + debugInfoItem + "<br>";
-							logger.debug("доставлен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+							log.debug("доставлен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 							deliveredCount++;
 						} else if ((currentStatus == OrderStatuses.READY_GIVE_AWAY || currentStatus == OrderStatuses.READY_GIVE_AWAY_TROUBLE) && modifiedSdekStatus.getOrderStatus() == OrderStatuses.DELIVERED) {
 							// посылка готова к выдаче --> DELIVERED
@@ -417,13 +428,13 @@ public class DeliveryService extends AnyDaoImpl {
 							
 							debugInfoItem = "- доставлен: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 							debugInfo = debugInfo + debugInfoItem + "<br>";
-							logger.debug("доставлен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+							log.debug("доставлен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 							deliveredCount++;
 						}
 					}				
 				}						
 							
-				logger.debug("yandex.market:");			
+				log.debug("yandex.market:");
 				final String sqlSelectYandexMarketListOrders = "SELECT * from sr_v_order where advert_type = 9 and status in (2)";
 				List<Order> beforeYandexMarketOrders = this.jdbcTemplate.query(sqlSelectYandexMarketListOrders,
 						new Object[] {},
@@ -457,11 +468,11 @@ public class DeliveryService extends AnyDaoImpl {
 						
 						debugInfoItem = "- доставляется: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 						debugInfo = debugInfo + debugInfoItem + "<br>";						
-						logger.debug("доставляется: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+						log.debug("доставляется: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 						deliveringCount++;
 					}
 				}			
-				logger.debug("ozon:");			
+				log.debug("ozon:");
 				final String sqlSelectOzonListOrders = "SELECT * from sr_v_order where advert_type = 11 and delivery_type = 701 and status in (1, 2, 5, 7)";							
 				List<Order> beforeOzonOrders = this.jdbcTemplate.query(sqlSelectOzonListOrders,
 						new Object[] {},
@@ -494,7 +505,7 @@ public class DeliveryService extends AnyDaoImpl {
 						
 						debugInfoItem = "- доставляется: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 						debugInfo = debugInfo + debugInfoItem + "<br>";						
-						logger.debug("доставляется: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+						log.debug("доставляется: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 						deliveringCount++;
 					} else if (currentStatus == OrderStatuses.APPROVED && modifiedStatus == OrderStatuses.DELIVERED) {
 						// посылка доставлена --> DELIVERED
@@ -503,7 +514,7 @@ public class DeliveryService extends AnyDaoImpl {
 						
 						debugInfoItem = "- доставлен: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 						debugInfo = debugInfo + debugInfoItem + "<br>";
-						logger.debug("доставлен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+						log.debug("доставлен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 						deliveredCount++;
 					} else if (currentStatus == OrderStatuses.DELIVERING && modifiedStatus == OrderStatuses.DELIVERED) {
 						// посылка доставляется --> DELIVERED
@@ -512,7 +523,7 @@ public class DeliveryService extends AnyDaoImpl {
 						
 						debugInfoItem = "- доставлен: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 						debugInfo = debugInfo + debugInfoItem + "<br>";
-						logger.debug("доставлен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+						log.debug("доставлен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 						deliveredCount++;
 					} else if (currentStatus != OrderStatuses.CANCELED && modifiedStatus == OrderStatuses.CANCELED) {
 						// посылка доставляется --> CANCELED
@@ -521,7 +532,7 @@ public class DeliveryService extends AnyDaoImpl {
 						
 						debugInfoItem = "- отменен: " + currentStatusOrder.getNo() + ", " + currentStatusOrder.getCustomer().getViewShortName() + ", " + currentStatusOrder.getDelivery().getAddress().getAddress();
 						debugInfo = debugInfo + debugInfoItem + "<br>";
-						logger.debug("отменен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
+						log.debug("отменен: {}, {}, {}", currentStatusOrder.getNo(), currentStatusOrder.getCustomer().getViewShortName(), currentStatusOrder.getDelivery().getAddress().getAddress());
 						cancelledCount++;
 
 					}  			
@@ -529,7 +540,7 @@ public class DeliveryService extends AnyDaoImpl {
 				}
 			}
 		
-			logger.debug("");		
+			log.debug("");
 			// перебираем список modifiedOrders и у посылок меняем статус + у посылок с новыми статусами:			
 			// DELIVERING или READY_GIVE_AWAY - оповещение	
 			for (Order willModifiedOrder: willModifingOrders) {
@@ -555,7 +566,7 @@ public class DeliveryService extends AnyDaoImpl {
 			}			
 			
 		} catch (Exception e) {
-			logger.error("Statuses reloaded with errors:", e);			
+			log.error("Statuses reloaded with errors:", e);
 		} 
 		// перебираем все ордера со статусами на изменение и меняем статусы + рассылки смс
 		int changedCount = deliveringCount + readyGiveAwayCount + deliveredCount + cancelledCount;
@@ -603,10 +614,8 @@ public class DeliveryService extends AnyDaoImpl {
 	}
 
 	private DeliveryServiceResult cdekCalc(Order order, BigDecimal totalAmount, DeliveryTypes deliveryType, Address to) throws Exception {
-		
-		CdekApi cdek = new CdekApi(environment);
-		
-		int tariffId = CdekApi.getCdekTariffId(deliveryType);		
+
+		int tariffId = CdekUtils.getCdekTariffId(deliveryType);
 		int receiverCityId = to.getCarrierInfo().getCityId();
 		
 		boolean isPostpay = false;
@@ -614,7 +623,7 @@ public class DeliveryService extends AnyDaoImpl {
 			isPostpay = order.getPaymentType() == PaymentTypes.POSTPAY ? true : false;			
 		}				
 		boolean isPaySeller = order.getDelivery().getPaymentDeliveryType() == PaymentDeliveryTypes.SELLER ? true : false;				
-		DeliveryServiceResult result = cdek.calculate(calcTotalWeightKg(order), DateTimeUtils.sysDate(), 
+		DeliveryServiceResult result = cdekApiService.calculate(calcTotalWeightG(order), DateTimeUtils.sysDate(),
 				totalAmount, tariffId, receiverCityId, isPostpay, isPaySeller);
 		result.setParcelType(deliveryType.getAnnotation()); 
 		result.setTo(to.getAddress());
@@ -633,7 +642,7 @@ public class DeliveryService extends AnyDaoImpl {
 				PostcalcApi.getSv(order.getPaymentType()));
 	}
 	
-	private int calcTotalWeightG(Order order) {
+	public int calcTotalWeightG(Order order) {
 		
 		int weight = 0;
 		BigDecimal totalWeight = BigDecimal.ZERO;
@@ -649,10 +658,9 @@ public class DeliveryService extends AnyDaoImpl {
 	
 	private BigDecimal calcTotalWeightKg(Order order) {
 		int weightG = calcTotalWeightG(order);
-		BigDecimal weightKg = BigDecimal.valueOf(0.001).multiply(BigDecimal.valueOf(weightG));
-		return weightKg;
-	}	
-	
+		return MathUtils.weightG2Kg(weightG);
+	}
+
 	public void exportParcelOrdersToExcel(int orderId, OutputStream outStream, Date executorDate, CrmTypes crmType) {
 		
 		if (crmType == CrmTypes.CDEK) {			
@@ -671,9 +679,9 @@ public class DeliveryService extends AnyDaoImpl {
 				List<CdekOrderBean> exportBeans = convert4CdekCrmExportBeans(orders);			
 				writeIntoExcel(exportBeans, outStream);
 			} catch (FileNotFoundException e) {
-				logger.error("FileNotFoundException", e);
+				log.error("FileNotFoundException", e);
 			} catch (IOException e) {
-				logger.error("IOException", e);
+				log.error("IOException", e);
 			}			
 		} 
 		
@@ -709,14 +717,15 @@ public class DeliveryService extends AnyDaoImpl {
 		
 		List<CdekOrderBean> beans = new ArrayList<CdekOrderBean>();		
 		for (Order order : orders) {
-			logger.debug("order:{},{},{}", order.getId(), order.getNo(), order.getCustomer().getViewShortName());
+			log.debug("order:{},{},{}", order.getId(), order.getNo(), order.getCustomer().getViewShortName());
 			
 			CdekOrderBean bean = convert4CdekCrmExportBean(order);
 			beans.add(bean);
 		}		
 		return beans;
 	}
-	
+
+	// TODO must die
 	private CdekOrderBean convert4CdekCrmExportBean(Order order) {
 		
 		CdekOrderBean bean = new CdekOrderBean(order);
@@ -759,7 +768,7 @@ public class DeliveryService extends AnyDaoImpl {
 		if (StringUtils.isEmpty(pvz)) {
 			pvz = wikiDao.findCdekPvzByAddress(order.getDelivery().getAddress());
 		}
-		logger.debug("writeIntoExcel():{},{}", pvz, order.getDelivery().getAddress());			
+		log.debug("writeIntoExcel():{},{}", pvz, order.getDelivery().getAddress());
 		bean.setPvz(pvz);
 		BigDecimal deliveryAmount = BigDecimal.ZERO;
 		if (order.isPrepayment()) {
@@ -836,7 +845,7 @@ public class DeliveryService extends AnyDaoImpl {
 	
 	private void writeIntoExcel(List<CdekOrderBean> beans, OutputStream outStream) throws FileNotFoundException, IOException {
 		
-		logger.debug("writeIntoExcel(): {}", "start");
+		log.debug("writeIntoExcel(): {}", "start");
 
 		Workbook workBook = new HSSFWorkbook();
 		Sheet sheet = workBook.createSheet("sheet-first");
@@ -1078,7 +1087,7 @@ public class DeliveryService extends AnyDaoImpl {
 		rowIndex++;
 		workBook.write(outStream);
 		workBook.close();
-		logger.debug("writeIntoExcel(): {}", "stop");
+		log.debug("writeIntoExcel(): {}", "stop");
 	}	
 
 }

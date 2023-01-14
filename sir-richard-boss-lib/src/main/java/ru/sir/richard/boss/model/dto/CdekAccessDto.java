@@ -1,16 +1,20 @@
 package ru.sir.richard.boss.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class CdekAccessDto {
-    String access_token;
-    String token_type;
-    String expires_in;
+    @JsonProperty("access_token")
+    String accessToken;
+    @JsonProperty("token_type")
+    String tokenType;
+    @JsonProperty("expires_in")
+    String expiresIn;
     String scope;
     String jti;
     
     public String getSecret() {
-    	return "Bearer " + getAccess_token();
+    	return "Bearer " + getAccessToken();
     }
 }

@@ -95,8 +95,7 @@ public class YandexMarketApiTest {
 				.asJson();
 		assertEquals(200, jsonResponseCart.getStatus());
 		assertEquals("{\"cart\":{\"items\":[{\"feedId\":935744,\"count\":2,\"offerId\":\"LS-987BF\"}]}}", jsonResponseCart.getBody().toString());
-		
-				     
+
 		jsonObjectString = "{ \"cart\": { \"businessId\": 893360, \"currency\": \"RUR\", \"items\": [ { \"feedId\": 935744, \"offerId\": \"SUN-BATTERY-SC-09\", \"offerName\": \"Аккумулятор SITITEK Sun-Battery SC-09, черный\", \"subsidy\": 0, \"count\": 1, \"fulfilmentShopId\": 1017201, \"warehouseId\": 55269, \"partnerWarehouseId\": \"46902712-00b8-4b38-ac5c-a86e02b42b75\" } ], \"delivery\": { \"region\": { \"id\": 213, \"name\": \"Москва\", \"type\": \"CITY\", \"parent\": { \"id\": 1, \"name\": \"Москва и Московская область\", \"type\": \"SUBJECT_FEDERATION\", \"parent\": { \"id\": 3, \"name\": \"Центральный федеральный округ\", \"type\": \"COUNTRY_DISTRICT\", \"parent\": { \"id\": 225, \"name\": \"Россия\", \"type\": \"COUNTRY\" } } } } } } }";
 		jsonObject = new JSONObject(jsonObjectString);		     
 		

@@ -27,11 +27,12 @@ import java.time.ZoneId;
 public class DateTimeUtils {
 		
 	public static final String DATE_FORMAT_dd_MM_yyyy = "dd.MM.yyyy";
-	public static final String DATE_FORMAT_HH_mm = "HH:mm";	
+	public static final String DATE_FORMAT_HH_mm = "HH:mm";
 	public static final String DATA_FORMAT_UTC_Z = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 	public static final String DATE_FORMAT_OZON = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 	public static final String DATE_FORMAT_CDEK = "yyyy-MM-dd'T'HH:mm:ssZ"; // "2022-11-21T09:05:06+0000"
-	
+	public static final String DATE_FORMAT_yyyy_MM_dd = "yyyy-MM-dd";
+
 	public static String defaultFormatDateTimeByTimeZone(Date date, String timeZoneId) {		
 		final SimpleDateFormat sdf = new SimpleDateFormat(DATA_FORMAT_UTC_Z);
 		sdf.setTimeZone(TimeZone.getTimeZone(timeZoneId));

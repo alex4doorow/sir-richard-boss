@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class CdekEntityOrderLocationDto {
-	private String code;
+	private Integer code;
 	private String city;
 	@JsonProperty("country_code")
 	private String countryCode;	
@@ -18,4 +18,5 @@ public class CdekEntityOrderLocationDto {
 	private String regionCode;
 	private BigDecimal longitude;
 	private BigDecimal latitude;
+	private String address;
 }	

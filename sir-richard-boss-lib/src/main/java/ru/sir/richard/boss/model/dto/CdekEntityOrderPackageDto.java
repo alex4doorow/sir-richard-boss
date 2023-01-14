@@ -12,11 +12,11 @@ public class CdekEntityOrderPackageDto {
     private int weight;
     private int length;
     private int width;
+    private int height;
     @JsonProperty("weight_volume")
     private int weightVolume;
     @JsonProperty("weight_calc")
     private int weightCalc;
-    private int height;
     private String comment;
     private List<CdekEntityPackageItemDto> items;
 }

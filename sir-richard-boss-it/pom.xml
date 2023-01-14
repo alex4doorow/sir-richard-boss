@@ -8,13 +8,12 @@
 	<parent>
 		<groupId>ru.sir.richard.boss</groupId>
 		<artifactId>sir-richard-boss</artifactId>
-		<version>4.2.0-SNAPSHOT</version>
+		<version>4.3.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent> 	
 	<properties>
 		<sir-richard-boss.version>${project.parent.version}</sir-richard-boss.version>	
 	</properties>
-	
 	<dependencyManagement>
         <dependencies>
             <dependency>
@@ -32,10 +31,12 @@
 			<groupId>ru.sir.richard.boss</groupId>
 			<artifactId>sir-richard-boss-lib</artifactId>
 			<version>${sir-richard-boss.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

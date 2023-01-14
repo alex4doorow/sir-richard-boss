@@ -13,18 +13,13 @@ import ru.sir.richard.boss.model.types.SupplierTypes;
 import ru.sir.richard.boss.model.utils.NumberUtils;
 
 public class Product extends AnyCatalog {
-
 	private String model;
 	private String sku;
-
 	private String deliveryName;
-
 	private int quantity;
 	private BigDecimal price; // фактическая цена
-
 	private BigDecimal priceWithoutDiscount; // цена без дисконта
 	private BigDecimal priceWithDiscount; // цена c дисконтом
-
 	private BigDecimal supplierPrice;
 	private int supplierQuantity;
 	private int stockQuantity;
@@ -33,16 +28,12 @@ public class Product extends AnyCatalog {
 	private PaymentDeliveryMethods deliveryMethod;
 	private boolean optionalExist;
 	private int linkId;
-
 	private SupplierTypes mainSupplier;
 	private ProductTypes type;
-
 	private boolean composite; // комплект
 	private Set<Product> kitComponents;
-
 	private boolean visible; // видимость (да, нет)
 	private ProductStore store;	// фронт
-
 	private Set<ProductMarket> markets;
 
 	public Product(int id, String name) {

@@ -26,7 +26,6 @@ public enum DeliveryTypes {
 	private String category;
 	private String annotation;
 	private String code;
-	
 
 	DeliveryTypes(int id, String category, String annotation) {
 		this.id = id;
@@ -115,7 +114,7 @@ public enum DeliveryTypes {
 		}
 	}
 	
-	public boolean isСdekPvz() {
+	public boolean isCdekPvz() {
 		if (this == DeliveryTypes.CDEK_PVZ_TYPICAL || this == DeliveryTypes.CDEK_PVZ_ECONOMY || this == DeliveryTypes.PICKUP) {
 			return true;
 		} else {

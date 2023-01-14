@@ -912,12 +912,12 @@ public class OrderDao extends AnyDaoImpl {
 			if (order.getCustomer().getId() > 0) {
 				customerId = order.getCustomer().getId();
 				checkCustomer = order.getCustomer();
-			} else if (customerId == 0 && order.getCustomer().isPerson()) {
+			} else if (order.getCustomer().isPerson()) {
 				ForeignerCustomer personCustomer = (ForeignerCustomer) order.getCustomer();				
 				CustomerConditions customerConditions = new CustomerConditions(order.getCustomer().getType());
 				customerConditions.setPersonPhoneNumber(personCustomer.getPhoneNumber());				
 				checkCustomer = customerDao.findByConditions(customerConditions);				
-			} else if (customerId == 0 && (order.getCustomer().isCompany())) {				
+			} else if (order.getCustomer().isCompany()) {
 				ForeignerCompanyCustomer companyCustomer = (ForeignerCompanyCustomer) order.getCustomer();				
 				CustomerConditions customerConditions = new CustomerConditions(order.getCustomer().getType());
 				customerConditions.setCustomerType(order.getCustomer().getType());
@@ -1472,7 +1472,6 @@ public class OrderDao extends AnyDaoImpl {
 	public void changeStatusOrder(int orderId, OrderStatuses status, String annotation, String trackCode, OrderStatusItem newOrderStatusValue) {
 		
 		OrderStatuses currentOrderStatus = findCurrentStatusOrderByOrderId(orderId);
-				
 		final String sqlUpdateOrder = "UPDATE sr_order"
 				+ "  SET status = ?,"				
 				+ "      date_modified = ?,"

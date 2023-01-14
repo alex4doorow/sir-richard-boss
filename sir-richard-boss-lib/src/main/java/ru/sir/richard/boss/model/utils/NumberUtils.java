@@ -9,8 +9,8 @@ import java.util.Locale;
 public class NumberUtils {
 	
 	public static String NUMBER_FORMAT_MONEY = "#,##0.00";
-	
-	public static String formatNumber(BigDecimal value, String pattern) {		
+
+	public static String formatNumber(BigDecimal value, String pattern) {
 		DecimalFormat df = new DecimalFormat(pattern);
 		return df.format(value);
 	}
@@ -49,5 +49,4 @@ public class NumberUtils {
 		NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("ru", "RU"));
 		return formatter.format(value);// + "\u20BD";
 	}
-	
 }

@@ -14,25 +14,26 @@ import org.springframework.web.reactive.function.client.WebClient;
 import ru.sir.richard.boss.converter.CdekConverter;
 import ru.sir.richard.boss.model.data.Address;
 import ru.sir.richard.boss.model.data.Order;
-import ru.sir.richard.boss.model.dto.CdekAccessDto;
-import ru.sir.richard.boss.model.dto.CdekCityDto;
-import ru.sir.richard.boss.model.dto.CdekOrderDto;
-import ru.sir.richard.boss.model.dto.CdekPvzDto;
+import ru.sir.richard.boss.model.data.crm.DeliveryServiceResult;
+import ru.sir.richard.boss.model.dto.*;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
 @Slf4j
+//https://api-docs.cdek.ru/29923741.html
 public class CdekApiService {
 
     @Autowired
     private Environment environment;
-    
+
     @Autowired
-    private CdekConverter cdekAddressConverter;
+    private CdekConverter cdekConverter;
 
     private WebClient webClient;
 
@@ -78,6 +79,41 @@ public class CdekApiService {
         return null;
     }
 
+    public CdekResponseOrderDto addOrder(Order order, int weightOfG, CdekAccessDto access) {
+        log.debug("addOrder(): {}", order);
+        CdekOrderDto cdekOrder = cdekConverter.convertOrderToCdekOrderDto(order, weightOfG);
+        final String url = "https://api.cdek.ru/v2/orders";
+        try {
+            CdekResponseOrderDto result = webClient.post()
+                    .uri(new URI(url))
+                    .header(HttpHeaders.AUTHORIZATION, access.getSecret())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(cdekOrder.getEntity())
+                    .retrieve()
+                    .bodyToMono(CdekResponseOrderDto.class)
+                    .log()
+                    .block();
+
+            log.debug("result: {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("result: {}", e);
+        }
+        return null;
+    }
+
+    /**
+     * https://api.cdek.ru/v2/orders
+     *
+     * @param order
+     * @param weightOfG
+     * @return result of operation
+     */
+    public CdekResponseOrderDto addOrder(Order order, int weightOfG) {
+        CdekAccessDto access = authorization();
+        return addOrder(order, weightOfG, access);
+    }
+
     public List<Address> getCities(String cityContext) {
         log.debug("getCities(): {}", cityContext);
         try {
@@ -97,19 +133,18 @@ public class CdekApiService {
                     .bodyToMono(CdekCityDto[].class)
                     .log()
                     .block();
-	        List<Address> result = cdekAddressConverter.convertCityDtosToAddresses(cdekCityDtoArray);
-	        log.debug("result: {}", result);
-	        return result;
+            List<Address> result = cdekConverter.convertCityDtosToAddresses(cdekCityDtoArray);
+            log.debug("result: {}", result);
+            return result;
         } catch (Exception e) {
             log.error("result: {}", e);
         }
         // 401
         return null;
     }
-    
-    /*
-    public List<CarrierInfo> getPvzs(int cityId) {
-    	log.debug("getPvzs(): {}", cityId);    	
+
+    public List<Address> getPvzs(int cityId) {
+        log.debug("getPvzs(): {}", cityId);
         try {
             CdekAccessDto access = authorization();
             CdekPvzDto[] cdekPvzDtoArray = webClient.get()
@@ -119,7 +154,7 @@ public class CdekApiService {
                             .path("/v2/deliverypoints")
                             .queryParam("country_codes", "RU")
                             .queryParam("city_code", cityId)
-                            .queryParam("type", "PVZ")                            
+                            .queryParam("type", "PVZ")
                             .build())
                     .header(HttpHeaders.AUTHORIZATION, access.getSecret())
                     .accept(MediaType.APPLICATION_JSON)
@@ -127,48 +162,43 @@ public class CdekApiService {
                     .bodyToMono(CdekPvzDto[].class)
                     .log()
                     .block();
-            List<CarrierInfo> result = cdekAddressConverter.convertPvzDtosToCarrierInfo(cdekPvzDtoArray);
-	        log.debug("result: {}", result);
-	        return result;
+            List<Address> result = cdekConverter.convertPvzDtosToAddresses(cdekPvzDtoArray);
+            log.debug("result: {}", result);
+            return result;
         } catch (Exception e) {
             log.error("result: {}", e);
-        }        
+        }
         return null;
     }
-    */
-    
-    public List<Address> getPvzs(int cityId) {
-    	log.debug("getPvzs(): {}", cityId);    	
+
+    public Order getOrderByUUID(String uuId, CdekAccessDto inputAccess) {
+        log.debug("getOrder(): {}", uuId);
+
+        final String url = "https://api.cdek.ru/v2/orders/" + uuId;
         try {
-            CdekAccessDto access = authorization();
-            CdekPvzDto[] cdekPvzDtoArray = webClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .scheme("https")
-                            .host("api.cdek.ru")
-                            .path("/v2/deliverypoints")
-                            .queryParam("country_codes", "RU")
-                            .queryParam("city_code", cityId)
-                            .queryParam("type", "PVZ")                            
-                            .build())
+            CdekAccessDto access = inputAccess == null ? authorization() : inputAccess;
+            CdekOrderDto cdekOrderDto = webClient.get()
+                    .uri(url)
                     .header(HttpHeaders.AUTHORIZATION, access.getSecret())
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
-                    .bodyToMono(CdekPvzDto[].class)
+                    .bodyToMono(CdekOrderDto.class)
                     .log()
                     .block();
-            List<Address> result = cdekAddressConverter.convertPvzDtosToAddresses(cdekPvzDtoArray);
-	        log.debug("result: {}", result);
-	        return result;
+            log.debug("result: {}", cdekOrderDto);
+            Order result = cdekConverter.convertCdekOrderDtoToOrder(cdekOrderDto);
+            log.debug("result: {}", result);
+            return result;
         } catch (Exception e) {
             log.error("result: {}", e);
-        }        
-        return null;  
+        }
+        return null;
     }
-    
-    public Order getOrder(String trackCode, CdekAccessDto inputAccess) {
-    	log.debug("getOrder(): {}", trackCode);    	
+
+    public Order getOrderByTrackCode(String trackCode, CdekAccessDto inputAccess) {
+        log.debug("getOrder(): {}", trackCode);
         try {
-        	CdekAccessDto access = inputAccess == null ? authorization() : inputAccess;
+            CdekAccessDto access = inputAccess == null ? authorization() : inputAccess;
             CdekOrderDto cdekOrderDto = webClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .scheme("https")
@@ -183,26 +213,83 @@ public class CdekApiService {
                     .log()
                     .block();
             log.debug("result: {}", cdekOrderDto);
-            Order result = cdekAddressConverter.convertCdekOrderDtoToOrder(cdekOrderDto);
-	        log.debug("result: {}", result);
-	        return result;
+            Order result = cdekConverter.convertCdekOrderDtoToOrder(cdekOrderDto);
+            log.debug("result: {}", result);
+            return result;
         } catch (Exception e) {
             log.error("result: {}", e);
-        }        
+        }
         return null;
     }
-    
+
     public List<Order> getStatuses(List<Order> inputOrders) {
-    	CdekAccessDto access = authorization();
-    	List<Order> results = new ArrayList<Order>();
-    	inputOrders.forEach(inputOrder -> {
-    		if (StringUtils.isNotEmpty(inputOrder.getDelivery().getTrackCode())) {
-    			Order resultOrder = getOrder(inputOrder.getDelivery().getTrackCode(), access);
-    			if (resultOrder != null) {
-    				results.add(resultOrder);
-    			}    			
-    		}
-    	});
-    	return results;
-    }    
+        CdekAccessDto access = authorization();
+        List<Order> results = new ArrayList<>();
+        inputOrders.forEach(inputOrder -> {
+            if (StringUtils.isNotEmpty(inputOrder.getDelivery().getTrackCode())) {
+                Order resultOrder = getOrderByTrackCode(inputOrder.getDelivery().getTrackCode(), access);
+                if (resultOrder != null) {
+                    results.add(resultOrder);
+                }
+            }
+        });
+        return results;
+    }
+
+    /**
+     * Алгоритм, учитывает комиссию за наложенный платеж и обрабатывает корректно параметр "наложенный платеж"
+     *
+     * @param weightOfG
+     * @param calculateDate
+     * @param totalAmount
+     * @param tariffId
+     * @param receiverCityId
+     * @param isPostpay      постоплата (да/нет)
+     * @param isPaySeller    кто платит за доставку (продавец/покупатель)
+     * @return DeliveryServiceResult calculated data
+     * @throws Exception
+     */
+    public DeliveryServiceResult calculate(int weightOfG,
+                                           Date calculateDate,
+                                           BigDecimal totalAmount,
+                                           int tariffId,
+                                           int receiverCityId,
+                                           boolean isPostpay,
+                                           boolean isPaySeller) throws Exception {
+        if (tariffId == 0) {
+            return DeliveryServiceResult.createEmpty();
+        }
+        log.debug("calculate(): weightOfG={}, totalAmount={}, tariffId={}, receiverCityId={}, isPostpay={}, isPaySeller={}",
+                weightOfG, totalAmount, tariffId, receiverCityId,
+                isPostpay, isPaySeller);
+
+        CdekEntityOrderDto requestData = cdekConverter.convertTariffDataToCdekOrderDto(weightOfG, tariffId,
+                receiverCityId);
+
+        final String url = "https://api.cdek.ru/v2/calculator/tariff";
+        CdekResponseTariffDto responseData;
+        try {
+            CdekAccessDto access = authorization();
+            responseData = webClient.post()
+                    .uri(new URI(url))
+                    .header(HttpHeaders.AUTHORIZATION, access.getSecret())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(requestData)
+                    .retrieve()
+                    .bodyToMono(CdekResponseTariffDto.class)
+                    .log()
+                    .block();
+            log.debug("responseData: deliverySum={}, totalSum={}", responseData.getDeliverySum(), responseData.getTotalSum());
+        } catch (Exception e) {
+            log.error("result:", e);
+            return DeliveryServiceResult.createEmpty();
+        }
+        return cdekConverter.convertTariffDataToDeliveryServiceResult(responseData,
+                weightOfG,
+                totalAmount,
+                tariffId,
+                receiverCityId,
+                isPostpay,
+                isPaySeller);
+    }
 }
