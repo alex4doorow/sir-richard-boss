@@ -44,13 +44,14 @@ hs_err_pid*
 **/--load/*
 **/--save/*
 
-
 *.xlsx
 *.xls
 *.mwb
 
 **/--1-load
 **/--1-archive
+**/--1-save
+**/--2-secret
 **/Servers
 **/spring-tutoral
 
