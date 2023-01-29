@@ -27,8 +27,7 @@ public class Order extends AnyId {
 	private int subNo;
 	
 	@DateTimeFormat(pattern = "dd.MM.yyyy")
-	private Date orderDate;	
-	
+	private Date orderDate;
 	private OrderTypes orderType;
 	private ProductCategory productCategory;
 	private OrderSourceTypes sourceType;

@@ -10,8 +10,10 @@ import ru.sir.richard.boss.model.data.ProductCategory;
 import ru.sir.richard.boss.model.data.SupplierStock;
 import ru.sir.richard.boss.model.data.conditions.OrderConditions;
 import ru.sir.richard.boss.model.data.conditions.ProductSalesReportConditions;
+import ru.sir.richard.boss.model.data.report.AggregateProductSalesReportBean;
 import ru.sir.richard.boss.model.data.report.ProductSalesReportBean;
 import ru.sir.richard.boss.model.data.report.SalesFunnelReportBean;
+import ru.sir.richard.boss.model.data.report.TempProductSalesReportBean;
 import ru.sir.richard.boss.model.types.*;
 import ru.sir.richard.boss.model.utils.Pair;
 
@@ -30,6 +32,146 @@ public class ReportDao extends AnyDaoImpl {
 	
 	@Autowired
 	private OrderDao orderDao;
+
+	public AggregateProductSalesReportBean aggregateProductSales(Pair<Date> period) {
+		final String sqlSelectProductSales = "select oi.quantity quantity, oi.product_id product_id, min(o.category_product_id) category_product_id, min(p.sku) sku, min(p.name) name" +
+				"  from sr_order_item oi, sr_v_order o, sr_v_product_light p" +
+				"  where (oi.order_id = o.id)" +
+				"    and (p.product_id = oi.product_id)" +
+				"    and (o.order_date between ? and ?)" +
+				"    and (o.status in (2,3,4,5,7,12,10,8))" +
+				"    group by oi.quantity, oi.product_id";
+
+		List<TempProductSalesReportBean> tempBeans = this.jdbcTemplate.query(sqlSelectProductSales,
+				new Object[]{period.getStart(), period.getEnd()},
+				new int[] {Types.DATE, Types.DATE },
+				new RowMapper<TempProductSalesReportBean>() {
+					@Override
+					public TempProductSalesReportBean mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+						TempProductSalesReportBean bean = new TempProductSalesReportBean();
+						bean.setCategoryProductId(rs.getInt("category_product_id"));
+						bean.setProductId(rs.getInt("product_id"));
+						bean.setSku(rs.getString("sku"));
+						bean.setQuantity(rs.getInt("quantity"));
+						return bean;
+					}
+				});
+
+/*
+						102	отпугиватели	отпугиватели змей
+						103	отпугиватели	отпугиватели птиц
+						104	отпугиватели	отпугиватели грызунов
+						105	отпугиватели	отпугиватели комаров
+						107	отпугиватели	отпугиватели ос
+						108	отпугиватели	отпугиватели собак
+						109	отпугиватели	уничтожители насекомых
+						110	отпугиватели	отпугиватели клещей
+						201	для дома	gsm розетки и реле
+						202	для дома	gsm сигнализации
+						203	для дома	автономные извещатели
+						204	для дома	видеоглазки и видеодомофоны
+						205	для дома	видеонаблюдение
+						206	для дома	ножеточки
+						207	для дома	эконаборы
+						208	для дома	светильники
+						209	для дома	столики для ноутбука
+						210	для дома	роботы для уборки
+						211	для дома	средства защиты
+						301	для автомобиля	алкотестеры
+						302	для автомобиля	пуско-зарядные устройства
+						303	для автомобиля	гибкие камеры
+						304	для автомобиля	гаджеты
+						401	для дачи	изотермика
+						403	для дачи	мобильный душ
+						404	для дачи	системы полива
+						405	для дачи	термосы
+						501	для детей	микроскопы USB
+						502	для детей	домашние планетарии
+						503	для детей	видеоняни
+						504	для детей	конструкторы
+						601	безопасность	антижучки
+						602	безопасность	обнаружители видеокамер
+						603	безопасность	подавители диктофонов
+						604	безопасность	подавители сотовых телефонов
+						701	путешествия	стельки с подогревом
+						702	путешествия	возвращатели
+						703	путешествия	мини электростанции
+						801	музыка	наушники
+						802	музыка	колонки
+						901	для домашних животных	фурминатор для кошек
+						902	для домашних животных	фурминатор для собак
+						903	для домашних животных	автокормушки и автопоилки
+						904	для домашних животных	электронные ошейники
+						1111	производство	инкубаторы
+						1101	прочие	элементы питания
+						1102	прочие	инструменты
+						1103	прочие	подарки
+						1104	прочие	для рыбалки
+						1105	прочие	для охоты
+						1106	прочие	фонари
+
+ */
+
+
+		AggregateProductSalesReportBean bean = new AggregateProductSalesReportBean();
+
+		//isocket	sapsan	sanseit	эланг	эланг реле	IQsocket Mobile	Телеметрика Т80	Телеметрика Т60
+		// итого	сититек gsm	сититек i8	сититек eye	остальные	итого	gsm сигнализации	usb микроскоп	планетарий	антижучки
+		// отпугиватели птиц	отпугиватели грызунов	отпугиватель кротов	отпугиватель змей	отпугиватель собак	антидог
+		// ThermaCELL	уничтожители комаров	экотестеры
+		// ножеточки	столики для ноутбука
+		// автокормушки	пуско-зарядные устройства CARKU	эхолоты	иные
+
+
+
+		tempBeans.forEach(tempBean -> {
+			if (tempBean.getSku().equalsIgnoreCase("TELEMETRIKA-T80-MASTER")) {
+				bean.setTelemetrikaT80(tempBean.getQuantity());
+			} else if (tempBean.getSku().equalsIgnoreCase("TELEMETRIKA-T60-SLAVE")) {
+				bean.setTelemetrikaT60(tempBean.getQuantity());
+			} else if (tempBean.getSku().equalsIgnoreCase("ELANG-RELE-POWERCONTROL-PRO")) {
+				bean.setElang(bean.getElang() + tempBean.getQuantity());
+			} else if (tempBean.getSku().equalsIgnoreCase("ELANG-RELE-POWERCONTROL")) {
+				bean.setElang(bean.getElang() + tempBean.getQuantity());
+			} else if (tempBean.getSku().equalsIgnoreCase("ELANG-RELE-THERMOCONTROL")) {
+				bean.setElang(bean.getElang() + tempBean.getQuantity());
+			} else if (tempBean.getSku().equalsIgnoreCase("ELANG-SOCKET")) {
+				bean.setOtherGsmSocket(bean.getOtherGsmSocket() + tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 201) {
+				bean.setOtherGsmSocket(bean.getOtherGsmSocket() + tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 202) {
+				bean.setGsmAlarm(tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 204) {
+				bean.setVideoEye(tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 502) {
+				bean.setAstroEye(tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 601 || tempBean.getCategoryProductId() == 602 || tempBean.getCategoryProductId() == 603 || tempBean.getCategoryProductId() == 604) {
+				bean.setBugHunter(tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 102) {
+				bean.setSnakeRepeller(tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 103) {
+				bean.setBirdRepeller(tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 104) {
+				bean.setMouseRepeller(tempBean.getQuantity());
+			}  else if (tempBean.getCategoryProductId() == 108) {
+				if (tempBean.getSku().equalsIgnoreCase("ANTIDOG")) {
+					bean.setAntidog(bean.getAntidog() + tempBean.getQuantity());
+				} else {
+					bean.setUltrasonicDogRepeller(bean.getUltrasonicDogRepeller() + tempBean.getQuantity());
+				}
+			} else if (tempBean.getCategoryProductId() == 206) {
+				bean.setKnifePoint(bean.getKnifePoint() + tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 209) {
+				bean.setBamboo(bean.getBamboo() + tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 302) {
+				bean.setCarku(bean.getCarku() + tempBean.getQuantity());
+			} else {
+				bean.setOthers(tempBean.getQuantity());
+			}
+		});
+		return bean;
+	}
 	
 	public List<ProductSalesReportBean> productSales(Pair<Date> period) {
 		log.debug("productSales():{}", period);
