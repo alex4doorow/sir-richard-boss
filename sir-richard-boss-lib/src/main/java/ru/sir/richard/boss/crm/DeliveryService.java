@@ -843,7 +843,7 @@ public class DeliveryService extends AnyDaoImpl {
 		return bean;		
 	}
 	
-	private void writeIntoExcel(List<CdekOrderBean> beans, OutputStream outStream) throws FileNotFoundException, IOException {
+	private void writeIntoExcel(List<CdekOrderBean> beans, OutputStream outStream) throws IOException {
 		
 		log.debug("writeIntoExcel(): {}", "start");
 

@@ -2,6 +2,11 @@ package ru.sir.richard.boss.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -15,8 +20,11 @@ import ru.sir.richard.boss.model.data.report.ProductSalesReportBean;
 import ru.sir.richard.boss.model.data.report.SalesFunnelReportBean;
 import ru.sir.richard.boss.model.data.report.TempProductSalesReportBean;
 import ru.sir.richard.boss.model.types.*;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.model.utils.Pair;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,9 +37,265 @@ public class ReportDao extends AnyDaoImpl {
 
 	@Autowired
 	private WikiDao wikiDao;
-	
+
 	@Autowired
 	private OrderDao orderDao;
+
+	public void aggregateProductSalesWriteIntoExcel(List<AggregateProductSalesReportBean> beans) throws IOException {
+
+		//с	по	итого продано, шт	isocket	sapsan	sanseit	эланг	эланг реле	IQsocket Mobile	Телеметрика Т80	Телеметрика Т60	итого
+		// сититек gsm	сититек i8	сититек eye	остальные	итого
+		// gsm сигнализации	usb микроскоп	планетарий	антижучки
+		// отпугиватели птиц	отпугиватели грызунов	отпугиватель кротов	отпугиватель змей	отпугиватель собак	антидог	ThermaCELL	уничтожители комаров
+		// экотестеры	ножеточки	столики для ноутбука	автокормушки	пуско-зарядные устройства CARKU	эхолоты	иные	расходы на рекламу, руб	расходы рекламы на прибор
+
+
+		Workbook workBook = new HSSFWorkbook();
+		Sheet sheet = workBook.createSheet("sheet-first");
+
+		int rowIndex = 0;
+		Row row = sheet.createRow(0);
+		rowIndex++;
+
+		Cell cell;
+		int cellIndex = 0;
+
+		// header
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("c");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("по");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("итого продано, шт");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("телеметрика т80");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("телеметрика т60");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("реле эланг");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("другие");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("итого");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("видеоглазки");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("gsm сигнализации");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("планетарии");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("антижучки");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("отпугиватели птиц");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("отпугиватели грызунов");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("отпугиватели кротов");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("отпугиватели змей");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("отпугиватели собак");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("антидог");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("thermaCELL");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("уничтожители комаров");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("ножеточки");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("столики для ноутбуков");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("автокормушки");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("CARKU");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("эхолоты и камеры");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("палатки");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("расходы на рекламу");
+		cellIndex++;
+
+		cell = row.createCell(cellIndex);
+		cell.setCellValue("расходы на продажу");
+		cellIndex++;
+
+		for (AggregateProductSalesReportBean bean : beans) {
+			row = sheet.createRow(rowIndex);
+			rowIndex++;
+
+			cellIndex = 0;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(DateTimeUtils.defaultFormatDate(bean.getPeriod().getStart()));
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(DateTimeUtils.defaultFormatDate(bean.getPeriod().getEnd()));
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getTotal());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getTelemetrikaT80());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getTelemetrikaT60());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getElang());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getOtherGsmSocket());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getTotalGsmSocket());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getVideoEye());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getGsmAlarm());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getAstroEye());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getBugHunter());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getBirdRepeller());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getMouseRepeller());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getMoleRepeller());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getSnakeRepeller());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getUltrasonicDogRepeller());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getAntidog());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getThermacell());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getMosquitoKiller());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getKnifePoint());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getBamboo());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getAutoFeeder());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getCarku());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getPraktic());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(bean.getTent());
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(0);
+			cellIndex++;
+
+			cell = row.createCell(cellIndex);
+			cell.setCellValue(0);
+			cellIndex++;
+		}
+		FileOutputStream outputStream = new FileOutputStream("d:\\src\\sir-richard-boss\\--1-save\\aggregate-sales.xls");
+		workBook.write(outputStream);
+		workBook.close();
+
+	}
 
 	public AggregateProductSalesReportBean aggregateProductSales(Pair<Date> period) {
 		final String sqlSelectProductSales = "select oi.quantity quantity, oi.product_id product_id, min(o.category_product_id) category_product_id, min(p.sku) sku, min(p.name) name" +
@@ -53,6 +317,7 @@ public class ReportDao extends AnyDaoImpl {
 						bean.setCategoryProductId(rs.getInt("category_product_id"));
 						bean.setProductId(rs.getInt("product_id"));
 						bean.setSku(rs.getString("sku"));
+						bean.setName(rs.getString("name"));
 						bean.setQuantity(rs.getInt("quantity"));
 						return bean;
 					}
@@ -115,6 +380,9 @@ public class ReportDao extends AnyDaoImpl {
 
 
 		AggregateProductSalesReportBean bean = new AggregateProductSalesReportBean();
+		bean.getPeriod().setStart(period.getStart());
+		bean.getPeriod().setEnd(period.getEnd());
+
 
 		//isocket	sapsan	sanseit	эланг	эланг реле	IQsocket Mobile	Телеметрика Т80	Телеметрика Т60
 		// итого	сититек gsm	сититек i8	сититек eye	остальные	итого	gsm сигнализации	usb микроскоп	планетарий	антижучки
@@ -149,14 +417,34 @@ public class ReportDao extends AnyDaoImpl {
 			} else if (tempBean.getCategoryProductId() == 601 || tempBean.getCategoryProductId() == 602 || tempBean.getCategoryProductId() == 603 || tempBean.getCategoryProductId() == 604) {
 				bean.setBugHunter(tempBean.getQuantity());
 			} else if (tempBean.getCategoryProductId() == 102) {
-				bean.setSnakeRepeller(tempBean.getQuantity());
+				bean.setSnakeRepeller(bean.getSnakeRepeller() + tempBean.getQuantity());
 			} else if (tempBean.getCategoryProductId() == 103) {
-				bean.setBirdRepeller(tempBean.getQuantity());
+				if (StringUtils.containsIgnoreCase(tempBean.getName(), "шипы ")) {
+					bean.setBirdRepeller(bean.getBirdRepeller() + tempBean.getQuantity() / 10);
+				} else {
+					bean.setBirdRepeller(bean.getBirdRepeller() + tempBean.getQuantity());
+				}
 			} else if (tempBean.getCategoryProductId() == 104) {
-				bean.setMouseRepeller(tempBean.getQuantity());
+				bean.setMouseRepeller(bean.getMouseRepeller() + tempBean.getQuantity());
 			}  else if (tempBean.getCategoryProductId() == 108) {
 				if (tempBean.getSku().equalsIgnoreCase("ANTIDOG")) {
 					bean.setAntidog(bean.getAntidog() + tempBean.getQuantity());
+				} else if (tempBean.getSku().equalsIgnoreCase("ANTIDOG-BLACK")) {
+					bean.setAntidog(bean.getAntidog() + tempBean.getQuantity());
+				} else if (tempBean.getSku().equalsIgnoreCase("ANTIDOG-WHITE")) {
+					bean.setAntidog(bean.getAntidog() + tempBean.getQuantity());
+				} else if (tempBean.getSku().equalsIgnoreCase("ANTIDOG-KOMPLEKT")) {
+					bean.setAntidog(bean.getAntidog() + tempBean.getQuantity());
+				} else if (tempBean.getSku().equalsIgnoreCase("ANTIDOG-M")) {
+					bean.setAntidog(bean.getAntidog() + tempBean.getQuantity());
+				} else if (tempBean.getSku().equalsIgnoreCase("PYRODEFENDER")) {
+					bean.setAntidog(bean.getAntidog() + tempBean.getQuantity());
+				} else if (StringUtils.containsIgnoreCase(tempBean.getSku(), "PYRODEFENDER-KOMPLEKT")) {
+					bean.setAntidog(bean.getAntidog() + tempBean.getQuantity());
+				} else if (StringUtils.containsIgnoreCase(tempBean.getName(), "чехол")) {
+					//
+				} else if (StringUtils.containsIgnoreCase(tempBean.getName(), "упаковка")) {
+					//
 				} else {
 					bean.setUltrasonicDogRepeller(bean.getUltrasonicDogRepeller() + tempBean.getQuantity());
 				}
@@ -166,6 +454,16 @@ public class ReportDao extends AnyDaoImpl {
 				bean.setBamboo(bean.getBamboo() + tempBean.getQuantity());
 			} else if (tempBean.getCategoryProductId() == 302) {
 				bean.setCarku(bean.getCarku() + tempBean.getQuantity());
+			} else if (tempBean.getCategoryProductId() == 1104) {
+				if (StringUtils.contains(tempBean.getName(), "палатк")) {
+					bean.setTent(bean.getTent() + tempBean.getQuantity());
+				} else if (StringUtils.containsIgnoreCase(tempBean.getName(), "эхолот")) {
+					bean.setPraktic(bean.getPraktic() + tempBean.getQuantity());
+				} else if (StringUtils.containsIgnoreCase(tempBean.getName(), "камера")) {
+					bean.setPraktic(bean.getPraktic() + tempBean.getQuantity());
+				} else {
+					//
+				}
 			} else {
 				bean.setOthers(tempBean.getQuantity());
 			}
@@ -737,4 +1035,7 @@ public class ReportDao extends AnyDaoImpl {
 		results.add(bean);
 		return results;
 	}
+
+
+
 }
