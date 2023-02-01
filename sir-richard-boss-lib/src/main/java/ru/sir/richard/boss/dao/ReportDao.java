@@ -26,6 +26,7 @@ import ru.sir.richard.boss.model.utils.Pair;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -284,11 +285,11 @@ public class ReportDao extends AnyDaoImpl {
 			cellIndex++;
 
 			cell = row.createCell(cellIndex);
-			cell.setCellValue(0);
+			cell.setCellValue(bean.getAdvertBudget().doubleValue());
 			cellIndex++;
 
 			cell = row.createCell(cellIndex);
-			cell.setCellValue(0);
+			cell.setCellValue(bean.getAdvertBudgetByOne().doubleValue());
 			cellIndex++;
 		}
 		FileOutputStream outputStream = new FileOutputStream("d:\\src\\sir-richard-boss\\--1-save\\aggregate-sales.xls");
@@ -323,75 +324,9 @@ public class ReportDao extends AnyDaoImpl {
 					}
 				});
 
-/*
-						102	отпугиватели	отпугиватели змей
-						103	отпугиватели	отпугиватели птиц
-						104	отпугиватели	отпугиватели грызунов
-						105	отпугиватели	отпугиватели комаров
-						107	отпугиватели	отпугиватели ос
-						108	отпугиватели	отпугиватели собак
-						109	отпугиватели	уничтожители насекомых
-						110	отпугиватели	отпугиватели клещей
-						201	для дома	gsm розетки и реле
-						202	для дома	gsm сигнализации
-						203	для дома	автономные извещатели
-						204	для дома	видеоглазки и видеодомофоны
-						205	для дома	видеонаблюдение
-						206	для дома	ножеточки
-						207	для дома	эконаборы
-						208	для дома	светильники
-						209	для дома	столики для ноутбука
-						210	для дома	роботы для уборки
-						211	для дома	средства защиты
-						301	для автомобиля	алкотестеры
-						302	для автомобиля	пуско-зарядные устройства
-						303	для автомобиля	гибкие камеры
-						304	для автомобиля	гаджеты
-						401	для дачи	изотермика
-						403	для дачи	мобильный душ
-						404	для дачи	системы полива
-						405	для дачи	термосы
-						501	для детей	микроскопы USB
-						502	для детей	домашние планетарии
-						503	для детей	видеоняни
-						504	для детей	конструкторы
-						601	безопасность	антижучки
-						602	безопасность	обнаружители видеокамер
-						603	безопасность	подавители диктофонов
-						604	безопасность	подавители сотовых телефонов
-						701	путешествия	стельки с подогревом
-						702	путешествия	возвращатели
-						703	путешествия	мини электростанции
-						801	музыка	наушники
-						802	музыка	колонки
-						901	для домашних животных	фурминатор для кошек
-						902	для домашних животных	фурминатор для собак
-						903	для домашних животных	автокормушки и автопоилки
-						904	для домашних животных	электронные ошейники
-						1111	производство	инкубаторы
-						1101	прочие	элементы питания
-						1102	прочие	инструменты
-						1103	прочие	подарки
-						1104	прочие	для рыбалки
-						1105	прочие	для охоты
-						1106	прочие	фонари
-
- */
-
-
 		AggregateProductSalesReportBean bean = new AggregateProductSalesReportBean();
 		bean.getPeriod().setStart(period.getStart());
 		bean.getPeriod().setEnd(period.getEnd());
-
-
-		//isocket	sapsan	sanseit	эланг	эланг реле	IQsocket Mobile	Телеметрика Т80	Телеметрика Т60
-		// итого	сититек gsm	сититек i8	сититек eye	остальные	итого	gsm сигнализации	usb микроскоп	планетарий	антижучки
-		// отпугиватели птиц	отпугиватели грызунов	отпугиватель кротов	отпугиватель змей	отпугиватель собак	антидог
-		// ThermaCELL	уничтожители комаров	экотестеры
-		// ножеточки	столики для ноутбука
-		// автокормушки	пуско-зарядные устройства CARKU	эхолоты	иные
-
-
 
 		tempBeans.forEach(tempBean -> {
 			if (tempBean.getSku().equalsIgnoreCase("TELEMETRIKA-T80-MASTER")) {
@@ -468,6 +403,15 @@ public class ReportDao extends AnyDaoImpl {
 				bean.setOthers(tempBean.getQuantity());
 			}
 		});
+		BigDecimal advertAmount = wikiDao.ejectTotalAmountsByConditions(OrderAmountTypes.ADVERT_WEEK_BUDGET, period);
+		if (advertAmount.compareTo(BigDecimal.ZERO) == 0) {
+			Date smd = DateTimeUtils.firstDayOfMonth(period.getStart());
+			Date emd = DateTimeUtils.lastDayOfMonth(period.getStart());
+			Pair<Date> monthPeriod = new Pair<>(smd, emd);
+			advertAmount = wikiDao.ejectTotalAmountsByConditions(OrderAmountTypes.ADVERT_BUDGET, monthPeriod);
+			advertAmount = advertAmount.divide(BigDecimal.valueOf(4), RoundingMode.CEILING);
+		}
+		bean.setAdvertBudget(advertAmount);
 		return bean;
 	}
 	
@@ -481,22 +425,7 @@ public class ReportDao extends AnyDaoImpl {
 				"		        (o.status IN (2, 4, 5, 7, 12, 8, 10)) AND"	+ 
 				"               (o.order_type in (1, 2))" +
 				"		  GROUP BY category_annotation, p.product_id";
-		
-		/*
-		APPROVED(2, "подтвержден", ""),	// margin > 0, postpay > 0
-		PAY_WAITING(3, "ожидаем оплату", "warning"), // margin = 0, postpay = ?
-		PAY_ON(4, "оплата поступила", "warning"), // margin > 0, postpay = ?		
-		DELIVERING(5, "доставляется", ""), // margin > 0, postpay > 0
-		READY_GIVE_AWAY(7, "прибыл", ""), // margin > 0, postpay > 0
-		READY_GIVE_AWAY_TROUBLE(12, "заканчивается срок хранения", "danger"), // margin > 0, postpay > 0
-		DELIVERED(10, "получен", ""), 
-		DOC_NOT_EXIST(11, "нет ТОРГ-12", ""), // margin > 0, postpay = 0
-		FINISHED(8, "завершен", "success"), // margin > 0, postpay = 0	
-		REDELIVERY(9, "отказ от вручения", "secondary"), // margin = 0, postpay > 0
-		CANCELED(13, "отменен", "danger"), // margin = 0, postpay = 0
-		REDELIVERY_FINISHED(15, "возврат получен", "danger"), // --
-		LOST(16, "утерян", "lost"); // margin = 0, postpay = 0
-		*/
+
 		List<ProductSalesReportBean> beans = this.jdbcTemplate.query(sqlSelectProductSales,
 				new Object[]{period.getStart(), period.getEnd()},
 				new int[] {Types.DATE, Types.DATE },

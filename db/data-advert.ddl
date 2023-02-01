@@ -3,7 +3,17 @@ SET SQL_SAFE_UPDATES = 0;
 -- total_amounts
 DELETE FROM sr_period_total_amount;
 
--- 101 рекламный бюджет
+-- 101 рекламный бюджет (неделя)
+INSERT INTO sr_period_total_amount
+(amount_type, period_in, period_out, amount)
+VALUES
+(132, '2023-01-02', '2023-01-08', 0),
+(132, '2023-01-09', '2023-01-15', 9176),
+(132, '2023-01-16', '2023-01-22', 13064),
+(132, '2023-01-23', '2023-01-29', 12111);
+
+
+-- 101 рекламный бюджет (месяц)
 INSERT INTO sr_period_total_amount
 (amount_type, period_in, period_out, amount)
 VALUES

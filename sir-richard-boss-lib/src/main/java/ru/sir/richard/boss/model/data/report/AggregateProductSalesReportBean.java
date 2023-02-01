@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import ru.sir.richard.boss.model.utils.Pair;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 @Data
@@ -35,6 +37,8 @@ public class AggregateProductSalesReportBean {
     private int tent;
     private int praktic;
     private int others;
+    private BigDecimal advertBudget;
+
 
     //isocket	sapsan	sanseit	эланг	эланг реле	IQsocket Mobile	Телеметрика Т80	Телеметрика Т60
     // итого	сититек gsm	сититек i8	сититек eye	остальные	итого	gsm сигнализации	usb микроскоп	планетарий	антижучки
@@ -68,6 +72,14 @@ public class AggregateProductSalesReportBean {
                 + tent
                 + praktic
                 + others;
+    }
+
+    public BigDecimal getAdvertBudgetByOne() {
+        if (getTotal() == 0) {
+            return BigDecimal.ZERO;
+        } else {
+            return getAdvertBudget().divide(BigDecimal.valueOf(getTotal()), RoundingMode.CEILING);
+        }
     }
 
 }

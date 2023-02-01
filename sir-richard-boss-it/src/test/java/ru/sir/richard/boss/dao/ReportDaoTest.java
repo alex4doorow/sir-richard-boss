@@ -42,6 +42,10 @@ public class ReportDaoTest {
 
         final DayOfWeek firstDayOfWeek = DayOfWeek.MONDAY;
         final DayOfWeek lastDayOfWeek = DayOfWeek.SUNDAY;
+/*
+        Pair<Date> period = new Pair<>(DateTimeUtils.defaultFormatStringToDate("01.01.2022"),
+                DateTimeUtils.defaultFormatStringToDate("30.01.2023"));
+*/
 
         Pair<Date> period = new Pair<>(DateTimeUtils.defaultFormatStringToDate("01.01.2016"),
                 DateTimeUtils.defaultFormatStringToDate("30.01.2023"));

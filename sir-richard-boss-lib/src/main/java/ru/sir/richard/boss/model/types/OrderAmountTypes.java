@@ -13,7 +13,7 @@ public enum OrderAmountTypes {
 	DELIVERY(7, "стоимость доставки"),
 	CASH_ON_DELIVERY(8, "наложенный платеж"),
 	
-	ADVERT_BUDGET(101, "рекламный бюджет за период"),
+	ADVERT_BUDGET(101, "рекламный бюджет за месяц"),
 	COUNT_VISITS(102, "число сеансов за период"),
 	COUNT_UNIQUE_VISITORS(107, "число уникальных посетителей за период"),
 	COUNT_NEW_VISITORS(111, "число новых посетителей за период"),	
@@ -23,10 +23,11 @@ public enum OrderAmountTypes {
 	POSTPAY_SDEK(108, "стоимость постоплаты СДЭК"),
 	POSTPAY_POST(109, "стоимость постоплаты почта"),
 	POSTPAY_COMPANY(110, "стоимость постоплаты организаций"),
-	POSTPAY_YANDEX_MARKET(111, "стоимость постоплаты \"Яндекс.Маркет\""),
+	POSTPAY_YANDEX_MARKET(131, "стоимость постоплаты \"Яндекс.Маркет\""),
 	POSTPAY_OZON_MARKET(112, "стоимость постоплаты \"OZON\""),
 	POSTPAY_OZON_ROCKET(113, "стоимость постоплаты \"OZON ROCKET\""),
 	POSTPAY_YANDEX_GO(114, "стоимость постоплаты \"YANDEX GO\""),
+	ADVERT_WEEK_BUDGET(132, "рекламный бюджет за неделю"),
 		
 	// total amounts
 	TOTAL_SUPPLIER(121, "суммарный опт"),
@@ -67,6 +68,8 @@ public enum OrderAmountTypes {
 			return OrderAmountTypes.CASH_ON_DELIVERY;
 		} else if (value == 101) {
 			return OrderAmountTypes.ADVERT_BUDGET;
+		} else if (value == 132) {
+			return OrderAmountTypes.ADVERT_WEEK_BUDGET;
 		} else if (value == 102) {
 			return OrderAmountTypes.COUNT_VISITS;
 		} else if (value == 107) {
@@ -85,7 +88,7 @@ public enum OrderAmountTypes {
 			return OrderAmountTypes.POSTPAY_POST;
 		} else if (value == 110) {
 			return OrderAmountTypes.POSTPAY_COMPANY;
-		} else if (value == 111) {
+		} else if (value == 131) {
 			return OrderAmountTypes.POSTPAY_YANDEX_MARKET;
 		} else if (value == 112) {
 			return OrderAmountTypes.POSTPAY_OZON_MARKET;				
