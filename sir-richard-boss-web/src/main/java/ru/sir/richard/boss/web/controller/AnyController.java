@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 
+import ru.sir.richard.boss.model.entity.AppUser;
 import ru.sir.richard.boss.model.types.Countries;
 import ru.sir.richard.boss.model.types.CustomerTypes;
 import ru.sir.richard.boss.model.types.DeliveryPrices;
@@ -28,6 +30,11 @@ public abstract class AnyController {
 			
 	public AnyController() {
 		super();
+	}
+	
+	protected int getUserIdByPrincipal() {
+		AppUser appUser = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return appUser.getId().intValue();		 
 	}
 			
 	protected void populateDefaultModel(Model model) {

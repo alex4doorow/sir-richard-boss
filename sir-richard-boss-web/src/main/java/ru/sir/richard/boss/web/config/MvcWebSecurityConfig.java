@@ -77,7 +77,7 @@ public class MvcWebSecurityConfig {
 	        	.formLogin()
 	        	.loginPage("/login")
 	        	.loginProcessingUrl("/login")
-	            .successHandler(successHandler())
+				//.successHandler(successHandler())
 	        	.failureUrl("/login?error=true")
 	        .and()
 	        	.logout().deleteCookies("JSESSIONID")

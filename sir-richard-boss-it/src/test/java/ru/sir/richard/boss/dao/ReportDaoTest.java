@@ -9,6 +9,7 @@ import ru.sir.richard.boss.model.data.report.AggregateProductSalesReportBean;
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.model.utils.Pair;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.DayOfWeek;
@@ -34,7 +35,8 @@ public class ReportDaoTest {
         log.info(result.toString());
 
         List<AggregateProductSalesReportBean> beans = Collections.singletonList(result);
-        reportDao.aggregateProductSalesWriteIntoExcel(beans);
+        FileOutputStream outputStream = new FileOutputStream("d:\\src\\sir-richard-boss\\--1-save\\aggregate-sales.xls");
+        reportDao.aggregateProductSalesWriteIntoExcel(beans, outputStream);
     }
 
     @Test
@@ -75,7 +77,8 @@ public class ReportDaoTest {
             AggregateProductSalesReportBean bean = reportDao.aggregateProductSales(week);
             beans.add(bean);
         });
-        reportDao.aggregateProductSalesWriteIntoExcel(beans);
+        FileOutputStream outputStream = new FileOutputStream("d:\\src\\sir-richard-boss\\--1-save\\aggregate-sales.xls");
+        reportDao.aggregateProductSalesWriteIntoExcel(beans, outputStream);
     }
 
 }

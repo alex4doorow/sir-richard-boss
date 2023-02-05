@@ -39,22 +39,11 @@ public class ExportController {
 	
 	@RequestMapping(value = "/orders/{id}/export/excel-cdek", method = RequestMethod.GET)
 	@ResponseBody
-	public void exportExcelCdek(@PathVariable("id") int orderId, HttpServletResponse response) throws JRException, IOException {
-		
-		logger.debug("exportExcelCdek():{}", "start");
-
+	public void exportExcelCdek(@PathVariable("id") int orderId, HttpServletResponse response) throws IOException {
 		response.setContentType("application/vnd.ms-excel");
 		response.setHeader("Content-Disposition", "attachment; filename=cdek-out.xls");
-
 		final OutputStream outStream = response.getOutputStream();
-		
 		deliveryService.exportParcelOrdersToExcel(orderId, outStream, DateTimeUtils.sysDate(), CrmTypes.CDEK);
-		
-		/*
-		orderService.getCrmManager().setExecutorDate(DateTimeUtils.sysDate());
-		orderService.getCrmManager().exportCdekExcel(orderId, outStream);
-		*/
-		logger.debug("exportExcelCdek():{}", "finish");
 	}	
 	
 	@RequestMapping(value = "/orders/{id}/export/api-cdek", method = RequestMethod.GET)

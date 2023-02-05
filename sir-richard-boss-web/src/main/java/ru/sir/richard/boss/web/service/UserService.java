@@ -52,7 +52,6 @@ public class UserService implements UserDetailsService {
         if (userFromDB != null) {
             return false;
         }
-
         user.setRoles(Collections.singleton(new AppRole(1L, "ROLE_USER")));
         //user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         wsUserRepository.save(user);

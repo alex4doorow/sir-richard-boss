@@ -25,11 +25,16 @@ import ru.sir.richard.boss.model.utils.Pair;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 @Repository
@@ -42,7 +47,7 @@ public class ReportDao extends AnyDaoImpl {
 	@Autowired
 	private OrderDao orderDao;
 
-	public void aggregateProductSalesWriteIntoExcel(List<AggregateProductSalesReportBean> beans) throws IOException {
+	public void aggregateProductSalesWriteIntoExcel(List<AggregateProductSalesReportBean> beans, OutputStream outStream) throws IOException {
 
 		//с	по	итого продано, шт	isocket	sapsan	sanseit	эланг	эланг реле	IQsocket Mobile	Телеметрика Т80	Телеметрика Т60	итого
 		// сититек gsm	сититек i8	сититек eye	остальные	итого
@@ -292,12 +297,10 @@ public class ReportDao extends AnyDaoImpl {
 			cell.setCellValue(bean.getAdvertBudgetByOne().doubleValue());
 			cellIndex++;
 		}
-		FileOutputStream outputStream = new FileOutputStream("d:\\src\\sir-richard-boss\\--1-save\\aggregate-sales.xls");
-		workBook.write(outputStream);
+
+		workBook.write(outStream);
 		workBook.close();
-
 	}
-
 	public AggregateProductSalesReportBean aggregateProductSales(Pair<Date> period) {
 		final String sqlSelectProductSales = "select oi.quantity quantity, oi.product_id product_id, min(o.category_product_id) category_product_id, min(p.sku) sku, min(p.name) name" +
 				"  from sr_order_item oi, sr_v_order o, sr_v_product_light p" +
@@ -414,7 +417,40 @@ public class ReportDao extends AnyDaoImpl {
 		bean.setAdvertBudget(advertAmount);
 		return bean;
 	}
-	
+
+	public List<AggregateProductSalesReportBean> complexAggregateProductSales(Pair<Date> period) {
+
+		final DayOfWeek firstDayOfWeek = DayOfWeek.MONDAY;
+		final DayOfWeek lastDayOfWeek = DayOfWeek.SUNDAY;
+
+		Date dateI = period.getStart();
+		List<Pair<Date>> weeks = new ArrayList<>();
+		while (dateI.compareTo(period.getEnd()) < 0) {
+			LocalDateTime swd = dateI.toInstant()
+					.atZone(ZoneId.systemDefault())
+					.toLocalDateTime()
+					.with(TemporalAdjusters.previousOrSame(firstDayOfWeek));
+			LocalDateTime ewd = dateI.toInstant()
+					.atZone(ZoneId.systemDefault())
+					.toLocalDateTime()
+					.with(TemporalAdjusters.nextOrSame(lastDayOfWeek));
+			log.info("week: {}, {}", swd, ewd);
+
+			weeks.add(new Pair<>(java.util.Date.from(swd.atZone(ZoneId.systemDefault()).toInstant()),
+					java.util.Date.from(ewd.atZone(ZoneId.systemDefault()).toInstant())));
+
+			LocalDateTime nextDay = ewd.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+			dateI = java.util.Date.from(nextDay.atZone(ZoneId.systemDefault()).toInstant());
+		}
+
+		List<AggregateProductSalesReportBean> beans = new ArrayList<>();
+		weeks.forEach(week -> {
+			AggregateProductSalesReportBean bean = aggregateProductSales(week);
+			beans.add(bean);
+		});
+		return beans;
+	}
+
 	public List<ProductSalesReportBean> productSales(Pair<Date> period) {
 		log.debug("productSales():{}", period);
 		final String sqlSelectProductSales = "SELECT p.product_id, MAX(p.name) product_name, MAX(p.category_annotation) category_annotation, SUM(oi.quantity) quantity, SUM(oi.amount) amount" + 

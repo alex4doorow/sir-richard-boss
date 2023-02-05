@@ -14,11 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import net.sf.jasperreports.engine.JRException;
@@ -30,8 +26,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 import ru.sir.richard.boss.dao.ReportDao;
 import ru.sir.richard.boss.model.data.Order;
-import ru.sir.richard.boss.model.data.conditions.AnyReportConditions;
 import ru.sir.richard.boss.model.data.conditions.ProductSalesReportConditions;
+import ru.sir.richard.boss.model.data.report.AggregateProductSalesReportBean;
 import ru.sir.richard.boss.model.data.report.ProductSalesReportBean;
 import ru.sir.richard.boss.model.data.report.SalesFunnelReportBean;
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
@@ -53,6 +49,7 @@ public class ReportController extends AnyController {
 	
 	@Autowired
 	private ReportDao reportManager;
+
 	
 	@Autowired
 	ProductSalesReportConditionsFormValidator productSalesReportConditionsFormValidator;
@@ -89,8 +86,7 @@ public class ReportController extends AnyController {
 	@ResponseBody
 	public void getReportPostRussiaPostpay(@PathVariable("id") int id, HttpServletResponse response) throws JRException, IOException {
 		createPdfOrderReport(id, 1, response, "/resources/jasperreports/post-postpay", "v3",
-				"post-russia-postpay-" + StringUtils.leftPad(String.valueOf(id), 4, "0") + ".pdf", false);
-		
+				"post-russia-postpay-" + StringUtils.leftPad(String.valueOf(id), 4, "0") + ".pdf", false);		
 	}
 	
 	@RequestMapping(value = "/orders/{id}/report/garant-ticket-all", method = RequestMethod.GET)
@@ -127,11 +123,48 @@ public class ReportController extends AnyController {
 		createPdfOrderReport(id, 1, response, "/resources/jasperreports/return-form-master", "v1",
 				"return-form-" + StringUtils.leftPad(String.valueOf(id), 4, "0") + ".pdf", false);		
 	}
+
+	@GetMapping(value = "/reports/complex-aggregate-product-sales")
+	public String reportComplexAggregateProductSales(Model model) {
+		
+		int userId = getUserIdByPrincipal();
+		Date periodStart = wikiService.getConfig().getFormDateValueByKey(userId, "aProductSalesReportForm", "period.start", DateTimeUtils.sysDate());
+		Date periodEnd = wikiService.getConfig().getFormDateValueByKey(userId, "aProductSalesReportForm", "period.end", DateTimeUtils.sysDate());
+
+		FormProductSalesReport reportForm = new FormProductSalesReport(periodStart, periodEnd);
+		model.addAttribute("reportForm", reportForm);
+		return "reports/reportcomplexaggregateproductsalesform";
+	}
+
+	@PostMapping(value = "/reports/complex-aggregate-product-sales/filter/exec")
+	public void execReportComplexAggregateProductSales(@ModelAttribute("reportForm") FormProductSalesReport reportForm,
+													   Model model, 
+													   final RedirectAttributes redirectAttributes, 
+													   HttpServletResponse response) throws IOException {
+		
+		int userId = getUserIdByPrincipal();
+		wikiService.getConfig().saveFormDateValue(userId, "aProductSalesReportForm", "period.start", reportForm.getPeriodStart());
+		wikiService.getConfig().saveFormDateValue(userId, "aProductSalesReportForm", "period.end", reportForm.getPeriodEnd());
+
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.putAll(wikiService.getConfigData());
+		parameters.put("PERIOD_START", reportForm.getPeriod().getStart());
+		parameters.put("PERIOD_END", reportForm.getPeriod().getEnd());
+		parameters.put("REPORT_QUERY_NAME", "Данные за период");
+		
+		List<AggregateProductSalesReportBean> reportBeans = reportManager.complexAggregateProductSales(reportForm.getPeriod());
+		
+		response.setContentType("application/vnd.ms-excel");
+		response.setHeader("Content-disposition", "inline; filename=" + "aggregate-sales.xls");
+		final OutputStream outStream = response.getOutputStream();
+		reportManager.aggregateProductSalesWriteIntoExcel(reportBeans, outStream);
+	}
 	
 	// list page
 	@RequestMapping(value = "/reports/product-sales", method = RequestMethod.GET)
 	public String reportProductSales(Model model) {
-		int userId = OrderListController.USER_ID;
+
+		int userId = getUserIdByPrincipal();
 		Date periodStart = wikiService.getConfig().getFormDateValueByKey(userId, "productSalesReportForm", "period.start", DateTimeUtils.sysDate());
 		Date periodEnd = wikiService.getConfig().getFormDateValueByKey(userId, "productSalesReportForm", "period.end", DateTimeUtils.sysDate());
 		BigDecimal advertBudget  = wikiService.getConfig().getFormBigDecimalValueByKey(userId, "productSalesReportForm", "advertBudget", BigDecimal.ZERO);
@@ -144,7 +177,7 @@ public class ReportController extends AnyController {
 	@RequestMapping(value = "/reports/product-sales/filter/exec", method = RequestMethod.POST)
 	public void execReportProductSales(@ModelAttribute("reportForm") FormProductSalesReport reportForm,
 			Model model, final RedirectAttributes redirectAttributes, HttpServletResponse response) throws JRException, IOException {
-		int userId = OrderListController.USER_ID;
+		int userId = getUserIdByPrincipal();
 		wikiService.getConfig().saveFormDateValue(userId, "productSalesReportForm", "period.start", reportForm.getPeriodStart());
 		wikiService.getConfig().saveFormDateValue(userId, "productSalesReportForm", "period.end", reportForm.getPeriodEnd());
 		wikiService.getConfig().saveFormBigDecimalValue(userId, "productSalesReportForm", "advertBudget", reportForm.getAdvertBudget());
@@ -161,31 +194,30 @@ public class ReportController extends AnyController {
 				"report-product-sales.pdf");
 	}
 	
-	
 	@RequestMapping(value = "/reports/product-sales-by-query-name", method = RequestMethod.GET)
 	public String reportProductSalesByQueryName(Model model) {
-			int userId = OrderListController.USER_ID;
+		int userId = getUserIdByPrincipal();
+		
 			
-			Date periodStart = wikiService.getConfig().getFormDateValueByKey(userId, "productSalesReportByQueryForm", "period.start", DateTimeUtils.sysDate());
-			Date periodEnd = wikiService.getConfig().getFormDateValueByKey(userId, "productSalesReportByQueryForm", "period.end", DateTimeUtils.sysDate());
+		Date periodStart = wikiService.getConfig().getFormDateValueByKey(userId, "productSalesReportByQueryForm", "period.start", DateTimeUtils.sysDate());
+		Date periodEnd = wikiService.getConfig().getFormDateValueByKey(userId, "productSalesReportByQueryForm", "period.end", DateTimeUtils.sysDate());
 			
-			int reportQueryNameId = wikiService.getConfig().getFormIntegerValueByKey(userId, "productSalesReportByQueryForm", "reportQueryName", ReportQueryNames.CDEK_POSTPAYMENT.getId());
+		int reportQueryNameId = wikiService.getConfig().getFormIntegerValueByKey(userId, "productSalesReportByQueryForm", "reportQueryName", ReportQueryNames.CDEK_POSTPAYMENT.getId());
 			
-			FormProductSalesReport reportForm = new FormProductSalesReport(periodStart, periodEnd);
-			reportForm.setQueryName(ReportQueryNames.getValueById(reportQueryNameId));
+		FormProductSalesReport reportForm = new FormProductSalesReport(periodStart, periodEnd);
+		reportForm.setQueryName(ReportQueryNames.getValueById(reportQueryNameId));
 			
-			model.addAttribute("reportForm", reportForm);
-			model.addAttribute("reportQueryNames", ReportQueryNames.values());
-			populateDefaultModel(model);
-
-			return "reports/reportproductsalesformbyqueryname";
+		model.addAttribute("reportForm", reportForm);
+		model.addAttribute("reportQueryNames", ReportQueryNames.values());
+		populateDefaultModel(model);
+		return "reports/reportproductsalesformbyqueryname";
 	}
-	
-	@RequestMapping(value = "/reports/product-sales-by-query-name/filter/exec", method = RequestMethod.POST)
+
+	@PostMapping(value = "/reports/product-sales-by-query-name/filter/exec")
 	public void execReportProductSalesByQueryName(@ModelAttribute("reportForm") FormProductSalesReport reportForm,
 			Model model, final RedirectAttributes redirectAttributes, HttpServletResponse response) throws JRException, IOException {
 
-		int userId = OrderListController.USER_ID;
+		int userId = getUserIdByPrincipal();
 		wikiService.getConfig().saveFormDateValue(userId, "productSalesReportByQueryForm", "period.start", reportForm.getPeriod().getStart());
 		wikiService.getConfig().saveFormDateValue(userId, "productSalesReportByQueryForm", "period.end", reportForm.getPeriod().getEnd());	
 		
@@ -206,19 +238,21 @@ public class ReportController extends AnyController {
 	// list page
 	@RequestMapping(value = "/reports/product-sales-by-query", method = RequestMethod.GET)
 	public String reportProductSalesByQuery(Model model) {
-			ProductSalesReportConditions reportForm = wikiService.getConfig().loadProductSalesByQueryReportConditions(OrderListController.USER_ID);
-			model.addAttribute("reportForm", reportForm);
-			model.addAttribute("reportPeriodType", reportForm.getReportPeriodType());
-			model.addAttribute("reportPeriodTypes", ReportPeriodTypes.getListOrderValues());
-			Map<Integer, String> months = DateTimeUtils.getMonths();
-			model.addAttribute("reportPeriodMonths", months);
-			populateDefaultModel(model);
-			return "reports/reportproductsalesformbyquery";
+		
+		ProductSalesReportConditions reportForm = wikiService.getConfig().loadProductSalesByQueryReportConditions(OrderListController.USER_ID);
+		model.addAttribute("reportForm", reportForm);
+		model.addAttribute("reportPeriodType", reportForm.getReportPeriodType());
+		model.addAttribute("reportPeriodTypes", ReportPeriodTypes.getListOrderValues());
+		Map<Integer, String> months = DateTimeUtils.getMonths();
+		model.addAttribute("reportPeriodMonths", months);
+		populateDefaultModel(model);
+		return "reports/reportproductsalesformbyquery";
 	}
 	
 	@RequestMapping(value = "/reports/product-sales-by-query/filter/exec", method = RequestMethod.POST)
 	public void execReportProductSalesByQuery(@ModelAttribute("reportForm") FormProductSalesReport reportForm,
 			Model model, final RedirectAttributes redirectAttributes, HttpServletResponse response) throws JRException, IOException {
+		
 		wikiService.getConfig().saveProductSalesByQueryReportConditions(OrderListController.USER_ID, reportForm);
 		Map<String, Object> parameters = new HashMap<>(wikiService.getConfigData());
 		parameters.put("PERIOD_START", reportForm.getPeriod().getStart());
@@ -234,7 +268,7 @@ public class ReportController extends AnyController {
 	@RequestMapping(value = "/reports/sales-funnel", method = RequestMethod.GET)
 	public String reportSalesFunnel(Model model) {
 
-		int userId = 1;
+		int userId = getUserIdByPrincipal();
 		Date periodStart = wikiService.getConfig().getFormDateValueByKey(userId, "salesFunnelReportForm", "period.start", DateTimeUtils.sysDate());
 		Date periodEnd = wikiService.getConfig().getFormDateValueByKey(userId, "salesFunnelReportForm", "period.end", DateTimeUtils.sysDate());
 		
@@ -263,7 +297,8 @@ public class ReportController extends AnyController {
 	@RequestMapping(value = "/reports/sales-funnel/filter/exec", method = RequestMethod.POST)
 	public void execReportSalesFunnel(@ModelAttribute("reportForm") FormSalesFunnelReport reportForm,
 			Model model, final RedirectAttributes redirectAttributes, HttpServletResponse response) throws JRException, IOException {
-		int userId = 1;
+		
+		int userId = getUserIdByPrincipal();
 		wikiService.getConfig().saveFormIntegerValue(userId, "salesFunnelReportForm", "reportPeriodType", 
 				reportForm.getReportPeriodType().getId());
 		wikiService.getConfig().saveFormIntegerValue(userId, "salesFunnelReportForm", "reportPeriodMonth", 
@@ -296,15 +331,13 @@ public class ReportController extends AnyController {
 	private void createPdfReport(Collection<?> beanCollection, Map<String, Object> parameters, HttpServletResponse response, String templateName, String fileName)
 			throws JRException, IOException {
 		
-		InputStream jasperMasterStream = servletContext.getResourceAsStream(templateName); 		
-
+		InputStream jasperMasterStream = servletContext.getResourceAsStream(templateName);
 		JasperReport jasperReport = (JasperReport) JRLoader.loadObject(jasperMasterStream);
 		JRBeanCollectionDataSource beanColDataSource = new JRBeanCollectionDataSource(beanCollection);
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, beanColDataSource);
 
 		response.setContentType("application/x-pdf");
 		response.setHeader("Content-disposition", "inline; filename=" + fileName);
-
 		final OutputStream outStream = response.getOutputStream();
 		JasperExportManager.exportReportToPdfStream(jasperPrint, outStream);
 	}

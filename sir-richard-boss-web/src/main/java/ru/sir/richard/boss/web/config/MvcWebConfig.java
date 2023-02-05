@@ -32,8 +32,8 @@ import java.util.Properties;
         "ru.sir.richard.boss.repository", "ru.sir.richard.boss.dao", "ru.sir.richard.boss.crm", "ru.sir.richard.boss.api",
         "ru.sir.richard.boss.converter"})
 @PropertySource(value = "classpath:application.properties", encoding = "UTF-8")
-@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
-//@PropertySource(value = "classpath:application-test.properties", encoding = "UTF-8")
+//@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
+@PropertySource(value = "classpath:application-test.properties", encoding = "UTF-8")
 public class MvcWebConfig implements WebMvcConfigurer {
 
     @Value("${application.name}")

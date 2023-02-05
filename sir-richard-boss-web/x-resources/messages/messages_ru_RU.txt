@@ -22,6 +22,7 @@ main.menus.left.ozonProducts = Товары на "Озон"
 
 main.menus.left.Reports = Отчеты
 main.menus.left.Reports.productSales = Отчет по товарам (за период)
+main.menus.left.Reports.complexAggregateProductSales = Агрегированный отчет по товарам
 main.menus.left.Reports.productSalesByQuery = Отчет по товарам (по запросу)
 main.menus.left.Reports.productSalesByQueryName = Отчет по товарам (по условию)
 main.menus.left.Reports.orderSales = Отчет по продажам (заказы)
@@ -71,16 +72,23 @@ reports.anyReport.form.fields.placeholder.period.end = Период "По"
 reports.productSales.form.title = Отчет по продажам (товары)
 reports.productSales.form.header = Отчет по продажам (товары)
 reports.productSales.form.headers.period = Отобрать данные за период
-
 reports.productSales.form.fields.period.start = С
 reports.productSales.form.fields.period.end = По
 reports.productSales.form.fields.advertBudget = Рекламный бюджет
-
 reports.productSales.form.fields.invalidFeedback.period.start = Ошибочно задана даты начала периода 
 reports.productSales.form.fields.invalidFeedback.period.end = Ошибочно задана даты конца периода
-
 reports.productSales.form.fields.placeholder.period.start = Период "С"
 reports.productSales.form.fields.placeholder.period.end = Период "По"
+
+reports.aggregate.productSales.form.title = Агрегированный отчет по товарам
+reports.aggregate.productSales.form.header = Агрегированный отчет по товарам
+reports.aggregate.productSales.form.headers.period = Отобрать данные за период
+reports.aggregate.productSales.form.fields.period.start = С
+reports.aggregate.productSales.form.fields.period.end = По
+reports.aggregate.productSales.form.fields.invalidFeedback.period.start = Ошибочно задана даты начала периода
+reports.aggregate.productSales.form.fields.invalidFeedback.period.end = Ошибочно задана даты конца периода
+reports.aggregate.productSales.form.fields.placeholder.period.start = Период "С"
+reports.aggregate.productSales.form.fields.placeholder.period.end = Период "По"
 
 reports.productSalesByQuery.form.headers.deliveryTypes = Варианты доставки
 reports.productSalesByQuery.form.headers.customerTypes = Покупатели

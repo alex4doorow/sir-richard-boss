@@ -117,6 +117,13 @@
 		                  <fmt:message key="main.menus.left.Reports.productSales" />
 		                </a>
 	                </li>
+
+                    <li class="nav-item">
+                        <a id="nav-link-report-complex-aggregate-product-sales" class="nav-link" href="${urlHome}reports/complex-aggregate-product-sales">
+                            <i class="bi bi-printer text-dark"></i>
+                            <fmt:message key="main.menus.left.Reports.complexAggregateProductSales" />
+                        </a>
+                    </li>
 	                
 	                <li class="nav-item">	                
 		                <a id="nav-link-report-product-sales-by-query" class="nav-link" href="${urlHome}reports/product-sales-by-query">
