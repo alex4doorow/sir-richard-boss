@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,8 +47,6 @@ public class OrderListController extends AnyController {
 
 	private final Logger logger = LoggerFactory.getLogger(OrderListController.class);
 
-	public final static int USER_ID = 1;
-
 	@Autowired
 	OrderConditionsFormValidator orderConditionsFormValidator;
 
@@ -55,6 +55,9 @@ public class OrderListController extends AnyController {
 
 	@Autowired
 	private DeliveryService deliveryService;
+
+	@Autowired
+	private MessageSource messageSource;
 	
 	@InitBinder
 	protected void initBinder(WebDataBinder binder, HttpServletRequest httpServletRequest) {
@@ -79,18 +82,15 @@ public class OrderListController extends AnyController {
 	public String showAllOrders(Model model) {
 
 		logger.debug("showAllOrders()");
-		OrderConditions orderConditions = wikiService.getConfig().loadOrderConditions(OrderListController.USER_ID);
-
+		OrderConditions orderConditions = wikiService.getConfig().loadOrderConditions(getUserIdByPrincipal());
 		List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
 		Map<OrderAmountTypes, BigDecimal> totalAmounts = orderService.getOrderDao().calcTotalOrdersAmountsByConditions(orders,
 				orderConditions.getPeriod());
-
 		populateDefaultModel(model);
 		model.addAttribute("orders", orders);
 		model.addAttribute("totalAmounts", totalAmounts);
 		model.addAttribute("reportPeriodType", ReportPeriodTypes.CURRENT_MONTH);
 		model.addAttribute("listType", "orders");
-
 		return "orders/list";
 	}
 	
@@ -98,12 +98,10 @@ public class OrderListController extends AnyController {
 	public String showTroubleOrders(Model model) {
 
 		logger.debug("showTroubleOrders()");
-
 		List<Order> orders = orderService.getOrderDao().listTroubleOrders();
 		model.addAttribute("orders", orders);
 		model.addAttribute("reportPeriodType", ReportPeriodTypes.CURRENT_MONTH);
 		model.addAttribute("listType", "trouble-load");
-
 		return "orders/list";
 	}
 
@@ -113,11 +111,9 @@ public class OrderListController extends AnyController {
 		logger.debug("showOrdersByPeriod()");
 		ReportPeriodTypes reportPeriodType = ReportPeriodTypes.getValueByCode(period);
 		OrderConditions orderConditions = new OrderConditions(reportPeriodType);
-
 		List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
 		Map<OrderAmountTypes, BigDecimal> totalAmounts = orderService.getOrderDao().calcTotalOrdersAmountsByConditions(orders,
 				orderConditions.getPeriod());
-
 		model.addAttribute("orders", orders);
 		model.addAttribute("totalAmounts", totalAmounts);
 		model.addAttribute("reportPeriodType", reportPeriodType);
@@ -129,15 +125,12 @@ public class OrderListController extends AnyController {
 	public String showOrdersByConditions(Model model) {
 
 		logger.debug("showOrdersByConditions()");
-
-		OrderConditions orderConditionsForm = wikiService.getConfig().loadOrderConditions(OrderListController.USER_ID);
-
+		OrderConditions orderConditionsForm = wikiService.getConfig().loadOrderConditions(getUserIdByPrincipal());
 		model.addAttribute("orderConditionsForm", orderConditionsForm);
 		model.addAttribute("reportPeriodType", ReportPeriodTypes.CURRENT_MONTH);
 		model.addAttribute("reportPeriodTypes", ReportPeriodTypes.getListOrderValues());
 		Map<Integer, String> months = DateTimeUtils.getMonths();
 		model.addAttribute("reportPeriodMonths", months);
-
 		populateDefaultModel(model);
 		return "orders/orderconditionsform";
 	}
@@ -147,13 +140,10 @@ public class OrderListController extends AnyController {
 			Model model, final RedirectAttributes redirectAttributes) {
 
 		logger.debug("execOrdersByConditions():{}", orderConditionsForm);
-
-		wikiService.getConfig().saveOrderConditions(OrderListController.USER_ID, orderConditionsForm);
-
+		wikiService.getConfig().saveOrderConditions(getUserIdByPrincipal(), orderConditionsForm);
 		List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditionsForm);
 		Map<OrderAmountTypes, BigDecimal> totalAmounts = orderService.getOrderDao().calcTotalOrdersAmountsByConditions(orders,
 				orderConditionsForm.getPeriod());
-
 		model.addAttribute("orders", orders);
 		model.addAttribute("totalAmounts", totalAmounts);
 		model.addAttribute("reportPeriodType", ReportPeriodTypes.CURRENT_MONTH);
@@ -162,19 +152,21 @@ public class OrderListController extends AnyController {
 	}
 
 	@RequestMapping(value = "/orders/show/by-conditions/{dirtyConditions}", method = RequestMethod.GET)
-	public String orderByOrderConditions(@PathVariable("dirtyConditions") String dirtyConditions, Model model, final RedirectAttributes redirectAttributes) {
+	public String orderByOrderConditions(@PathVariable("dirtyConditions") String dirtyConditions, Model model,
+										 final RedirectAttributes redirectAttributes) {
 
 		if (StringUtils.isEmpty(dirtyConditions)) {
 			redirectAttributes.addFlashAttribute("css", "danger");
-			redirectAttributes.addFlashAttribute("msg", "Запись не найдена!");
+			redirectAttributes.addFlashAttribute("msg", messageSource.getMessage("main.message.recordNotFound",
+					null, Locale.getDefault()));
 			return "redirect:/orders";
 		}
 		// 1) ищем по номеру заказа
 		int orderSubNo = 0;
 		int orderYear = DateTimeUtils.dateToShortYear(DateTimeUtils.sysDate());		
-		logger.debug("orderByOrderConditions():{},{},{}", dirtyConditions, orderSubNo, orderYear);
+		logger.debug("orderByOrderConditions(): {}, {}, {}", dirtyConditions, orderSubNo, orderYear);
 		
-		int id = 0;
+		int id;
 		try {
 			 id = orderService.getOrderDao().findIdByNo(Integer.valueOf(dirtyConditions.trim()), orderSubNo, orderYear);
 			 if (id > 0) {
@@ -199,7 +191,6 @@ public class OrderListController extends AnyController {
 				id = orders.get(0).getId();
 			}			
 		}
-		
 		if (id <= 0) {
 			// 3) ищем по телефону физика
 			final String dirtyPhoneNumber = dirtyConditions.trim();			
@@ -259,7 +250,6 @@ public class OrderListController extends AnyController {
 		if (id <= 0) {
 			// 6) ищем по opencart no
 			final String crmNo = dirtyConditions.trim();
-			
 			orderConditions = new OrderConditions();
 			orderConditions.setPeriodExist(false);
 			customerConditions = new CustomerConditions();
@@ -286,11 +276,8 @@ public class OrderListController extends AnyController {
 			id = orders.get(0).getId();
 			return "redirect:/orders/" + id + "/orders";			
 		} else if (orders != null && orders.size() > 0) {			
-			//Map<OrderAmountTypes, BigDecimal> totalAmounts = new HashMap<OrderAmountTypes, BigDecimal>();
-			
 			Map<OrderAmountTypes, BigDecimal> totalAmounts = orderService.getOrderDao().calcTotalOrdersAmountsByConditions(orders,
 					new Pair<Date>(DateTimeUtils.sysDate()));
-			
 			model.addAttribute("orders", orders);
 			model.addAttribute("totalAmounts", totalAmounts);
 			model.addAttribute("reportPeriodType", ReportPeriodTypes.CURRENT_MONTH);
@@ -306,8 +293,6 @@ public class OrderListController extends AnyController {
 	@RequestMapping(value = "/orders/statuses/reload", method = RequestMethod.GET)
 	public String ordersStatusesReload(Model model, final RedirectAttributes redirectAttributes) {
 		logger.debug("ordersStatusesReload(): start");
-		// --> orderListController
-		
 		String resultDelivery = deliveryService.ordersStatusesReload();
 		String resultEmail = orderService.ordersSendFeedback(DateTimeUtils.sysDate());
 		resultDelivery += "<br/>" + resultEmail;
@@ -319,7 +304,6 @@ public class OrderListController extends AnyController {
 		redirectAttributes.addFlashAttribute("msg", resultDelivery);
 		populateDefaultModel(model);
 		logger.debug("ordersStatusesReload(): end");
-				
 		return "redirect:/orders";
 	}
 	
@@ -340,8 +324,6 @@ public class OrderListController extends AnyController {
 		
 		logger.debug("ordersStatusesToday(): start");
 		deliveryService.ordersStatusesReload();
-		
-		//Date today = DateTimeUtils.beforeAnyDate(DateTimeUtils.sysDate(), 1);
 		Date today = DateTimeUtils.sysDate();
 		
 		// посчитаем прибыль за сегодня		

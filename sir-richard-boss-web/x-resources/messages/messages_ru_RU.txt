@@ -7,7 +7,9 @@ app.header.author = Aleksey Fedorov
 main.const.ruble = ₽
 
 main.const.table.value.status.yes = v
-main.const.table.value.status.no =  
+main.const.table.value.status.no =
+
+main.message.recordNotFound = Запись не найдена!
 
 main.menus.left.home = Главная
 main.menus.left.orders = Заказы

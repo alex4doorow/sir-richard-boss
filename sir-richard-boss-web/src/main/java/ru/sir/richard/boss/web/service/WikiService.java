@@ -55,11 +55,11 @@ public class WikiService {
 		return products.get(0);
 	}
 	
-	public String ymOfferPricesUpdates() {
+	public String ymOfferPricesUpdates(int userId) {
 		
 		YandexMarketApi yandexMarketApi = new YandexMarketApi(this.environment);
 		
-		ProductConditions productConditions = getConfig().loadYmProductConditions(OrderListController.USER_ID);		
+		ProductConditions productConditions = getConfig().loadYmProductConditions(userId);
 		List<Product> products = getWiki().listYmProductsByConditions(productConditions);
 					
 		List<Product> productsForQuantityUpdates = new ArrayList<Product>();
@@ -106,7 +106,7 @@ public class WikiService {
 		return resultMessage;
 	}
 		
-	public String ozonOfferPricesUpdates(boolean isConditions) {
+	public String ozonOfferPricesUpdates(int userId, boolean isConditions) {
 		
 		String resultMessage = "";					
 		Boolean isEnabled = Boolean.valueOf(getConfig().getConfig().get("ozon_enabled"));
@@ -115,7 +115,7 @@ public class WikiService {
 		}		
 		ProductConditions productConditions;
 		if (isConditions) {
-			productConditions = getConfig().loadOzonProductConditions(OrderListController.USER_ID);			
+			productConditions = getConfig().loadOzonProductConditions(userId);
 		} else {
 			productConditions = new ProductConditions();
 			productConditions.setOzonSellerExist(1);

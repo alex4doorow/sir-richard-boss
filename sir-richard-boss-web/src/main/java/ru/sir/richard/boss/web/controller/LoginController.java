@@ -39,5 +39,4 @@ public class LoginController {
 		logger.debug("index-logout()");
         return ResponseEntity.ok().build();
     }
-
 }

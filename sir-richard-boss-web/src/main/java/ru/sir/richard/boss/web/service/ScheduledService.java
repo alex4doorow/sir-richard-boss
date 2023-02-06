@@ -23,6 +23,8 @@ import java.util.List;
 @Slf4j
 public class ScheduledService {
 
+    private static final int SCHEDULED_USER_ID = 1;
+
     @Autowired
     private WikiDao wikiDao;
 
@@ -66,7 +68,7 @@ public class ScheduledService {
                 YandexMarketApi yandexMarketApi = new YandexMarketApi(this.environment);
                 yandexMarketApi.offerPricesUpdatesByAllWarehouses(productsForOfferUpdates);
                 // 3) актуализация цен и остатков на ozon
-                wikiService.ozonOfferPricesUpdates(false);
+                wikiService.ozonOfferPricesUpdates(SCHEDULED_USER_ID,false);
                 // 4) загрузка лидов
                 crmManager.setExecutorDate(DateTimeUtils.sysDate());
                 crmManager.importRun();
@@ -90,7 +92,7 @@ public class ScheduledService {
         try {
             if (Boolean.parseBoolean(environment.getProperty("application.production"))) {
                 log.debug("scheduleOzon.init(): start");
-                wikiService.ozonOfferPricesUpdates(false);
+                wikiService.ozonOfferPricesUpdates(SCHEDULED_USER_ID,false);
                 log.debug("scheduleOzon.init(): end");
             }
         } catch (CannotGetJdbcConnectionException e) {

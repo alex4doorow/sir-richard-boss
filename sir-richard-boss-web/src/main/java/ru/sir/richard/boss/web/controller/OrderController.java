@@ -286,30 +286,21 @@ public class OrderController extends AnyController {
 		
 	@RequestMapping(value = "/orders/{id}/bill-expired-status/{listType}", method = RequestMethod.GET)
 	public String changeBillExpiredStatusForm(@PathVariable("id") int id, @PathVariable("listType") String listType, Model model) {
-
 		logger.debug("changeBillExpiredStatusForm():{}", id);
-
 		Order order = orderService.getOrderDao().findById(id);
-		
 		if ((order.getOrderType() == OrderTypes.BILL || order.getOrderType() == OrderTypes.KP) && order.getStatus() == OrderStatuses.BID) {
-			
-			FormOrder formOrder = FormOrder.createForm(order);	
-			
+			FormOrder formOrder = FormOrder.createForm(order);
 			EmailSenderTextGenerator textGenerator = new EmailSenderTextGenerator();
 			String textMessage = textGenerator.createBillExpiredStatusMessage(order);
 			formOrder.setTextMessage(textMessage);
-					
 			model.addAttribute("orderForm", formOrder);
 			model.addAttribute("order", formOrder);
 			model.addAttribute("listType", listType);
-
 			populateDefaultModel(model);
 			return "orders/billexpiredstatusform";
-			
 		} else {
 			return "redirect:/orders";			
-		}		
-		
+		}
 	}	
 	
 	@RequestMapping(value = "/orders/{id}/bill-expired-status/save/{listType}", method = RequestMethod.POST)
@@ -329,8 +320,7 @@ public class OrderController extends AnyController {
 			String msg;			
 			Order oldOrder = orderService.getOrderDao().findById(id);
 			orderService.getOrderDao().changeBillExpiredStatusOrder(formOrder);
-			
-			//Order newOrder = orderService.findById(id);
+
 			MessageManager messageManager = new MessageManager(environment);	
 			MessageSendingStatus responceStatus = messageManager.sendOrderManualMessage(oldOrder, formOrder.getTextMessage(), formOrder.isSendMessage());
 			redirectAttributes.addFlashAttribute("css", "success");
@@ -379,12 +369,10 @@ public class OrderController extends AnyController {
 	@Override
 	protected void populateDefaultModel(Model model) {
 		super.populateDefaultModel(model);
-		
-		
-		model.addAttribute("cdekDefaultCountry", "Россия");
-		model.addAttribute("cdekDefaultCity", "Москва");
-		model.addAttribute("cdekCityFrom", "Москва");
-				
+
+		model.addAttribute("cdekDefaultCountry", environment.getProperty("cdek.from.country"));
+		model.addAttribute("cdekDefaultCity", environment.getProperty("cdek.from.city"));
+		model.addAttribute("cdekCityFrom", environment.getProperty("cdek.from.city"));
 	}
 	
 	private List<OrderItem> removeTrashFromOrderItems(List<OrderItem> orderItems) {
@@ -399,5 +387,4 @@ public class OrderController extends AnyController {
 		}
 		return result;
 	}
-
 }

@@ -50,7 +50,6 @@ public class ReportController extends AnyController {
 	@Autowired
 	private ReportDao reportManager;
 
-	
 	@Autowired
 	ProductSalesReportConditionsFormValidator productSalesReportConditionsFormValidator;
 
@@ -239,7 +238,7 @@ public class ReportController extends AnyController {
 	@RequestMapping(value = "/reports/product-sales-by-query", method = RequestMethod.GET)
 	public String reportProductSalesByQuery(Model model) {
 		
-		ProductSalesReportConditions reportForm = wikiService.getConfig().loadProductSalesByQueryReportConditions(OrderListController.USER_ID);
+		ProductSalesReportConditions reportForm = wikiService.getConfig().loadProductSalesByQueryReportConditions(getUserIdByPrincipal());
 		model.addAttribute("reportForm", reportForm);
 		model.addAttribute("reportPeriodType", reportForm.getReportPeriodType());
 		model.addAttribute("reportPeriodTypes", ReportPeriodTypes.getListOrderValues());
@@ -253,7 +252,7 @@ public class ReportController extends AnyController {
 	public void execReportProductSalesByQuery(@ModelAttribute("reportForm") FormProductSalesReport reportForm,
 			Model model, final RedirectAttributes redirectAttributes, HttpServletResponse response) throws JRException, IOException {
 		
-		wikiService.getConfig().saveProductSalesByQueryReportConditions(OrderListController.USER_ID, reportForm);
+		wikiService.getConfig().saveProductSalesByQueryReportConditions(getUserIdByPrincipal(), reportForm);
 		Map<String, Object> parameters = new HashMap<>(wikiService.getConfigData());
 		parameters.put("PERIOD_START", reportForm.getPeriod().getStart());
 		parameters.put("PERIOD_END", reportForm.getPeriod().getEnd());
@@ -370,6 +369,5 @@ public class ReportController extends AnyController {
 	@Override
 	protected void populateDefaultModel(Model model) {
 		super.populateDefaultModel(model);
-			
 	}
 }
