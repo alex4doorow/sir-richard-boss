@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.sir.richard.boss.api.market.YandexMarketApi;
 import ru.sir.richard.boss.crm.CrmManager;
 import ru.sir.richard.boss.crm.DeliveryService;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Service
+@Component
 @Scope("singleton")
 @Slf4j
 public class ScheduledService {

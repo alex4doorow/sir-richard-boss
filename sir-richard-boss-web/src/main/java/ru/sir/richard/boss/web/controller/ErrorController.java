@@ -73,7 +73,7 @@ public class ErrorController {
     }
 
     @RequestMapping(value = "runtimeException", method = RequestMethod.GET)
-    public void throwException() {
+    public void testThrowException() {
         throw new RuntimeException("Throwing a null pointer exception");
     }
 

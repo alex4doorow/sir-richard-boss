@@ -4,10 +4,12 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
+
 import ru.sir.richard.boss.model.data.*;
 import ru.sir.richard.boss.model.data.conditions.ConditionResult;
 import ru.sir.richard.boss.model.data.conditions.ProductConditions;
@@ -24,7 +26,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.*;
 
-@Repository
+@Component
+@Scope("singleton")
 @Slf4j
 public class WikiDao extends AnyDaoImpl {
 	
