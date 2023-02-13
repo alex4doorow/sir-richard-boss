@@ -17,14 +17,20 @@ public class IndexController extends AnyController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(Model model) {
 		logger.debug("root()");
-		return "redirect:/index";
+		return "redirect:/main/index";
 	}	
 		
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String showIndexTest(Model model) {
 		logger.debug("index()");
 		model.addAttribute("orderConditionsByNoForm", new OrderConditions());
-		return "index";
+		return "main/index";
+	}
+	
+	@RequestMapping(value = "/main/index", method = RequestMethod.GET)
+	public String showIndex4(Model model) {
+		logger.debug("index()");
+		return "main/index";
 	}
 
 }

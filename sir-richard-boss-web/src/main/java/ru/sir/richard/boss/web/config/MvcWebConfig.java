@@ -32,8 +32,8 @@ import java.util.Properties;
         "ru.sir.richard.boss.repository", "ru.sir.richard.boss.dao", "ru.sir.richard.boss.crm", "ru.sir.richard.boss.api",
         "ru.sir.richard.boss.converter"})
 @PropertySource(value = "classpath:application.properties", encoding = "UTF-8")
-@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
-//@PropertySource(value = "classpath:application-test.properties", encoding = "UTF-8")
+//@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
+@PropertySource(value = "classpath:application-test.properties", encoding = "UTF-8")
 public class MvcWebConfig implements WebMvcConfigurer {
 
     @Value("${application.name}")
@@ -41,6 +41,9 @@ public class MvcWebConfig implements WebMvcConfigurer {
 
     @Value("${application.version}")
     private String applicationVersion;
+    
+    @Value("${java.version}")
+    private String javaVersion;
 
     public String getApplicationName() {
         return applicationName;
@@ -93,7 +96,7 @@ public class MvcWebConfig implements WebMvcConfigurer {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    @Bean(name = "simpleMappingExceptionResolver")
+    //@Bean(name = "simpleMappingExceptionResolver")
     public SimpleMappingExceptionResolver createSimpleMappingExceptionResolver() {
         log.info("Creating SimpleMappingExceptionResolver");
         SimpleMappingExceptionResolver r = new SimpleMappingExceptionResolver();
@@ -120,7 +123,7 @@ public class MvcWebConfig implements WebMvcConfigurer {
          * we would specify the view as "error" to match Spring Boot, however so
          * you can see what is happening, we are using a different page.
          */
-        r.setDefaultErrorView("error/exception2page");
+        r.setDefaultErrorView("errors/exception2page");
         return r;
     }
 

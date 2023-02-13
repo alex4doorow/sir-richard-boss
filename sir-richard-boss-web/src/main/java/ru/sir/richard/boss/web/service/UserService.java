@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sir.richard.boss.model.entity.AppRole;
 import ru.sir.richard.boss.model.entity.AppUser;
 import ru.sir.richard.boss.repository.AppRoleRepository;
@@ -13,6 +14,7 @@ import ru.sir.richard.boss.repository.AppUserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +22,7 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     @PersistenceContext
-    private EntityManager em;
+    private EntityManager entityManager;
 
     @Autowired
     AppUserRepository wsUserRepository;
@@ -28,12 +30,16 @@ public class UserService implements UserDetailsService {
     @Autowired
     AppRoleRepository wsRoleRepository;
 
+    @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUser user = wsUserRepository.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
+        user = entityManager.find(AppUser.class, user.getId());
+        user.setLastLogin(new Date());
+        entityManager.merge(user);
         return user;
     }
 
@@ -67,7 +73,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<AppUser> usergtList(Long idMin) {
-        return em.createQuery("SELECT u FROM AppUser u WHERE u.id > :paramId", AppUser.class)
+        return entityManager.createQuery("SELECT u FROM AppUser u WHERE u.id > :paramId", AppUser.class)
                 .setParameter("paramId", idMin).getResultList();
     }
 }

@@ -37,46 +37,38 @@
 	    <encoder>	    			
 	      <pattern>%d{dd.MM.yyyy HH:mm:ss:SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
 	    </encoder>
-	  </appender> 
+	</appender> 
 	
 
 	<logger name="org.springframework" level="error" additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="ROLLING_FILE" />		
+		<appender-ref ref="STDOUT" />				
 	</logger>
 	
 	<logger name="ru.sir.richard.boss.model" level="debug" additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="ROLLING_FILE" />
+		<appender-ref ref="STDOUT" />		
 	</logger>	
 	<logger name="ru.sir.richard.boss.model.calc" level="debug" additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="ROLLING_FILE" />
+		<appender-ref ref="STDOUT" />		
 	</logger>
 	
 	<logger name="ru.sir.richard.boss.dao" level="debug" additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="ROLLING_FILE" />
+		<appender-ref ref="STDOUT" />		
 	</logger>
 	
 	<logger name="ru.sir.richard.boss.crm" level="debug" additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="ROLLING_FILE" />
+		<appender-ref ref="STDOUT" />		
 	</logger>	
 	
 	<logger name="ru.sir.richard.boss.web" level="debug" additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="ROLLING_FILE" />
+		<appender-ref ref="STDOUT" />		
 	</logger>
 	
 	<logger name="ru.sir.richard.boss.api" level="debug" additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="ROLLING_FILE" />
+		<appender-ref ref="STDOUT" />		
 	</logger>
 
 	<root level="error">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="ROLLING_FILE" />
+		<appender-ref ref="STDOUT" />		
 	</root>
 
 </configuration>

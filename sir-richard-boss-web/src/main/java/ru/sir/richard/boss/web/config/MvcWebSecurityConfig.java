@@ -62,22 +62,25 @@ public class MvcWebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    	log.info("filterChain: {}", http);
     	http
 	        .csrf().disable()
 	        .authorizeRequests()
+	        	.antMatchers("/main/*").permitAll()
 		        .antMatchers("/orders/*").permitAll()
 	    		.antMatchers("/wiki/*").permitAll()
 	    		.antMatchers("/ajax/*").permitAll()
-	    		.antMatchers("/errors/*").permitAll()
+	    		.antMatchers("/error*").permitAll()
+	    		.antMatchers("/errors*").permitAll()
 	    		.antMatchers("/", "/resources/**").permitAll()
 	        	.antMatchers("/anonymous*").anonymous()
-	        	.antMatchers("/login*","/invalid-session*", "/session-expired*", "/index-logout*").permitAll()
+	        	.antMatchers("/login*","/invalid-session*", "/session-expired*", "/index-logout*").permitAll()	        	
 	        	.anyRequest().authenticated()
 	        .and()
 	        	.formLogin()
 	        	.loginPage("/login")
 	        	.loginProcessingUrl("/login")
-				//.successHandler(successHandler())
+				.successHandler(successHandler())
 	        	.failureUrl("/login?error=true")
 	        .and()
 	        	.logout().deleteCookies("JSESSIONID")

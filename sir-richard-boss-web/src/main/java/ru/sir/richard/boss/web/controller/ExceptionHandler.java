@@ -35,13 +35,13 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 	        }
 	    }       
         
-        ModelAndView errorPage = new ModelAndView("error/exception2page", "exceptionMsg", "ExceptionHandler msg: " + ex.toString());
+        ModelAndView errorPage = new ModelAndView("errors/exception2page", "exceptionMsg", "ExceptionHandler msg: " + ex.toString());
         errorPage.addObject("errorHeader", errorHeader);
 	    errorPage.addObject("errorMsg", errorMsg);
 	    errorPage.addObject("exception", ex);
 	    errorPage.addObject("stackTrace", stackTrace);
 	    errorPage.addObject("url", httpServletRequest.getRequestURL());
-	    //errorPage.setViewName("error/exception2page");
+	    //errorPage.setViewName("errors/exception2page");
 	    return errorPage;
         
         //return new ModelAndView("exception2page", "exceptionMsg", "ExceptionHandler msg: " + e.toString());

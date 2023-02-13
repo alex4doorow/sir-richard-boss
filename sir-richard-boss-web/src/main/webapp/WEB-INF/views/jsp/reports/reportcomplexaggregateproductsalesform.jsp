@@ -76,8 +76,8 @@
 <!-- local java script -->
 <script>
 	
-	$('#nav-link-report-product-sales').addClass('active');
-	$('#nav-link-report-product-sales i').removeClass('text-dark').addClass('text-info');
+	$('#nav-link-report-complex-aggregate-product-sales').addClass('active');
+	$('#nav-link-report-complex-aggregate-product-sales i').removeClass('text-dark').addClass('text-info');
 	
 	$('#btn-clear-filter').click(function() {
 		$('.form-control-input-text').val(''); 
@@ -85,8 +85,6 @@
 	$('#btn-excute-filter').click(function() {
 		$('#report-product-sales-form').submit();
 	});
-	
-	
-		
+
 </script>  
 <%@ include file = "../fragments/footer2html.jsp" %>

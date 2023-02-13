@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.sir.richard.boss.api.cdek.CdekApiService;
 import ru.sir.richard.boss.crm.DeliveryService;
 import ru.sir.richard.boss.model.data.Address;
@@ -45,10 +44,9 @@ import ru.sir.richard.boss.web.service.WikiRestService;
 import ru.sir.richard.boss.web.service.WikiService;
 
 @RestController
+@Slf4j
 public class AjaxController {
-	
-	private final Logger logger = LoggerFactory.getLogger(AjaxController.class);
-		
+
 	@Autowired
 	private WikiService wikiService;
 	
@@ -68,7 +66,7 @@ public class AjaxController {
 	@RequestMapping(value = "/ajax/wiki/stock-products/post2/suppliers/list", produces = "application/json", method = RequestMethod.POST)
     public Page<SupplierStockProduct> stockProductsPost(@RequestBody PagingRequest pagingRequest) {
 		
-		logger.info("stockProductsPost: {}", pagingRequest);
+		log.info("stockProductsPost: {}", pagingRequest);
 		
 		return wikiRestService.getSupplierData(pagingRequest);
     }
@@ -76,7 +74,7 @@ public class AjaxController {
 	@ResponseBody
 	@RequestMapping(value = "/ajax/wiki/search/find-products-by-context", produces = "application/json", method = RequestMethod.POST)
 	public OrderFormAjaxResponseBody findProductsByContextAjax(@RequestBody String contextString) {
-		logger.debug("findProductsByContextAjax():{}", contextString);
+		log.debug("findProductsByContextAjax():{}", contextString);
 		
 		OrderFormAjaxResponseBody result = new OrderFormAjaxResponseBody();
 		result.setMsg("result msg");
@@ -115,7 +113,7 @@ public class AjaxController {
 	public OrderFormAjaxResponseBody nextPhoneNumber(@RequestBody String contextString) {
 		OrderFormAjaxResponseBody result = new OrderFormAjaxResponseBody();
 		String phoneNumber = orderService.getCustomerDao().nextEmptyPhoneNumber();
-		logger.debug("nextPhoneNumber():{}", phoneNumber);		
+		log.debug("nextPhoneNumber():{}", phoneNumber);		
 		result.setMsg(phoneNumber);		
 		result.setCode("200");
 		return result;
@@ -124,7 +122,7 @@ public class AjaxController {
 	@ResponseBody
 	@RequestMapping(value = "/ajax/wiki/search/find-price-by-delivery-types", produces = "application/json", method = RequestMethod.POST)
 	public OrderFormAjaxResponseBody findDeliveryPriceByDeliveryTypes(@RequestBody String contextString) {
-		logger.debug("findDeliveryPriceByDeliveryTypes():{}", contextString);
+		log.debug("findDeliveryPriceByDeliveryTypes():{}", contextString);
 		
 		OrderFormAjaxResponseBody result = new OrderFormAjaxResponseBody();
 		result.setMsg("result msg");
@@ -151,7 +149,7 @@ public class AjaxController {
 	@ResponseBody
 	@RequestMapping(value = "/ajax/cusomer/search/find-customer-by-conditions", produces = "application/json", method = RequestMethod.POST)
 	public OrderFormAjaxResponseBody findCustomerByConditionsAjax(@RequestBody CustomerConditions customerConditions) {
-		logger.debug("findCustomerByConditionsAjax():{}", customerConditions);		
+		log.debug("findCustomerByConditionsAjax():{}", customerConditions);		
 		OrderFormAjaxResponseBody result = new OrderFormAjaxResponseBody();
 		result.setMsg("result msg");		
 			FormCustomer formCustomer = orderService.customerFindByConditions(customerConditions);
@@ -205,7 +203,7 @@ public class AjaxController {
 	@RequestMapping(value = "/ajax/orders/conditions/filter/get-periods-by-month-year", produces = "application/json", method = RequestMethod.POST)
 	public OrderConditionsAjaxResponseBody findOrdersConditionPeriodByMonthYearAjax(@RequestBody OrderConditions reportPeriodContainer) {
 		
-		logger.debug("findOrdersConditionPeriodByMonthYearAjax():{}", reportPeriodContainer);		
+		log.debug("findOrdersConditionPeriodByMonthYearAjax():{}", reportPeriodContainer);		
 		OrderConditionsAjaxResponseBody result = new OrderConditionsAjaxResponseBody();		
 		result.setMsg("result msg");
 		
@@ -248,7 +246,7 @@ public class AjaxController {
 	@ResponseBody
 	@RequestMapping(value = "/ajax/orders/calc/total-amounts", produces = "application/json", method = RequestMethod.POST)
 	public OrderFormAjaxResponseBody calcOrderItemsTotalAmountsAjax(@RequestBody Order orderContainer) {
-		logger.debug("calcOrderItemsTotalAmountsAjax():{}, {}", orderContainer.getOrderType(), orderContainer.getDelivery().getDeliveryType());
+		log.debug("calcOrderItemsTotalAmountsAjax():{}, {}", orderContainer.getOrderType(), orderContainer.getDelivery().getDeliveryType());
 		
 		OrderAmounts orderAmounts = orderService.calcTotalAmounts(orderContainer);		
 		OrderFormAjaxResponseBody result = new OrderFormAjaxResponseBody();
@@ -261,7 +259,7 @@ public class AjaxController {
 	@ResponseBody
 	@RequestMapping(value = "/ajax/orders/calc/parcel-delivery-cdek-cities", produces = "application/json", method = RequestMethod.POST)
 	public OrderFormAjaxResponseBody calcOrderItemsParcelDeliveryCdekCities(@RequestBody String contextString) {
-		logger.debug("calcOrderItemsParcelDeliveryCdekCitiesAjax():{}, {}", contextString);
+		log.debug("calcOrderItemsParcelDeliveryCdekCitiesAjax():{}, {}", contextString);
 
 		if (StringUtils.isEmpty(contextString) || contextString.equals("\"\"")) {
 			List<Address> cities = new ArrayList<Address>();
@@ -288,7 +286,7 @@ public class AjaxController {
 	@ResponseBody
 	@RequestMapping(value = "/ajax/orders/calc/parcel-delivery-cdek-pvzs", produces = "application/json", method = RequestMethod.POST)
 	public OrderFormAjaxResponseBody calcOrderItemsParcelDeliveryCdekPvzs(@RequestBody Integer cityId) {
-		logger.debug("calcOrderItemsParcelDeliveryCdekPvzsAjax(): {}", cityId);
+		log.debug("calcOrderItemsParcelDeliveryCdekPvzsAjax(): {}", cityId);
 		
 		List<Address> pvzs = cdekApiService.getPvzs(cityId);
 		OrderFormAjaxResponseBody result = new OrderFormAjaxResponseBody();
@@ -301,7 +299,7 @@ public class AjaxController {
 	@ResponseBody
 	@RequestMapping(value = "/ajax/orders/calc/parcel-delivery-amounts", produces = "application/json", method = RequestMethod.POST)
 	public OrderFormAjaxResponseBody calcOrderItemsParcelDeliveryAmountsAjax(@RequestBody Order orderContainer) {
-		logger.debug("calcOrderItemsParcelDeliveryAmountsAjax():{}, {}", orderContainer.getOrderType(), orderContainer.getDelivery().getDeliveryType());
+		log.debug("calcOrderItemsParcelDeliveryAmountsAjax():{}, {}", orderContainer.getOrderType(), orderContainer.getDelivery().getDeliveryType());
 		
 		OrderAmounts orderAmounts = orderService.calcTotalAmounts(orderContainer);				
 					
@@ -321,7 +319,7 @@ public class AjaxController {
 	@RequestMapping(value = "/ajax/product/create-meta", produces = "application/json", method = RequestMethod.POST)
 	public ProductFormAjaxResponceBody productCreateMeta(@RequestBody int productId) {
 
-		logger.debug("productCreateMeta(): {}", productId);		
+		log.debug("productCreateMeta(): {}", productId);		
 		Product product = wikiService.getWiki().createProductDescriptionMeta(productId);
 		
 		ProductFormAjaxResponceBody result = new ProductFormAjaxResponceBody();
@@ -334,7 +332,7 @@ public class AjaxController {
 	@RequestMapping(value = "/ajax/product/priceText", produces = "application/json", method = RequestMethod.POST)
 	public ProductFormAjaxResponceBody productCreatePriceText(@RequestBody ProductConditions productConditions) {
 
-		logger.debug("productCreatePriceText(): {}, {}", productConditions.getPriceWithoutDiscountText(), productConditions.getPriceWithDiscountText());		
+		log.debug("productCreatePriceText(): {}, {}", productConditions.getPriceWithoutDiscountText(), productConditions.getPriceWithDiscountText());		
 		
 		String testOutput = "";
 		BigDecimal priceWithoutDiscount = BigDecimal.ZERO;

@@ -2,6 +2,7 @@ package ru.sir.richard.boss.web.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,16 +15,16 @@ import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.data.conditions.ProductConditions;
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.model.utils.SingleExecutor;
+import ru.sir.richard.boss.repository.AppUserRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
+@Scope("singleton")
 @Slf4j
 public class ScheduledService {
-
-    private static final int SCHEDULED_USER_ID = 1;
 
     @Autowired
     private WikiDao wikiDao;
@@ -39,6 +40,9 @@ public class ScheduledService {
 
     @Autowired
     private PricerService pricerService;
+
+    @Autowired
+    AppUserRepository wsUserRepository;
 
     @Autowired
     private Environment environment;
@@ -68,7 +72,7 @@ public class ScheduledService {
                 YandexMarketApi yandexMarketApi = new YandexMarketApi(this.environment);
                 yandexMarketApi.offerPricesUpdatesByAllWarehouses(productsForOfferUpdates);
                 // 3) актуализация цен и остатков на ozon
-                wikiService.ozonOfferPricesUpdates(SCHEDULED_USER_ID,false);
+                wikiService.ozonOfferPricesUpdates(getScheduledUserId(),false);
                 // 4) загрузка лидов
                 crmManager.setExecutorDate(DateTimeUtils.sysDate());
                 crmManager.importRun();
@@ -92,7 +96,7 @@ public class ScheduledService {
         try {
             if (Boolean.parseBoolean(environment.getProperty("application.production"))) {
                 log.debug("scheduleOzon.init(): start");
-                wikiService.ozonOfferPricesUpdates(SCHEDULED_USER_ID,false);
+                wikiService.ozonOfferPricesUpdates(getScheduledUserId(),false);
                 log.debug("scheduleOzon.init(): end");
             }
         } catch (CannotGetJdbcConnectionException e) {
@@ -152,6 +156,10 @@ public class ScheduledService {
             SingleExecutor.MARKETPLACES_CHEATER_STATUS_SET = false;
             SingleExecutor.MARKETPLACES_CHEATER_STATUS_ROLLBACK = false;
         }
+    }
+
+    private int getScheduledUserId() {
+        return wsUserRepository.findByUsername("scheduler").getId().intValue();
     }
 
 }

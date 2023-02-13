@@ -41,7 +41,7 @@ public class AppUser implements UserDetails {
     private String email;
 
     @Basic
-    @Temporal(TemporalType.TIME)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_login")
     private Date lastLogin;
 
