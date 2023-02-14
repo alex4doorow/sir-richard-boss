@@ -1,6 +1,6 @@
 <configuration>
 
-  <property name="LOG_PATH" value="d:/src/sir-richard-boss/logs"/>
+  <property name="LOG_PATH" value="../logs"/>
   <property name="LOG_FILE" value="srbw" />
   <property name="LOG_PATH_FILE" value="c:/server/apache-tomcat-9.0.67/logs/srbw.log"/>
   <property name="LOG_PATH_FILE_1" value="../logs/srbw.log"/>
@@ -25,12 +25,11 @@
 	    <encoder>	    			
 	       <pattern>%d{dd.MM.yyyy HH:mm:ss:SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
 	    </encoder>
-  </appender> 
-    
+  </appender>    
   
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+      <pattern>%d{dd.MM.yyyy HH:mm:ss:SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
     </encoder>
   </appender>
    

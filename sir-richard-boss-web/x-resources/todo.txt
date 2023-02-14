@@ -451,7 +451,7 @@ http://qaru.site/questions/599137/how-to-access-tomcat-from-another-computer
 https://habr.com/ru/post/326164/
 
 расположение war в томкате
-c:\src\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\
+d:\src\sir-richard-boss\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\
 
 выгрузка данных из google analitics
 
