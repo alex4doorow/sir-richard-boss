@@ -33,6 +33,12 @@
 			<artifactId>sir-richard-boss-lib</artifactId>
 			<version>${sir-richard-boss.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.netty/netty-codec -->
+		<dependency>
+		    <groupId>io.netty</groupId>
+		    <artifactId>netty-codec</artifactId>
+		    <version>4.1.88.Final</version>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

@@ -2,10 +2,7 @@ package ru.sir.richard.boss.web.config;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.jmx.export.annotation.AnnotationMBeanExporter;
@@ -34,6 +31,7 @@ import java.util.Properties;
 @PropertySource(value = "classpath:application.properties", encoding = "UTF-8")
 //@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
 @PropertySource(value = "classpath:application-test.properties", encoding = "UTF-8")
+@ImportResource({"${app.beans-xml-path}"})
 public class MvcWebConfig implements WebMvcConfigurer {
 
     @Value("${application.name}")

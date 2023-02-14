@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -20,7 +22,11 @@ import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import ru.sir.richard.boss.web.service.UserService;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 import static org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter.Directive.*;
 
@@ -113,7 +119,18 @@ public class MvcWebSecurityConfig {
     }
     
     private AuthenticationSuccessHandler successHandler() {
-        return new SimpleUrlAuthenticationSuccessHandler();
+		AuthenticationSuccessHandler handler = new AuthenticationSuccessHandler() {
+			@Override
+			public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+				// run custom logics upon successful login
+				UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+				String username = userDetails.getUsername();
+				log.info("The user {} has logged in.", username);
+				response.sendRedirect(request.getContextPath());
+			}
+		};
+		return handler;
+        //return new SimpleUrlAuthenticationSuccessHandler();
     	//return new RefererRedirectionAuthenticationSuccessHandler();
     }
 }
