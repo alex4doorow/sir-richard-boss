@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,10 +26,9 @@ import ru.sir.richard.boss.model.types.SupplierTypes;
 
 @SpringBootTest
 @PropertySource(value="classpath:application-it.properties", encoding="UTF-8")
+@Slf4j
 public class WikiDaoTest {
-	
-	private final Logger logger = LoggerFactory.getLogger(WikiDaoTest.class);
-	
+
 	@Autowired
 	private WikiDao wikiDao;
 	
@@ -70,7 +70,7 @@ public class WikiDaoTest {
 	    ProductConditions productConditions = new ProductConditions();
 	    productConditions.setProductId(productId);
 	    List<Product> products = wikiDao.listProductsByConditions(productConditions);
-	    products.forEach(product -> logger.debug("testListProductsByConditions: {}, {}", product.getId(),
+	    products.forEach(product -> log.debug("testListProductsByConditions: {}, {}", product.getId(),
 		    product.getName()));
 	}
 	

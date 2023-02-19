@@ -5,8 +5,7 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,15 +18,14 @@ import net.sf.jasperreports.engine.JRException;
 import ru.sir.richard.boss.crm.DeliveryService;
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.types.CrmTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
 import ru.sir.richard.boss.web.service.OrderService;
 import ru.sir.richard.boss.web.service.WikiService;
 
 @Controller
+@Slf4j
 public class ExportController {
-	
-	private final Logger logger = LoggerFactory.getLogger(ExportController.class);
-	
+
 	@Autowired
 	private OrderService orderService;
 	
@@ -49,17 +47,17 @@ public class ExportController {
 	@RequestMapping(value = "/orders/{id}/export/api-cdek", method = RequestMethod.GET)
 	public String exportApiCdek(@PathVariable("id") int orderId, Model model) throws JRException, IOException {
 		
-		logger.debug("exportApiCdek(): {}", "start");
+		log.debug("exportApiCdek(): {}", "start");
 		
 		if (orderId == 0) {
-			logger.debug("exportApiCdek(): {},{}", "finish", "empty");
+			log.debug("exportApiCdek(): {},{}", "finish", "empty");
 			return "redirect:/orders";
 		}
 		
 		Order order = orderService.getOrderDao().findById(orderId);		
 		String trackCode = deliveryService.addCdekParcelOrder(order);
 		
-		logger.debug("exportApiCdek():{},{}", "finish", trackCode);
+		log.debug("exportApiCdek():{},{}", "finish", trackCode);
 		return "redirect:/orders";
 	}
 	

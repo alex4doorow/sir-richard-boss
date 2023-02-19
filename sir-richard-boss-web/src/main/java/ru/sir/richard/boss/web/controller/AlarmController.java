@@ -2,6 +2,7 @@ package ru.sir.richard.boss.web.controller;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,9 @@ import ru.sir.richard.boss.model.data.AlarmMessage;
  3- hartbeat - запрос состояния 
 */
 @Controller
+@Slf4j
 public class AlarmController extends AnyController {
-	
-	private final Logger logger = LoggerFactory.getLogger(AlarmController.class);
-	
+
 	@Autowired
 	private AlarmDao alarm;
 	
@@ -43,7 +43,7 @@ public class AlarmController extends AnyController {
 	@RequestMapping(value = "/alarm/car", method = RequestMethod.GET)
 	public String listAlarmCar(Model model) {
 		
-		logger.debug("listAlarmCar()");
+		log.debug("listAlarmCar()");
 		
 		alarm.requestCarState();		
 		List<AlarmMessage> messages = alarm.listSystemMessageLog(AlarmDao.CAR_MODULE);
@@ -87,13 +87,11 @@ public class AlarmController extends AnyController {
 	@RequestMapping(value = "/alarm/car/action/{action}", method = RequestMethod.GET)
 	public String alarmCarAction(@PathVariable("action") int action, Model model) {
 		
-		logger.debug("alarmCarAction(): {}", action);		
+		log.debug("alarmCarAction(): {}", action);
 		alarm.actionExecute(action);
 		alarm.requestCarState();
 		// delay
-		return "redirect:/alarm/car";	
-		
+		return "redirect:/alarm/car";
 	}
-	
 
 }

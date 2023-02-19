@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -34,8 +35,6 @@ import org.apache.pdfbox.printing.PDFPageable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.env.PropertyResolver;
 
 import com.mashape.unirest.http.Unirest;
@@ -47,17 +46,16 @@ import ru.sir.richard.boss.model.data.OrderExternalCrm;
 import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
-import ru.sir.richard.boss.model.utils.NumberUtils;
+import ru.sir.richard.boss.utils.NumberUtils;
 
 /**
  * doc https://yandex.ru/dev/market/partner-marketplace-cd/doc/dg/reference/put-campaigns-id-orders-id-status.html 
  * @author alex4doorow
  *
  */
+@Slf4j
 public class YandexMarketApi {
-	
-	private final Logger logger = LoggerFactory.getLogger(YandexMarketApi.class);
-	
+
 	/**
 	 * application.properties
 	 */	
@@ -117,7 +115,7 @@ public class YandexMarketApi {
 		inputJson = StringUtils.substring(inputJson, 0, inputJson.length() - 1); 
 		inputJson += "\r\n  ]\r\n" + 
 				"}";
-		logger.debug("offerPricesUpdates() inputJson:{}", inputJson);        
+		log.debug("offerPricesUpdates() inputJson:{}", inputJson);
 		JSONObject inputJsonObj = new JSONObject(inputJson);
 	
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -142,11 +140,11 @@ public class YandexMarketApi {
         	    in.close();                
         	    
         	    myResponse = new JSONObject(responseB.toString());
-        	    logger.debug("offerPricesUpdates() jsonResponse:{}", myResponse.toString());        	    
+        	    log.debug("offerPricesUpdates() jsonResponse:{}", myResponse.toString());
         	    
         	    String status = (String) myResponse.get("status");        	    
         	    if (status.equals("OK")) {  
-        	    	logger.debug("status: {}", status);
+        	    	log.debug("status: {}", status);
         	    	result = "status: " + status;
         	    	
         	    } else if (status.equals("ERROR")) {
@@ -157,14 +155,14 @@ public class YandexMarketApi {
         	    	    String code = error.getString("code");
         	    	    String message = error.getString("message");
         	    	    
-        	    	    logger.error("status: {}, {}, {}", status, code, message);
+        	    	    log.error("status: {}, {}, {}", status, code, message);
             	    	result = "status: " + status + " [" + code + "] " + message;            	    	
         	    	} 
         	    }
             }
 
 		} catch (Exception ex) {
-			logger.error("Exception: ", ex);
+			log.error("Exception: ", ex);
 			result = "status: EXCEPTION " + ex.getMessage();
 		} finally {
 			//httpClient.close();
@@ -204,7 +202,7 @@ public class YandexMarketApi {
 		inputJson = StringUtils.substring(inputJson, 0, inputJson.length() - 1); 
 		inputJson += "\r\n  ]\r\n" + 
 				"}";
-		logger.debug("offerPricesUpdates() inputJson:{}", inputJson);        
+		log.debug("offerPricesUpdates() inputJson:{}", inputJson);
 		JSONObject inputJsonObj = new JSONObject(inputJson);
 	
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -230,11 +228,11 @@ public class YandexMarketApi {
         	    in.close();                
         	    
         	    myResponse = new JSONObject(responseB.toString());
-        	    logger.debug("offerPricesUpdates() jsonResponse: {}", myResponse.toString());        	    
+        	    log.debug("offerPricesUpdates() jsonResponse: {}", myResponse.toString());
         	    
         	    String status = (String) myResponse.get("status");        	    
         	    if (status.equals("OK")) {  
-        	    	logger.debug("status: {}", status);
+        	    	log.debug("status: {}", status);
         	    	result = "status: " + status;
         	    	
         	    } else if (status.equals("ERROR")) {
@@ -245,14 +243,14 @@ public class YandexMarketApi {
         	    	    String code = error.getString("code");
         	    	    String message = error.getString("message");
         	    	    
-        	    	    logger.error("status: {}, {}, {}", status, code, message);
+        	    	    log.error("status: {}, {}, {}", status, code, message);
             	    	result = "status: " + status + " [" + code + "] " + message;            	    	
         	    	} 
         	    }
             }
 
 		} catch (Exception ex) {
-			logger.error("Exception: ", ex);
+			log.error("Exception: ", ex);
 			result = "status: EXCEPTION " + ex.getMessage();
 		} finally {
 			//httpClient.close();
@@ -291,8 +289,8 @@ public class YandexMarketApi {
 		    if (responseCode == 404) {
 		    	return null;
 		    }		    
-		    logger.debug("offerMappingEntries() responseCode:{}", responseCode);
-		    logger.debug("offerMappingEntries() sending 'GET' request to URL:{}", url);
+		    log.debug("offerMappingEntries() responseCode:{}", responseCode);
+		    log.debug("offerMappingEntries() sending 'GET' request to URL:{}", url);
 		    
 		    BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
 		    String inputLine;
@@ -301,10 +299,10 @@ public class YandexMarketApi {
 		     	response.append(inputLine);
 		    }
 		    in.close();
-		    logger.debug("response: {}", response);
+		    log.debug("response: {}", response);
 		    		    
 		    myResponse = new JSONObject(response.toString());
-    	    logger.debug("offerMappingEntries() jsonResponse:{}", myResponse.toString());        	    
+    	    log.debug("offerMappingEntries() jsonResponse:{}", myResponse.toString());
     	       	        
     	    String yandexMarketStatus = myResponse.getJSONObject("order").getString("status");
     	    String yandexMarketSubStatus = "";    	    
@@ -332,7 +330,7 @@ public class YandexMarketApi {
         	} else {
         		result.setStatus(OrderStatuses.UNKNOWN);
         	} 
-    	    logger.debug("status: [{}, {}] -> {}", yandexMarketStatus, yandexMarketSubStatus, result.getStatus());
+    	    log.debug("status: [{}, {}] -> {}", yandexMarketStatus, yandexMarketSubStatus, result.getStatus());
     	        	    
     	    JSONObject jsonDelivery = myResponse.getJSONObject("order").getJSONObject("delivery");
     	    
@@ -360,10 +358,10 @@ public class YandexMarketApi {
     	    }  	    
 			
 		} catch (MalformedURLException e) {
-			logger.error("MalformedURLException:", e);
+			log.error("MalformedURLException:", e);
 			return null;			
 		} catch (Exception e) {
-			logger.error("Exception:", e);			
+			log.error("Exception:", e);
 			return null;
 		}
 		result.setId(ymOrderId.intValue());
@@ -397,14 +395,14 @@ public class YandexMarketApi {
 		            try {
 		                throw new InterruptedException();
 		            } catch (InterruptedException e) {
-		            	logger.error("InterruptedException:", e);		                
+		            	log.error("InterruptedException:", e);
 		            }
 		        }
 		    }
 		    in.close();
 		    out.close();
 		    
-		    logger.info("downloadedFile: {}", downloadedFile.getAbsolutePath());
+		    log.info("downloadedFile: {}", downloadedFile.getAbsolutePath());
 		    PDDocument document = PDDocument.load(new File(downloadedFile.getAbsolutePath()));
 		    		    
 		    PrintService myPrintService = findPrintService(environment.getProperty("printer.service.to.labels"));
@@ -413,14 +411,14 @@ public class YandexMarketApi {
 	            job.setPageable(new PDFPageable(document));
 	            job.print();     	
 	        } else {
-	        	logger.error("Printer " + environment.getProperty("printer.service.to.labels") + " is not found");
+	        	log.error("Printer " + environment.getProperty("printer.service.to.labels") + " is not found");
 	        }	
 		} catch (UnirestException e) {
-			logger.error("UnirestException:", e);
+			log.error("UnirestException:", e);
 		} catch (IOException e) {
-			logger.error("IOException:", e);
+			log.error("IOException:", e);
 		} catch (PrinterException e) {
-			logger.error("PrinterException:", e);
+			log.error("PrinterException:", e);
 		}		
 	}
 		
@@ -484,7 +482,7 @@ public class YandexMarketApi {
 				"]\r\n" +
 				"}\r\n";				
 
-		logger.debug("status() inputJson:{}", inputJson);        
+		log.debug("status() inputJson:{}", inputJson);
 		JSONObject inputJsonObj = new JSONObject(inputJson);
 
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -510,23 +508,23 @@ public class YandexMarketApi {
 			    in.close();                
 			    
 			    myResponse = new JSONObject(responseB.toString());
-			    logger.debug("status() jsonResponse:{}", myResponse.toString()); 
+			    log.debug("status() jsonResponse:{}", myResponse.toString());
 			    
 			    String status = (String) myResponse.get("status");        	    
         	    if (status.equals("OK")) {  
-        	    	logger.debug("status: {}", status);
+        	    	log.debug("status: {}", status);
         	    	resultRequest = true;
         	    	
         	    } else if (status.equals("ERROR")) {
         	    	JSONObject parcelData = (JSONObject) myResponse.get("errors");
         	    	String code = (String) parcelData.get("code");
         	    	String message = (String) parcelData.get("message");        	    	
-        	    	logger.error("status: {}, {}, {}", status, code, message);      	    	
+        	    	log.error("status: {}, {}, {}", status, code, message);
         	    }	    	    			    
 			}
 			
 			} catch (Exception ex) {
-				logger.error("Exception: ", ex);
+				log.error("Exception: ", ex);
 			} finally {
 				//httpClient.close();
 			}	
@@ -586,7 +584,7 @@ public class YandexMarketApi {
 			try {
 				resultRequestBoxes = boxes(ymOrderId, order);
 			} catch (JSONException e) {
-				logger.error("JSONException: {}", e);
+				log.error("JSONException: {}", e);
 			}
 			if (!resultRequestBoxes) {
 				return result;
@@ -617,12 +615,12 @@ public class YandexMarketApi {
 							"}\r\n";
 			
 		
-		logger.debug("status() inputJson:{}", inputJson);        
+		log.debug("status() inputJson:{}", inputJson);
 		JSONObject inputJsonObj = null;
 		try {
 			inputJsonObj = new JSONObject(inputJson);
 		} catch (JSONException e) {
-			logger.error("JSONException: {}", e);
+			log.error("JSONException: {}", e);
 		}
 	
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -648,11 +646,11 @@ public class YandexMarketApi {
         	    in.close();                
         	    
         	    myResponse = new JSONObject(responseB.toString());
-        	    logger.debug("status() jsonResponse:{}", myResponse.toString()); 
+        	    log.debug("status() jsonResponse:{}", myResponse.toString());
             }
 
 		} catch (Exception ex) {
-			logger.error("Exception: ", ex);
+			log.error("Exception: ", ex);
 			result = "status: EXCEPTION " + ex.getMessage();
 		} finally {
 			//httpClient.close();

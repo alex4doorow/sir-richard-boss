@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.model.utils;
+package ru.sir.richard.boss.utils;
 
 public class Pair<T extends Cloneable> {
 		

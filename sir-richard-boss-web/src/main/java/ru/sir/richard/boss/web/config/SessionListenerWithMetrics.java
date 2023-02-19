@@ -16,7 +16,6 @@ public class SessionListenerWithMetrics implements HttpSessionListener {
         //counterOfActiveSessions = MetricRegistrySingleton.metrics.counter("web.sessions.active.count");
     }
 
-    // API
     public final int getTotalActiveSession() {
         return activeSessions.get();
     }

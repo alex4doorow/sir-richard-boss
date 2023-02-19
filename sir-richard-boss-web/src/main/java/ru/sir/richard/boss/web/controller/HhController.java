@@ -3,6 +3,7 @@ package ru.sir.richard.boss.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +17,16 @@ import ru.sir.richard.boss.api.hh.HhApi;
 import ru.sir.richard.boss.model.data.HhVacanciesPage;
 
 @Controller
+@Slf4j
 public class HhController {
-	
-	private final Logger logger = LoggerFactory.getLogger(HhController.class);
-	
+
 	@Autowired
 	private Environment environment;
 	
 	@RequestMapping(value = "/vacancies", method = RequestMethod.GET)
 	public String vacancies(Model model) {
 
-		logger.debug("vacancies()");
+		log.debug("vacancies()");
 		
 		final String inputText = "java";		
 		HhApi hh = new HhApi(environment);

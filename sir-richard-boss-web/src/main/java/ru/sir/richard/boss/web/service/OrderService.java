@@ -5,8 +5,6 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -22,9 +20,9 @@ import ru.sir.richard.boss.model.data.OrderAmounts;
 import ru.sir.richard.boss.model.data.conditions.CustomerConditions;
 import ru.sir.richard.boss.model.factories.OrderTotalAmountsCalculatorFactory;
 import ru.sir.richard.boss.model.types.OrderEmailStatuses;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.sender.MessageManager;
-import ru.sir.richard.boss.model.utils.sender.email.EmailSenderTextGenerator;
+import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.sender.MessageManager;
+import ru.sir.richard.boss.utils.sender.email.EmailSenderTextGenerator;
 import ru.sir.richard.boss.web.data.FormCustomer;
 
 @Service

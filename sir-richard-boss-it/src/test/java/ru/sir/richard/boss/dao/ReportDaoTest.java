@@ -6,18 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import ru.sir.richard.boss.model.data.report.AggregateProductSalesReportBean;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.Pair;
+import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.Pair;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.WeekFields;
 import java.util.*;
 
 

@@ -10,7 +10,7 @@ import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.PaymentDeliveryMethods;
 import ru.sir.richard.boss.model.types.ProductTypes;
 import ru.sir.richard.boss.model.types.SupplierTypes;
-import ru.sir.richard.boss.model.utils.NumberUtils;
+import ru.sir.richard.boss.utils.NumberUtils;
 
 public class Product extends AnyCatalog {
 	private String model;

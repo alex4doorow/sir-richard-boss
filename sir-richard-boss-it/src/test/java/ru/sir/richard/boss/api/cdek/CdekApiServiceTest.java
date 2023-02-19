@@ -30,7 +30,7 @@ import ru.sir.richard.boss.model.dto.CdekAccessDto;
 import ru.sir.richard.boss.model.dto.CdekOrderDto;
 import ru.sir.richard.boss.model.dto.CdekResponseOrderDto;
 import ru.sir.richard.boss.model.types.DeliveryTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
 import ru.sir.richard.boss.utils.WikiTestHelper;
 
 import static org.junit.jupiter.api.Assertions.*;

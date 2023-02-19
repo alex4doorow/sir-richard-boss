@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.model.utils.sender;
+package ru.sir.richard.boss.utils.sender;
 
 public class Message {
 	

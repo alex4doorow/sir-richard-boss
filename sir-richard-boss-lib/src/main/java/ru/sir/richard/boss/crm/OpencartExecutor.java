@@ -10,9 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -48,14 +47,13 @@ import ru.sir.richard.boss.model.types.OrderTypes;
 import ru.sir.richard.boss.model.types.PaymentDeliveryTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
 import ru.sir.richard.boss.model.types.StoreTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.TextUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.TextUtils;
 
 @Service
+@Slf4j
 public class OpencartExecutor extends AnyDaoImpl implements CrmExecutable {
-	
-	private final Logger logger = LoggerFactory.getLogger(OpencartExecutor.class);
-	
+
 	private Date executorDate;
 	
 	@Autowired
@@ -85,9 +83,9 @@ public class OpencartExecutor extends AnyDaoImpl implements CrmExecutable {
 
 	@Override
 	public void run() {
-		logger.debug("run(): start");
+		log.debug("run(): start");
 		importFromCrmOrders(StoreTypes.PM);		
-		logger.debug("run(): end");
+		log.debug("run(): end");
 	}	
 	
 	private List<Order> importFromCrmOrders(StoreTypes store) {		
@@ -369,8 +367,6 @@ public class OpencartExecutor extends AnyDaoImpl implements CrmExecutable {
 						return order;
 					}
 				});
-		
-
 		return crmOrders;
 	}
 	
@@ -495,5 +491,4 @@ public class OpencartExecutor extends AnyDaoImpl implements CrmExecutable {
 			}
 		}			
 	}
-
 }

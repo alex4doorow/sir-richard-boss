@@ -9,8 +9,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -34,8 +33,8 @@ import ru.sir.richard.boss.model.data.conditions.ProductConditions;
 import ru.sir.richard.boss.model.types.CommentTypes;
 import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.SupplierTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.NumberUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.NumberUtils;
 import ru.sir.richard.boss.web.data.FormProduct;
 import ru.sir.richard.boss.web.data.FormSupplierStockProduct;
 import ru.sir.richard.boss.web.service.PricerService;
@@ -43,10 +42,9 @@ import ru.sir.richard.boss.web.service.WikiRestService;
 import ru.sir.richard.boss.web.validator.SupplierStockProductFormValidator;
 
 @Controller
+@Slf4j
 public class WikiController extends AnyController {
-	
-	private final Logger logger = LoggerFactory.getLogger(WikiController.class);
-	
+
 	@Autowired
 	protected PricerService pricerService;
 	
@@ -69,7 +67,7 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/cdek/widjet/{contextString}", method = RequestMethod.GET)
 	public String showCdekWidjet(@PathVariable("contextString") String contextString, Model model) {
 		
-		logger.debug("showCdekWidjet() :{}", contextString);
+		log.debug("showCdekWidjet() :{}", contextString);
 			
 		populateDefaultModel(model);		
 		return "wiki/cdekwidjet";
@@ -78,7 +76,7 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/ozon", method = RequestMethod.GET)
 	public String showOzonMarketProducts(Model model) {
 		
-		logger.debug("showOzonMarketProducts()");
+		log.debug("showOzonMarketProducts()");
 			
 		//wikiService.getConfig().saveFormStringValue(1, "productForm", "product.name", contextString);				
 		ProductConditions productConditions = wikiService.getConfig().loadOzonProductConditions(getUserIdByPrincipal());
@@ -95,7 +93,7 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/ozon/conditions/filter", method = RequestMethod.GET)
 	public String showOzonMarketProductsByConditions(Model model) {
 
-		logger.debug("showOzonMarketProductsByConditions()");
+		log.debug("showOzonMarketProductsByConditions()");
 		ProductConditions productConditions = wikiService.getConfig().loadOzonProductConditions(getUserIdByPrincipal());
 		model.addAttribute("productConditions", productConditions);
 		populateDefaultModel(model);
@@ -106,7 +104,7 @@ public class WikiController extends AnyController {
 	public String execOzonMarketProductsByConditions(@ModelAttribute("productConditions") ProductConditions productConditions,
 			Model model, final RedirectAttributes redirectAttributes) {
 
-		logger.debug("execOzonMarketProductsByConditions():{}", productConditions);
+		log.debug("execOzonMarketProductsByConditions():{}", productConditions);
 		wikiService.getConfig().saveOzonProductConditions(getUserIdByPrincipal(), productConditions);
 				
 		List<Product> products = wikiService.getWiki().listOzonProductsByConditions(productConditions);
@@ -120,14 +118,14 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/ozon/offer-prices/updates", method = RequestMethod.GET)
 	public String updateOfferPricesOzonMarketProducts(Model model, final RedirectAttributes redirectAttributes) {
 				 
-		logger.debug("updateOfferPricesOzonMarketProducts(): start");
+		log.debug("updateOfferPricesOzonMarketProducts(): start");
 					
 		String resultOfferPricesUpdates = wikiService.ozonOfferPricesUpdates(getUserIdByPrincipal(),true);
 		redirectAttributes.addFlashAttribute("css", "success");
 		redirectAttributes.addFlashAttribute("msg", resultOfferPricesUpdates);
 		populateDefaultModel(model);
 		
-		logger.debug("updateOfferPricesOzonMarketProducts(): end");
+		log.debug("updateOfferPricesOzonMarketProducts(): end");
 
 		return "redirect:/wiki/products/ozon";
 	}
@@ -135,14 +133,14 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/ozon/offer-prices/updates-full", method = RequestMethod.GET)
 	public String updateOfferPricesOzonMarketProductsFull(Model model, final RedirectAttributes redirectAttributes) {
 				 
-		logger.debug("updateOfferPricesOzonMarketProductsFull(): start");
+		log.debug("updateOfferPricesOzonMarketProductsFull(): start");
 					
 		String resultOfferPricesUpdates = wikiService.ozonOfferPricesUpdates(getUserIdByPrincipal(),false);
 		redirectAttributes.addFlashAttribute("css", "success");
 		redirectAttributes.addFlashAttribute("msg", resultOfferPricesUpdates);
 		populateDefaultModel(model);
 		
-		logger.debug("updateOfferPricesOzonMarketProductsFull(): end");
+		log.debug("updateOfferPricesOzonMarketProductsFull(): end");
 
 		return "redirect:/wiki/products/ozon";
 	}
@@ -159,14 +157,14 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/ozon/disconnect", method = RequestMethod.GET)
 	public String updateOfferPricesOzonDisconnect(Model model, final RedirectAttributes redirectAttributes) {
 				 
-		logger.debug("updateOfferPricesOzonDisconnect(): start");
+		log.debug("updateOfferPricesOzonDisconnect(): start");
 					
 		String resultOfferPricesUpdates = wikiService.ozonDisconnect();
 		redirectAttributes.addFlashAttribute("css", "success");
 		redirectAttributes.addFlashAttribute("msg", resultOfferPricesUpdates);
 		populateDefaultModel(model);
 		
-		logger.debug("updateOfferPricesOzonDisconnect(): end");
+		log.debug("updateOfferPricesOzonDisconnect(): end");
 
 		return "redirect:/wiki/products/ozon";
 	}
@@ -174,7 +172,7 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/ym", method = RequestMethod.GET)
 	public String showYandexMarketProducts(Model model) {
 		
-		logger.debug("showYandexMarketProducts()");		
+		log.debug("showYandexMarketProducts()");
 		ProductConditions productConditions = wikiService.getConfig().loadYmProductConditions(getUserIdByPrincipal());
 		List<Product> products = wikiService.getWiki().listYmProductsByConditions(productConditions);
 		populateDefaultModel(model);		
@@ -188,7 +186,7 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/ym/conditions/filter", method = RequestMethod.GET)
 	public String showYandexMarketProductsByConditions(Model model) {
 
-		logger.debug("showYandexMarketProductsByConditions()");
+		log.debug("showYandexMarketProductsByConditions()");
 		ProductConditions productConditions = wikiService.getConfig().loadYmProductConditions(getUserIdByPrincipal());
 		model.addAttribute("productConditions", productConditions);
 		populateDefaultModel(model);
@@ -199,7 +197,7 @@ public class WikiController extends AnyController {
 	public String execYandexMarketProductsByConditions(@ModelAttribute("productConditions") ProductConditions productConditions,
 			Model model, final RedirectAttributes redirectAttributes) {
 
-		logger.debug("execYandexMarketProductsByConditions():{}", productConditions);
+		log.debug("execYandexMarketProductsByConditions():{}", productConditions);
 		wikiService.getConfig().saveYmProductConditions(getUserIdByPrincipal(), productConditions);
 				
 		List<Product> products = wikiService.getWiki().listYmProductsByConditions(productConditions);
@@ -213,14 +211,14 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/ym/offer-prices/updates", method = RequestMethod.GET)
 	public String updateOfferPricesYandexMarketProducts(Model model, final RedirectAttributes redirectAttributes) {
 				 
-		logger.debug("updateOfferPricesYandexMarketProducts(): start");
+		log.debug("updateOfferPricesYandexMarketProducts(): start");
 					
 		String resultOfferPricesUpdates = wikiService.ymOfferPricesUpdates(getUserIdByPrincipal());
 		redirectAttributes.addFlashAttribute("css", "success");
 		redirectAttributes.addFlashAttribute("msg", resultOfferPricesUpdates);
 		populateDefaultModel(model);
 		
-		logger.debug("updateOfferPricesYandexMarketProducts(): end");
+		log.debug("updateOfferPricesYandexMarketProducts(): end");
 
 		return "redirect:/wiki/products/ym";
 	}
@@ -228,7 +226,7 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/products/{id}", method = RequestMethod.GET)
 	public String showProduct(@PathVariable("id") int productId, Model model) {
 		
-		logger.debug("showProduct() :{}", productId);	
+		log.debug("showProduct() :{}", productId);
 		wikiService.getConfig().saveFormIntegerValue(1, "productForm", "product.id", productId);
 				
 		ProductConditions productConditions = new ProductConditions();
@@ -246,7 +244,7 @@ public class WikiController extends AnyController {
 			Model model, final RedirectAttributes redirectAttributes) {
 		
 		String productSku = productConditions.getSku().trim();
-		logger.debug("showAllProducts() :{}", productSku);
+		log.debug("showAllProducts() :{}", productSku);
 		
 		wikiService.getConfig().saveFormStringValue(getUserIdByPrincipal(), "productForm", "product.sku", productSku);
 
@@ -276,10 +274,10 @@ public class WikiController extends AnyController {
 	public String saveOrUpdateProduct(@PathVariable("id") int id, @PathVariable("listType") String listType, @ModelAttribute("productForm") @Validated FormProduct product, 
 			BindingResult bindingResult, Model model, final RedirectAttributes redirectAttributes) {
 
-		logger.debug("saveOrUpdateProduct():{}", product.getId());
+		log.debug("saveOrUpdateProduct():{}", product.getId());
 	
 		if (bindingResult.hasErrors()) {
-			logger.debug("bindingResult:{}", bindingResult.getAllErrors());
+			log.debug("bindingResult:{}", bindingResult.getAllErrors());
 			populateDefaultModel(model);
 			model.addAttribute("listType", listType);
 			return "orders/orderform";
@@ -323,7 +321,7 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/stock-products/suppliers/{supplierId}/product-categories/{productCategoryId}", method = RequestMethod.GET)
 	public String showSupplierStockProductsBySupplier(@PathVariable("supplierId") int supplierId, @PathVariable("productCategoryId") int productCategoryId, Model model) {
 
-		logger.debug("showSupplierStockProductsBySupplier(): {}, {}", supplierId, productCategoryId);	
+		log.debug("showSupplierStockProductsBySupplier(): {}, {}", supplierId, productCategoryId);
 		SupplierTypes inputSupplier = SupplierTypes.getValueById(supplierId);
 		ProductCategory inputProductCategory = wikiService.getWiki().getCategoryById(productCategoryId);
 		
@@ -358,7 +356,7 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/stock-products/add", method = RequestMethod.GET)
 	public String showAddSupplierStockProductForm(Model model) {
 
-			logger.debug("showAddSupplierStockProductForm()");
+			log.debug("showAddSupplierStockProductForm()");
 			FormSupplierStockProduct supplierStockProduct = new FormSupplierStockProduct();
 										
 			model.addAttribute("supplierStockProductForm", supplierStockProduct);
@@ -371,7 +369,7 @@ public class WikiController extends AnyController {
 	@RequestMapping(value = "/wiki/stock-products/{id}/update", method = RequestMethod.GET)
 	public String showUpdateSupplierStockProductForm(@PathVariable("id") int id, Model model) {
 
-			logger.debug("showUpdateSupplierStockProductForm() :{}", id);
+			log.debug("showUpdateSupplierStockProductForm() :{}", id);
 
 			SupplierStockProduct supplierStockProduct = wikiService.getWiki().supplierStockProductFindById(id);
 			FormSupplierStockProduct formSupplierStockProduct = FormSupplierStockProduct.createForm(supplierStockProduct);		
@@ -390,9 +388,9 @@ public class WikiController extends AnyController {
 				BindingResult bindingResult, Model model, final RedirectAttributes redirectAttributes) {
 
 		
-			logger.debug("showUpdateSupplierStockProductForm() :{}", formSupplierStockProduct.getId());		
+			log.debug("showUpdateSupplierStockProductForm() :{}", formSupplierStockProduct.getId());
 			if (bindingResult.hasErrors()) {
-				logger.debug("bindingResult :{}", bindingResult.getAllErrors());						
+				log.debug("bindingResult :{}", bindingResult.getAllErrors());
 				populateDefaultModel(model);
 				return "wiki/stockform";
 			} else {						
@@ -427,7 +425,7 @@ public class WikiController extends AnyController {
 	
 	@RequestMapping(value = "/wiki/stock-products/{id}/delete", method = RequestMethod.GET)
 	public String deleteSupplierStockProduct(@PathVariable("id") int id, Model model) {
-		logger.debug("deleteSupplierStockProduct():{}", id);
+		log.debug("deleteSupplierStockProduct():{}", id);
 		wikiService.getWiki().deleteSupplierStockProduct(id);
 	
 		return "redirect:/wiki/stock-products";
@@ -435,7 +433,7 @@ public class WikiController extends AnyController {
 	
 	@RequestMapping(value = "/wiki/products/synchronize", method = RequestMethod.GET)
 	public String productsSynchronize(Model model, final RedirectAttributes redirectAttributes) {
-		logger.debug("productsSynchronize()");		
+		log.debug("productsSynchronize()");
 		wikiService.getWiki().init(false);
 		
 		redirectAttributes.addFlashAttribute("css", "success");
@@ -469,7 +467,5 @@ public class WikiController extends AnyController {
 		ozonSellerExistTypes.add(new Comment(0, CommentTypes.UNKNOWN, "0", "Нет размещения на \"Озон\""));
 		ozonSellerExistTypes.add(new Comment(1, CommentTypes.UNKNOWN, "1", "Размещено на \"Озон\""));
 		model.addAttribute("ozonSellerExistTypes", ozonSellerExistTypes);
-		
 	}
-
 }

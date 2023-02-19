@@ -3,10 +3,9 @@ package ru.sir.richard.boss.model.data;
 import java.util.Date;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.OrderTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
 
 /**
  * Контрольный срок исполнения заявки или КП

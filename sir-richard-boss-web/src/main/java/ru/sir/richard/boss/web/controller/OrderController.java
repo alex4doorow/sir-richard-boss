@@ -9,8 +9,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.core.env.Environment;
@@ -37,20 +36,19 @@ import ru.sir.richard.boss.model.factories.CustomersFactory;
 import ru.sir.richard.boss.model.types.CustomerTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.OrderTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.NumberUtils;
-import ru.sir.richard.boss.model.utils.sender.MessageManager;
-import ru.sir.richard.boss.model.utils.sender.MessageSendingStatus;
-import ru.sir.richard.boss.model.utils.sender.email.EmailSenderTextGenerator;
+import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.NumberUtils;
+import ru.sir.richard.boss.utils.sender.MessageManager;
+import ru.sir.richard.boss.utils.sender.MessageSendingStatus;
+import ru.sir.richard.boss.utils.sender.email.EmailSenderTextGenerator;
 import ru.sir.richard.boss.web.data.FormOrder;
 import ru.sir.richard.boss.web.service.OrderService;
 import ru.sir.richard.boss.web.validator.OrderFormValidator;
 
 @Controller
+@Slf4j
 public class OrderController extends AnyController {
 
-	private final Logger logger = LoggerFactory.getLogger(OrderController.class);
-	
 	@Autowired
 	private Environment environment;
 
@@ -104,7 +102,7 @@ public class OrderController extends AnyController {
 	// show order
 	@RequestMapping(value = "/orders/{id}/{listType}", method = RequestMethod.GET)
 	public String showOrder(@PathVariable("id") int id, @PathVariable("listType") String listType, Model model) {
-		logger.debug("showOrder():{}", id);
+		log.debug("showOrder():{}", id);
 		Order order = orderService.getOrderDao().findById(id);		
 		if (order == null) {
 			model.addAttribute("css", "danger");
@@ -121,7 +119,7 @@ public class OrderController extends AnyController {
 	@RequestMapping(value = "/orders/add/{listType}", method = RequestMethod.GET)
 	public String showAddOrderForm(Model model, @PathVariable("listType") String listType) {
 
-		logger.debug("showAddOrderForm()");
+		log.debug("showAddOrderForm()");
 		FormOrder order = new FormOrder();
 		order.setNo(orderService.getOrderDao().nextOrderNo());
 		order.setOrderDate(DateTimeUtils.sysDate());
@@ -139,7 +137,7 @@ public class OrderController extends AnyController {
 	@RequestMapping(value = "/orders/{id}/update/{listType}", method = RequestMethod.GET)
 	public String showUpdateOrderForm(@PathVariable("id") int id, @PathVariable("listType") String listType, Model model) {
 
-		logger.debug("showUpdateOrderForm():{},{}", id, listType);
+		log.debug("showUpdateOrderForm():{},{}", id, listType);
 
 		Order order = orderService.getOrderDao().findById(id);
 		FormOrder formOrder = FormOrder.createForm(order);		
@@ -161,11 +159,11 @@ public class OrderController extends AnyController {
 	public String saveOrUpdateOrder(@PathVariable("id") int id, @PathVariable("listType") String listType, @ModelAttribute("orderForm") @Validated FormOrder formOrder, 
 			BindingResult bindingResult, Model model, final RedirectAttributes redirectAttributes) {
 
-		logger.debug("saveOrUpdateOrder():{},{},{},{},{}", formOrder.getNo(), DateTimeUtils.defaultFormatDate(formOrder.getOrderDate()), 
+		log.debug("saveOrUpdateOrder():{},{},{},{},{}", formOrder.getNo(), DateTimeUtils.defaultFormatDate(formOrder.getOrderDate()),
 				formOrder.getOrderType(), formOrder.getSourceType(), formOrder.getProductCategory());
 	
 		if (bindingResult.hasErrors()) {
-			logger.debug("bindingResult:{}", bindingResult.getAllErrors());
+			log.debug("bindingResult:{}", bindingResult.getAllErrors());
 			populateDefaultModel(model);
 			return "orders/orderform";
 		} else {
@@ -199,7 +197,7 @@ public class OrderController extends AnyController {
 	@RequestMapping(value = "/orders/{id}/clone", method = RequestMethod.GET)
 	public String showCloneOrderForm(@PathVariable("id") int id, Model model) {
 
-			logger.debug("showCloneOrderForm():{}", id);
+			log.debug("showCloneOrderForm():{}", id);
 
 			Order order = null;
 			try {
@@ -230,7 +228,7 @@ public class OrderController extends AnyController {
 	@RequestMapping(value = "/orders/{id}/change-status/{listType}", method = RequestMethod.GET)
 	public String changeStatusOrderForm(@PathVariable("id") int id, @PathVariable("listType") String listType, Model model) {
 
-		logger.debug("changeStatusOrderForm():{}", id);
+		log.debug("changeStatusOrderForm():{}", id);
 
 		Order order = orderService.getOrderDao().findById(id);
 		FormOrder formOrder = FormOrder.createForm(order);		
@@ -249,9 +247,9 @@ public class OrderController extends AnyController {
 			@ModelAttribute("orderForm") @Validated FormOrder formOrder,
 			BindingResult bindingResult, Model model, final RedirectAttributes redirectAttributes) {
 
-		logger.debug("saveOrderChangeStatusOrder():{}", formOrder);		
+		log.debug("saveOrderChangeStatusOrder():{}", formOrder);
 		if (bindingResult.hasErrors()) {
-			logger.debug("bindingResult:{}", bindingResult.getAllErrors());
+			log.debug("bindingResult:{}", bindingResult.getAllErrors());
 			Order beforeOrder = orderService.getOrderDao().findById(id);
 			FormOrder beforeFormOrder = FormOrder.createForm(beforeOrder);
 			model.addAttribute("order", beforeFormOrder);
@@ -286,7 +284,7 @@ public class OrderController extends AnyController {
 		
 	@RequestMapping(value = "/orders/{id}/bill-expired-status/{listType}", method = RequestMethod.GET)
 	public String changeBillExpiredStatusForm(@PathVariable("id") int id, @PathVariable("listType") String listType, Model model) {
-		logger.debug("changeBillExpiredStatusForm():{}", id);
+		log.debug("changeBillExpiredStatusForm():{}", id);
 		Order order = orderService.getOrderDao().findById(id);
 		if ((order.getOrderType() == OrderTypes.BILL || order.getOrderType() == OrderTypes.KP) && order.getStatus() == OrderStatuses.BID) {
 			FormOrder formOrder = FormOrder.createForm(order);
@@ -308,9 +306,9 @@ public class OrderController extends AnyController {
 			@ModelAttribute("orderForm") @Validated FormOrder formOrder,
 			BindingResult bindingResult, Model model, final RedirectAttributes redirectAttributes) {
 
-		logger.debug("saveBillExpiredStatus():{}", formOrder);		
+		log.debug("saveBillExpiredStatus():{}", formOrder);
 		if (bindingResult.hasErrors()) {
-			logger.debug("bindingResult:{}", bindingResult.getAllErrors());
+			log.debug("bindingResult:{}", bindingResult.getAllErrors());
 			Order beforeOrder = orderService.getOrderDao().findById(id);
 			FormOrder beforeFormOrder = FormOrder.createForm(beforeOrder);
 			model.addAttribute("order", beforeFormOrder);
@@ -342,23 +340,22 @@ public class OrderController extends AnyController {
 	// delete order
 	@RequestMapping(value = "/orders/{id}/delete", method = RequestMethod.GET)
 	public String deleteOrder(@PathVariable("id") int id, Model model) {
-		logger.debug("deleteOrder():{}", id);
+		log.debug("deleteOrder():{}", id);
 		orderService.getOrderDao().deleteOrder(id);
 		return "redirect:/orders";
 	}
 	
 	@RequestMapping(value = "/orders/{id}/erase", method = RequestMethod.GET)
 	public String eraseOrder(@PathVariable("id") int id, Model model) {		
-		logger.debug("eraseOrder():{}", id);
+		log.debug("eraseOrder():{}", id);
 		orderService.getOrderDao().eraseOrder(id, false);
 		return "redirect:/orders";
 	}
 
-
 	@ExceptionHandler(EmptyResultDataAccessException.class)
 	public ModelAndView handleEmptyData(HttpServletRequest req, Exception ex) {
-		logger.debug("handleEmptyData()");
-		logger.error("Request:{}, error:{}", req.getRequestURL(), ex);
+		log.debug("handleEmptyData()");
+		log.error("Request:{}, error:{}", req.getRequestURL(), ex);
 		ModelAndView model = new ModelAndView();
 		model.setViewName("order/show");
 		model.addObject("msg", "order not found");

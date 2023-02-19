@@ -1,6 +1,6 @@
 package ru.sir.richard.boss.integration.msg;
 
-import ru.sir.richard.boss.model.utils.IntegrationUtils;
+import ru.sir.richard.boss.utils.IntegrationUtils;
 
 public class Payload {
 

@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.model.utils.sender;
+package ru.sir.richard.boss.utils.sender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import org.springframework.core.env.PropertyResolver;
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.types.OrderAdvertTypes;
 import ru.sir.richard.boss.model.types.OrderEmailStatuses;
-import ru.sir.richard.boss.model.utils.sender.email.EmailSender;
-import ru.sir.richard.boss.model.utils.sender.sms.SmsSender;
+import ru.sir.richard.boss.utils.sender.email.EmailSender;
+import ru.sir.richard.boss.utils.sender.sms.SmsSender;
 
 public class MessageManager {
 	

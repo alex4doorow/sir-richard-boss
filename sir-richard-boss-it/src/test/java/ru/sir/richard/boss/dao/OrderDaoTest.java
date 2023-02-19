@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,15 +28,14 @@ import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.CustomerTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.StoreTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.Pair;
+import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.Pair;
 
 @SpringBootTest
 @PropertySource(value="classpath:application-it.properties", encoding="UTF-8")
+@Slf4j
 public class OrderDaoTest {
-	
-	private final Logger logger = LoggerFactory.getLogger(OrderDaoTest.class);
-	
+
 	@Autowired
 	private WikiDao wikiDao;
 	
@@ -108,14 +108,14 @@ public class OrderDaoTest {
 		orderConditions.getCustomerConditions().setPersonPhoneNumber("(916) 169-90-99");
 			
 		List<Order> orders = orderDao.listOrdersByConditions(orderConditions);		
-		orders.forEach(order -> logger.debug("listOrdersByConditions: {}, {}, {}", order.getId(), order.getNo(), order.getCustomer().getViewShortName()));				
+		orders.forEach(order -> log.debug("listOrdersByConditions: {}, {}, {}", order.getId(), order.getNo(), order.getCustomer().getViewShortName()));
 	}
 	
 	@Test
 	public void testListOrdersForFeedback() {
 		
 		List<Order> orders = orderDao.listOrdersForFeedback(DateTimeUtils.sysDate());
-		orders.forEach(order -> logger.debug("listOrdersForFeedback: {}, {}, {}", order.getId(), order.getNo(), order.getCustomer().getViewShortName()));		
+		orders.forEach(order -> log.debug("listOrdersForFeedback: {}, {}, {}", order.getId(), order.getNo(), order.getCustomer().getViewShortName()));
 	}
 	
 	@Test
@@ -125,7 +125,7 @@ public class OrderDaoTest {
 		
 		orders.stream()
 			.sorted((o1, o2) -> o1.getViewNo().compareTo(o2.getViewNo()))
-			.forEach(order -> logger.debug("listYeildOrders: {}, {}", order.getId(), order.getNo()));
+			.forEach(order -> log.debug("listYeildOrders: {}, {}", order.getId(), order.getNo()));
 			
 		//orders.forEach(order -> logger.debug("listYeildOrders: {}, {}", order.getId(), order.getNo()));		
 		//orders.sort((o1, o2) -> o1.getViewNo().compareTo(o2.getViewNo()));		
@@ -342,6 +342,5 @@ public class OrderDaoTest {
 		
 		//orderDao.changeFullStatusOrder(order);		
 		
-	}	
-
+	}
 }

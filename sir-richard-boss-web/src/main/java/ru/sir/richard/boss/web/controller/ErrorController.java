@@ -2,6 +2,7 @@ package ru.sir.richard.boss.web.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -10,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@Slf4j
 public class ErrorController {
-
-    private final Logger logger = LoggerFactory.getLogger(ErrorController.class);
 
     @RequestMapping(value = "errors", method = RequestMethod.GET)
     public ModelAndView renderErrorsPage(HttpServletRequest httpRequest) {
@@ -24,7 +24,7 @@ public class ErrorController {
 
         int httpErrorCode = getErrorCode(httpRequest);
 
-        logger.error("renderErrorsPage(): {}, {}", httpErrorCode, httpRequest.getRequestURL());
+        log.error("renderErrorsPage(): {}, {}", httpErrorCode, httpRequest.getRequestURL());
         httpRequest.getRequestURL();
 
         switch (httpErrorCode) {
@@ -57,7 +57,6 @@ public class ErrorController {
                 break;
             }
         }
-
         errorPage.addObject("errorHeader", errorHeader);
         errorPage.addObject("errorMsg", errorMsg);
         errorPage.addObject("httpRequest", httpRequest);
@@ -68,7 +67,7 @@ public class ErrorController {
     @RequestMapping(value = "error", method = RequestMethod.GET)
     public ModelAndView renderErrorPage(HttpServletRequest httpRequest) {
         int httpErrorCode = getErrorCode(httpRequest);
-        logger.error("renderErrorPage(): {}, {}", httpErrorCode, httpRequest.getRequestURL());
+        log.error("renderErrorPage(): {}, {}", httpErrorCode, httpRequest.getRequestURL());
         return renderErrorsPage(httpRequest);
     }
 

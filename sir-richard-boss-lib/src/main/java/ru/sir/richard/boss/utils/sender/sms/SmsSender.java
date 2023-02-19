@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.model.utils.sender.sms;
+package ru.sir.richard.boss.utils.sender.sms;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,10 @@ import ru.sir.richard.boss.api.epochta.v2.SmsApi;
 import ru.sir.richard.boss.api.epochta.v2.SmsPhone;
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.types.OrderEmailStatuses;
-import ru.sir.richard.boss.model.utils.TextUtils;
-import ru.sir.richard.boss.model.utils.sender.AnySender;
-import ru.sir.richard.boss.model.utils.sender.SenderTextGenerator;
-import ru.sir.richard.boss.model.utils.sender.SendingResponseStatus;
+import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.utils.sender.AnySender;
+import ru.sir.richard.boss.utils.sender.SenderTextGenerator;
+import ru.sir.richard.boss.utils.sender.SendingResponseStatus;
 
 public class SmsSender implements AnySender {
 	

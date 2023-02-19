@@ -3,7 +3,7 @@ package ru.sir.richard.boss.web.data;
 import java.util.Date;
 
 import ru.sir.richard.boss.model.data.conditions.AnyReportConditions;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
 
 public class FormSalesFunnelReport extends AnyReportConditions {
 	

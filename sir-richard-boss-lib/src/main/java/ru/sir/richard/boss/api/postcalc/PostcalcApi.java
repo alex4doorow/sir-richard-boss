@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.zip.GZIPInputStream;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,10 +25,9 @@ import ru.sir.richard.boss.model.data.crm.DeliveryServiceResult;
 import ru.sir.richard.boss.model.types.DeliveryTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
 
+@Slf4j
 public class PostcalcApi implements AnyApi {
-	
-	private final Logger logger = LoggerFactory.getLogger(PostcalcApi.class);
-	
+
 	private PropertyResolver environment;	
 
 	public PostcalcApi(PropertyResolver environment) {
@@ -72,8 +72,8 @@ public class PostcalcApi implements AnyApi {
 	    con.setRequestProperty("User-Agent", "Mozilla/5.0");	    
      
 	    int responseCode = con.getResponseCode();
-	    logger.debug("postCalc() responseCode:{}", responseCode);
-	    logger.debug("postCalc() sending 'GET' request to URL:{}", url);
+	    log.debug("postCalc() responseCode:{}", responseCode);
+	    log.debug("postCalc() sending 'GET' request to URL:{}", url);
 	    
 	    InputStream  gis = new GZIPInputStream(con.getInputStream());	    
 	    BufferedReader in2 = new BufferedReader(new InputStreamReader(gis));
@@ -90,7 +90,7 @@ public class PostcalcApi implements AnyApi {
 	    DeliveryServiceResult result = new DeliveryServiceResult();
 	    try {
 	    	myResponse = new JSONObject(response.toString());
-		    logger.debug("postCalc() jsonResponse:{}", myResponse.toString());
+		    log.debug("postCalc() jsonResponse:{}", myResponse.toString());
 		    	   	
 	    	String status = (String) myResponse.get("Status");
 	    	if (StringUtils.equals(status, "BAD_TO_INDEX")) {
@@ -109,7 +109,7 @@ public class PostcalcApi implements AnyApi {
 	    	} 
 	    	
 	    } catch (Exception e) {
-	    	logger.error("Status: ", e);
+	    	log.error("Status: ", e);
 	    } 	    
 	    JSONObject parcelData = null;
 	    try {
@@ -140,7 +140,7 @@ public class PostcalcApi implements AnyApi {
 		    }
 	    	
 	    } catch (JSONException e) {
-			logger.error("JSONException:", e);
+			log.error("JSONException:", e);
 		}    
 	    return DeliveryServiceResult.createEmpty();
 	}

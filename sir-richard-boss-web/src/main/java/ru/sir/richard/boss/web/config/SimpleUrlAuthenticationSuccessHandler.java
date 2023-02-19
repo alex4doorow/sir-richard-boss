@@ -25,15 +25,11 @@ public class SimpleUrlAuthenticationSuccessHandler implements AuthenticationSucc
         super();
     }
 
-    // API
-
     @Override
     public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws IOException {
         handle(request, response, authentication);
         clearAuthenticationAttributes(request);
     }
-
-    // IMPL
 
     protected void handle(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws IOException {
         final String targetUrl = determineTargetUrl(request, response, authentication);

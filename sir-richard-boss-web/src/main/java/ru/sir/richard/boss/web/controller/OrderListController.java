@@ -9,9 +9,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.MessageSource;
@@ -35,17 +34,16 @@ import ru.sir.richard.boss.model.data.conditions.OrderConditions;
 import ru.sir.richard.boss.model.types.OrderAmountTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.NumberUtils;
-import ru.sir.richard.boss.model.utils.Pair;
-import ru.sir.richard.boss.model.utils.TextUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.NumberUtils;
+import ru.sir.richard.boss.utils.Pair;
+import ru.sir.richard.boss.utils.TextUtils;
 import ru.sir.richard.boss.web.service.OrderService;
 import ru.sir.richard.boss.web.validator.OrderConditionsFormValidator;
 
 @Controller
+@Slf4j
 public class OrderListController extends AnyController {
-
-	private final Logger logger = LoggerFactory.getLogger(OrderListController.class);
 
 	@Autowired
 	OrderConditionsFormValidator orderConditionsFormValidator;
@@ -70,10 +68,10 @@ public class OrderListController extends AnyController {
 
 	@RequestMapping(value = "/orders/import-crm", method = RequestMethod.GET)
 	public String importCrm(Model model) {
-		logger.debug("importCrm(): start");
+		log.debug("importCrm(): start");
 		orderService.getCrmManager().setExecutorDate(DateTimeUtils.sysDate());		
 		orderService.getCrmManager().importRun();
-		logger.debug("importCrm(): end");
+		log.debug("importCrm(): end");
 		return "redirect:/orders";
 	}
 
@@ -81,7 +79,7 @@ public class OrderListController extends AnyController {
 	@RequestMapping(value = "/orders", method = RequestMethod.GET)
 	public String showAllOrders(Model model) {
 
-		logger.debug("showAllOrders()");
+		log.debug("showAllOrders()");
 		OrderConditions orderConditions = wikiService.getConfig().loadOrderConditions(getUserIdByPrincipal());
 		List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
 		Map<OrderAmountTypes, BigDecimal> totalAmounts = orderService.getOrderDao().calcTotalOrdersAmountsByConditions(orders,
@@ -97,7 +95,7 @@ public class OrderListController extends AnyController {
 	@RequestMapping(value = "/orders/trouble-load", method = RequestMethod.GET)
 	public String showTroubleOrders(Model model) {
 
-		logger.debug("showTroubleOrders()");
+		log.debug("showTroubleOrders()");
 		List<Order> orders = orderService.getOrderDao().listTroubleOrders();
 		model.addAttribute("orders", orders);
 		model.addAttribute("reportPeriodType", ReportPeriodTypes.CURRENT_MONTH);
@@ -108,7 +106,7 @@ public class OrderListController extends AnyController {
 	@RequestMapping(value = "/orders/conditions/period/{period}", method = RequestMethod.GET)
 	public String showOrdersByPeriod(@PathVariable("period") String period, Model model) {
 
-		logger.debug("showOrdersByPeriod()");
+		log.debug("showOrdersByPeriod()");
 		ReportPeriodTypes reportPeriodType = ReportPeriodTypes.getValueByCode(period);
 		OrderConditions orderConditions = new OrderConditions(reportPeriodType);
 		List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditions);
@@ -124,7 +122,7 @@ public class OrderListController extends AnyController {
 	@RequestMapping(value = "/orders/conditions/filter", method = RequestMethod.GET)
 	public String showOrdersByConditions(Model model) {
 
-		logger.debug("showOrdersByConditions()");
+		log.debug("showOrdersByConditions()");
 		OrderConditions orderConditionsForm = wikiService.getConfig().loadOrderConditions(getUserIdByPrincipal());
 		model.addAttribute("orderConditionsForm", orderConditionsForm);
 		model.addAttribute("reportPeriodType", ReportPeriodTypes.CURRENT_MONTH);
@@ -139,7 +137,7 @@ public class OrderListController extends AnyController {
 	public String execOrdersByConditions(@ModelAttribute("orderConditionsForm") OrderConditions orderConditionsForm,
 			Model model, final RedirectAttributes redirectAttributes) {
 
-		logger.debug("execOrdersByConditions():{}", orderConditionsForm);
+		log.debug("execOrdersByConditions():{}", orderConditionsForm);
 		wikiService.getConfig().saveOrderConditions(getUserIdByPrincipal(), orderConditionsForm);
 		List<Order> orders = orderService.getOrderDao().listOrdersByConditions(orderConditionsForm);
 		Map<OrderAmountTypes, BigDecimal> totalAmounts = orderService.getOrderDao().calcTotalOrdersAmountsByConditions(orders,
@@ -164,7 +162,7 @@ public class OrderListController extends AnyController {
 		// 1) ищем по номеру заказа
 		int orderSubNo = 0;
 		int orderYear = DateTimeUtils.dateToShortYear(DateTimeUtils.sysDate());		
-		logger.debug("orderByOrderConditions(): {}, {}, {}", dirtyConditions, orderSubNo, orderYear);
+		log.debug("orderByOrderConditions(): {}, {}, {}", dirtyConditions, orderSubNo, orderYear);
 		
 		int id;
 		try {
@@ -292,7 +290,7 @@ public class OrderListController extends AnyController {
 		
 	@RequestMapping(value = "/orders/statuses/reload", method = RequestMethod.GET)
 	public String ordersStatusesReload(Model model, final RedirectAttributes redirectAttributes) {
-		logger.debug("ordersStatusesReload(): start");
+		log.debug("ordersStatusesReload(): start");
 		String resultDelivery = deliveryService.ordersStatusesReload();
 		String resultEmail = orderService.ordersSendFeedback(DateTimeUtils.sysDate());
 		resultDelivery += "<br/>" + resultEmail;
@@ -303,26 +301,26 @@ public class OrderListController extends AnyController {
 		redirectAttributes.addFlashAttribute("css", "success");
 		redirectAttributes.addFlashAttribute("msg", resultDelivery);
 		populateDefaultModel(model);
-		logger.debug("ordersStatusesReload(): end");
+		log.debug("ordersStatusesReload(): end");
 		return "redirect:/orders";
 	}
 	
 	@RequestMapping(value = "/orders/actualization-postpay", method = RequestMethod.GET)
 	public String ordersActualizationPostpay(Model model, final RedirectAttributes redirectAttributes) {
 		
-		logger.debug("ordersActualizationPostpay(): start");		
+		log.debug("ordersActualizationPostpay(): start");
 		Date today = DateTimeUtils.sysDate();
 		String result = orderService.getCrmManager().actualizationPostpay(today);		
 		redirectAttributes.addFlashAttribute("css", "success");
 		redirectAttributes.addFlashAttribute("msg", result);
-		logger.debug("ordersActualizationPostpay(): end");
+		log.debug("ordersActualizationPostpay(): end");
 		return "redirect:/orders";		
 	}
 	
 	@RequestMapping(value = "/orders/statuses/today", method = RequestMethod.GET)
 	public String ordersStatusesToday(Model model, final RedirectAttributes redirectAttributes) {
 		
-		logger.debug("ordersStatusesToday(): start");
+		log.debug("ordersStatusesToday(): start");
 		deliveryService.ordersStatusesReload();
 		Date today = DateTimeUtils.sysDate();
 		
@@ -353,7 +351,7 @@ public class OrderListController extends AnyController {
 		
 		redirectAttributes.addFlashAttribute("css", "success");
 		redirectAttributes.addFlashAttribute("msg", result);
-		logger.debug("ordersStatusesToday(): end");
+		log.debug("ordersStatusesToday(): end");
 		return "redirect:/orders";		
 	}
 	
@@ -374,8 +372,8 @@ public class OrderListController extends AnyController {
 
 	@ExceptionHandler(EmptyResultDataAccessException.class)
 	public ModelAndView handleEmptyData(HttpServletRequest req, Exception ex) {
-		logger.debug("handleEmptyData()");
-		logger.error("Request:{}, error ", req.getRequestURL(), ex);
+		log.debug("handleEmptyData()");
+		log.error("Request:{}, error ", req.getRequestURL(), ex);
 		ModelAndView model = new ModelAndView();
 		model.setViewName("order/list");
 		model.addObject("msg", "order condition not found");
@@ -386,7 +384,5 @@ public class OrderListController extends AnyController {
 	@Override
 	protected void populateDefaultModel(Model model) {
 		super.populateDefaultModel(model);
-
-		
 	}
 }

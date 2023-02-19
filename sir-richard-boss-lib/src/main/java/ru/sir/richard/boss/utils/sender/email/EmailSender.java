@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.model.utils.sender.email;
+package ru.sir.richard.boss.utils.sender.email;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -7,10 +7,10 @@ import org.springframework.core.env.PropertyResolver;
 
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.types.OrderEmailStatuses;
-import ru.sir.richard.boss.model.utils.sender.AnySender;
-import ru.sir.richard.boss.model.utils.sender.Message;
-import ru.sir.richard.boss.model.utils.sender.SenderTextGenerator;
-import ru.sir.richard.boss.model.utils.sender.SendingResponseStatus;
+import ru.sir.richard.boss.utils.sender.AnySender;
+import ru.sir.richard.boss.utils.sender.Message;
+import ru.sir.richard.boss.utils.sender.SenderTextGenerator;
+import ru.sir.richard.boss.utils.sender.SendingResponseStatus;
 
 public class EmailSender implements AnySender {
 	

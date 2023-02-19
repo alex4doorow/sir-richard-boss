@@ -15,9 +15,9 @@ import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.OrderTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.Pair;
-import ru.sir.richard.boss.model.utils.TextUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.Pair;
+import ru.sir.richard.boss.utils.TextUtils;
 
 public abstract class AnyConditions {	
 	

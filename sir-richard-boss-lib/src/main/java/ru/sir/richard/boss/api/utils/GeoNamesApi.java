@@ -4,12 +4,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.env.PropertyResolver;
 
 import com.mashape.unirest.http.HttpResponse;
@@ -17,7 +16,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
 
 /*
 // https://en.wikipedia.org/wiki/ISO_8601
@@ -27,9 +26,8 @@ https://grishaev.me/timezone/
 
 Орск, Оренбург https://geocode-maps.yandex.ru/1.x/?apikey=*******&geocode=орск  
 */
+@Slf4j
 public class GeoNamesApi {
-
-	private final Logger logger = LoggerFactory.getLogger(GeoNamesApi.class);
 
 	/**
 	 * application.properties
@@ -74,16 +72,16 @@ public class GeoNamesApi {
 					String countryCode = addressObjectPoint.getString("country_code");
 					String addressText = addressObjectPoint.getString("formatted");
 
-					logger.debug("objectPoint: {}, {}, {}", sPos, countryCode, addressText);
+					log.debug("objectPoint: {}, {}, {}", sPos, countryCode, addressText);
 					if (countryCode.equals("RU") && StringUtils.isNotEmpty(sPos)) {
 						break;
 					}
 			}
 
 		} catch (UnirestException e) {
-			logger.error("UnirestException:", e);
+			log.error("UnirestException:", e);
 		} catch (JSONException e) {
-			logger.error("JSONException", e);				
+			log.error("JSONException", e);
 		}
 		
 		if (StringUtils.isEmpty(sPos)) {
@@ -131,9 +129,9 @@ public class GeoNamesApi {
 			gmtOffset = jsonResponseTimeZoneBody.getInt("gmtOffset");
 
 		} catch (UnirestException e) {
-			logger.error("UnirestException:", e);
+			log.error("UnirestException:", e);
 		} catch (JSONException e) {
-			logger.error("JSONException:", e);
+			log.error("JSONException:", e);
 		}
 		String localDateTime = DateTimeUtils.defaultFormatDateTimeByTimeZone(currentDateTime, timeZoneId);
 		String localTime = DateTimeUtils.defaultFormatTimeByTimeZone(currentDateTime, timeZoneId);
@@ -206,5 +204,4 @@ public class GeoNamesApi {
 			}
 		}
 	}
-
 }

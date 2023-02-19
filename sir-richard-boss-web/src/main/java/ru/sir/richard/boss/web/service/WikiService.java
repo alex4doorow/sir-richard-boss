@@ -17,8 +17,7 @@ import ru.sir.richard.boss.dao.WikiDao;
 import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.data.conditions.ProductConditions;
 import ru.sir.richard.boss.model.types.CrmTypes;
-import ru.sir.richard.boss.model.utils.NumberUtils;
-import ru.sir.richard.boss.web.controller.OrderListController;
+import ru.sir.richard.boss.utils.NumberUtils;
 
 @Service
 public class WikiService {

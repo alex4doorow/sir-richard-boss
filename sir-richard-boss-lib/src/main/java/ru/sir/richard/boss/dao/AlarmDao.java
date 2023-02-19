@@ -5,7 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.sir.richard.boss.api.alert.AlarmApi;
 import ru.sir.richard.boss.model.data.AlarmMessage;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

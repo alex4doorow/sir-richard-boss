@@ -1,6 +1,6 @@
-package ru.sir.richard.boss.model.utils.sender.sms;
+package ru.sir.richard.boss.utils.sender.sms;
 
-import ru.sir.richard.boss.model.utils.sender.SendingResponseStatus;
+import ru.sir.richard.boss.utils.sender.SendingResponseStatus;
 
 public class SmsSendingResponseStatus extends SendingResponseStatus {
 

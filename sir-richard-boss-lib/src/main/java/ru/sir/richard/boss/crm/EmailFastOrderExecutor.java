@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.RowMapper;
@@ -26,15 +25,14 @@ import ru.sir.richard.boss.model.types.OrderSourceTypes;
 import ru.sir.richard.boss.model.types.OrderTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
 import ru.sir.richard.boss.model.types.StoreTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.TextUtils;
-import ru.sir.richard.boss.model.utils.sender.email.EmailUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.utils.sender.email.EmailUtils;
 
 @Service
+@Slf4j
 public class EmailFastOrderExecutor extends AnyDaoImpl implements CrmExecutable {
 
-private final Logger logger = LoggerFactory.getLogger(OpencartExecutor.class);
-	
 	private Date executorDate;
 	
 	@Autowired
@@ -60,9 +58,9 @@ private final Logger logger = LoggerFactory.getLogger(OpencartExecutor.class);
 
 	@Override
 	public void run() {
-		logger.debug("run(): start");
+		log.debug("run(): start");
 		importStoreOrders(StoreTypes.PM);
-		logger.debug("run(): end");
+		log.debug("run(): end");
 	}
 	
     private List<Order> importStoreOrders(StoreTypes store) {
@@ -93,7 +91,7 @@ private final Logger logger = LoggerFactory.getLogger(OpencartExecutor.class);
 			String[] textValues = text.split("\r\n");
 
 			if ("Быстрый заказ".equals(textValues[0])) {
-				logger.info("text message:{}", text);
+				log.info("text message:{}", text);
 
 				order = new Order();
 				order.setOrderType(OrderTypes.ORDER);
@@ -130,7 +128,7 @@ private final Logger logger = LoggerFactory.getLogger(OpencartExecutor.class);
 			}						
 			
 		} catch (Exception e) {
-			logger.error("email:{} {}", "fail", e);
+			log.error("email:{} {}", "fail", e);
 		}		
 		return order;		
 	}

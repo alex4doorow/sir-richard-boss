@@ -1,5 +1,6 @@
 package ru.sir.richard.boss.web.controller.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,10 @@ import ru.sir.richard.boss.model.paging.PagingRequest;
 import ru.sir.richard.boss.web.service.WikiRestService;
 
 @RestController
+@Slf4j
 //@RequestMapping("wiki-rest")
 public class WikiRestController {
-	
-	private final Logger logger = LoggerFactory.getLogger(WikiRestController.class);
-	
+
 	@Autowired
 	protected WikiRestService wikiRestService;
 	
@@ -26,7 +26,7 @@ public class WikiRestController {
 	@RequestMapping(value = "/wiki-rest/stock-products/suppliers/list", method = RequestMethod.POST)
     public Page<SupplierStockProduct> stockProducts(@RequestBody PagingRequest pagingRequest) {
 		
-		logger.info("listByPeriod: {}", pagingRequest);
+		log.info("listByPeriod: {}", pagingRequest);
 		
 		return wikiRestService.getSupplierData(pagingRequest);
     	
@@ -36,8 +36,4 @@ public class WikiRestController {
     	return orderService.getOrdersByPeriod(pagingRequest, period);
     	*/
     }
-	
-
-
-
 }

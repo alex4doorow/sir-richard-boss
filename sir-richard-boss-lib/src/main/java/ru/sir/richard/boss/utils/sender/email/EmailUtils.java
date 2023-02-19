@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.model.utils.sender.email;
+package ru.sir.richard.boss.utils.sender.email;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.PropertyResolver;
 
 import ru.sir.richard.boss.model.types.StoreTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
 
 public class EmailUtils {
 	

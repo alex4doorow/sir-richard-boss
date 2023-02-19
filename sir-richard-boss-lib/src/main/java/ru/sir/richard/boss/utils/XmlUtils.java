@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.model.utils;
+package ru.sir.richard.boss.utils;
 
 import java.io.IOException;
 import java.io.StringReader;

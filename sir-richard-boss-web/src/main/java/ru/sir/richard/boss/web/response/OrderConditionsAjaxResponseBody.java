@@ -5,8 +5,8 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
-import ru.sir.richard.boss.model.utils.Pair;
+import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.Pair;
 
 public class OrderConditionsAjaxResponseBody extends AnyAjaxResponseBody {
 	

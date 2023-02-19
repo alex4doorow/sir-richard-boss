@@ -32,7 +32,7 @@ import ru.sir.richard.boss.model.data.report.ProductSalesReportBean;
 import ru.sir.richard.boss.model.data.report.SalesFunnelReportBean;
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
 import ru.sir.richard.boss.model.types.ReportQueryNames;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
 import ru.sir.richard.boss.web.data.FormProductSalesReport;
 import ru.sir.richard.boss.web.data.FormSalesFunnelReport;
 import ru.sir.richard.boss.web.service.OrderService;

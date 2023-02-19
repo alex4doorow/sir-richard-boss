@@ -1,6 +1,6 @@
-package ru.sir.richard.boss.model.utils.sender.email;
+package ru.sir.richard.boss.utils.sender.email;
 
-import ru.sir.richard.boss.model.utils.sender.SendingResponseStatus;
+import ru.sir.richard.boss.utils.sender.SendingResponseStatus;
 
 public class EmailSendingResponseStatus extends SendingResponseStatus {
 

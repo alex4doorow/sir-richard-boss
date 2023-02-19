@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.env.PropertyResolver;
 
 import com.mashape.unirest.http.HttpResponse;
@@ -21,11 +20,10 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import ru.sir.richard.boss.model.data.HhVacanciesPage;
 import ru.sir.richard.boss.model.data.HhVacancy;
-import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.utils.DateTimeUtils;
 
+@Slf4j
 public class HhApi {
-	
-	private final Logger logger = LoggerFactory.getLogger(HhApi.class);
 	
 	public HhApi(PropertyResolver environment) {
 		super();
@@ -67,12 +65,12 @@ public class HhApi {
 								
 			}
 			if (jsonResponseHhRuVacancies.getStatus() == 401 || jsonResponseHhRuVacancies.getStatus() == 403) {
-				logger.error("HH api error. Status: {}", jsonResponseHhRuVacancies.getStatus());
+				log.error("HH api error. Status: {}", jsonResponseHhRuVacancies.getStatus());
 			}
 		} catch (JSONException e) {
-			logger.error("JSONException:", e);
+			log.error("JSONException:", e);
 		} catch (UnirestException e) {
-			logger.error("UnirestException:", e);
+			log.error("UnirestException:", e);
 		}
 		return result;
 	}
@@ -101,7 +99,7 @@ public class HhApi {
 					Date publishedDate = DateTimeUtils.stringToDate(jsonObjectVacancy.getString("published_at"), "yyyy-MM-dd'T'HH:mm:ssZ");
 					hhVacancy.setPublished(publishedDate);					
 				} catch (ParseException e) {						
-					logger.error("ParseException", e);
+					log.error("ParseException", e);
 				}
 				
 				
@@ -135,16 +133,16 @@ public class HhApi {
 				
 				result.add(hhVacancy);
 				
-				logger.info("{}: {}, {}", vacancyIndex, hhVacancy.getId(), hhVacancy.getName());
-				logger.info("    {}", hhVacancy.getResponsibility());					
-				logger.info("    {}", hhVacancy.getRequirement());
-				logger.info("    {}", hhVacancy.getAreaName());
-				logger.info("    {}", DateTimeUtils.formatDate(hhVacancy.getPublished(), "dd.MM.yyyy HH:mm:ss"));
-				logger.info("    {}", hhVacancy.getScheduleName());
-				logger.info("    {} - {}", salaryFrom, salaryTo);
-				logger.info("    {}", hhVacancy.getEmployerName());
-				logger.info("    {}", hhVacancy.getVacancyUrl());
-				logger.info("    архив:{}", hhVacancy.isArchived());
+				log.info("{}: {}, {}", vacancyIndex, hhVacancy.getId(), hhVacancy.getName());
+				log.info("    {}", hhVacancy.getResponsibility());
+				log.info("    {}", hhVacancy.getRequirement());
+				log.info("    {}", hhVacancy.getAreaName());
+				log.info("    {}", DateTimeUtils.formatDate(hhVacancy.getPublished(), "dd.MM.yyyy HH:mm:ss"));
+				log.info("    {}", hhVacancy.getScheduleName());
+				log.info("    {} - {}", salaryFrom, salaryTo);
+				log.info("    {}", hhVacancy.getEmployerName());
+				log.info("    {}", hhVacancy.getVacancyUrl());
+				log.info("    архив:{}", hhVacancy.isArchived());
 			
 								
 				// {"snippet":{"responsibility":"Сопровождение существующих систем. Разработка новых модулей.","requirement":"Понимание работы web-приложений. Наличие опыта работы с реляционными СУБД. Знания <highlighttext>Java<\/highlighttext> Core (Collections, Concurrency). Навыки работы с Spring Framework..."},"insider_interview":null,"sort_point_distance":null,"created_at":"2022-10-03T17:59:32+0300","salary":{"gross":false,"from":50000,"currency":"RUR","to":null},"type":{"name":"Открытая","id":"open"},"apply_alternate_url":"https:\/\/hh.ru\/applicant\/vacancy_response?vacancyId=69730106","working_time_modes":[],"archived":false,"premium":false,"employer":{"trusted":true,"logo_urls":{"original":"https:\/\/hhcdn.ru\/employer-logo-original\/235489.jpg","90":"https:\/\/hhcdn.ru\/employer-logo\/1384633.jpeg","240":"https:\/\/hhcdn.ru\/employer-logo\/1384634.jpeg"},"vacancies_url":"https:\/\/api.hh.ru\/vacancies?employer_id=1144524","name":"Аксиоматика","id":"1144524","alternate_url":"https:\/\/hh.ru\/employer\/1144524","url":"https:\/\/api.hh.ru\/employers\/1144524"},"accept_temporary":false,"id":"69730106","department":null,"published_at":"2022-10-03T17:59:32+0300","adv_response_url":"https:\/\/api.hh.ru\/vacancies\/69730106\/adv_response?host=hh.ru","area":{"name":"Волгоград","id":"24","url":"https:\/\/api.hh.ru\/areas\/24"},"address":{"lng":44.496233,"city":"Волгоград","street":"Баррикадная улица","metro":null,"description":null,"raw":"Волгоград, Баррикадная улица, 1Б","id":"667181","metro_stations":[],"building":"1Б","lat":48.689781},"working_days":[],"working_time_intervals":[],"url":"https:\/\/api.hh.ru\/vacancies\/69730106?host=hh.ru","schedule":{"name":"Гибкий график","id":"flexible"},"has_test":false,"name":"Junior Java-разработчик","response_letter_required":false,"relations":[],"alternate_url":"https:\/\/hh.ru\/vacancy\/69730106","contacts":null,"response_url":null}
@@ -152,10 +150,8 @@ public class HhApi {
 			
 			
 		} catch (JSONException e) {
-			logger.error("JSONException:", e);
-		}
-		
-		
+			log.error("JSONException:", e);
+		}	
 		
 		return result;
 	}

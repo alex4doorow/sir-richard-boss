@@ -19,8 +19,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -30,7 +28,7 @@ import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.data.raw.ProductDataRaw;
 import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.SupplierTypes;
-import ru.sir.richard.boss.model.utils.PricerUtils;
+import ru.sir.richard.boss.utils.PricerUtils;
 
 @Service
 @Slf4j
