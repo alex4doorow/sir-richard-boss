@@ -46,7 +46,7 @@ public class Order extends AnyId {
 	private Date addedDate;
 	private Date modifiedDate;	
 	private Set<Comment> comments;
-	private OrderOffer offer;
+	private final OrderOffer offer;
 	
 	public Order() {
 		super();
@@ -496,8 +496,7 @@ public class Order extends AnyId {
 	}
 	
 	public String getBarcodeNumber() {					
-		String s = DateTimeUtils.formatDate(this.getOrderDate(), "yyMMdd") + StringUtils.leftPad(String.valueOf(this.getNo()), 2, '0');
-		return s;
+		return DateTimeUtils.formatDate(this.getOrderDate(), "yyMMdd") + StringUtils.leftPad(String.valueOf(this.getNo()), 2, '0');
 	}
 	
 	public String getExpiredDate() {

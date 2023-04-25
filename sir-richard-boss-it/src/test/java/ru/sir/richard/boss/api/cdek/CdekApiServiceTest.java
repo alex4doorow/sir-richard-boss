@@ -110,7 +110,7 @@ public class CdekApiServiceTest {
 	
 	@Test
 	public void testGetOrderStatuses() {
-		List<Order> orders = new ArrayList<Order>();
+		List<Order> orders = new ArrayList<>();
 		Order one = new Order();
 		one.getDelivery().setTrackCode("1350203193");
 		orders.add(one);

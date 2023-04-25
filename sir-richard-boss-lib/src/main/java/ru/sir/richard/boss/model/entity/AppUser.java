@@ -85,8 +85,14 @@ public class AppUser implements UserDetails {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        AppUser wsUser = (AppUser) o;
-        return id != null && Objects.equals(id, wsUser.id);
+        if (o == null || getClass() != o.getClass()) return false;
+        AppUser appUser = (AppUser) o;
+        return Objects.equals(id, appUser.id) && Objects.equals(username, appUser.username) &&
+                Objects.equals(password, appUser.password) &&
+                Objects.equals(passwordConfirm, appUser.passwordConfirm) &&
+                Objects.equals(email, appUser.email) &&
+                Objects.equals(lastLogin, appUser.lastLogin) &&
+                Objects.equals(roles, appUser.roles);
     }
 
     @Override

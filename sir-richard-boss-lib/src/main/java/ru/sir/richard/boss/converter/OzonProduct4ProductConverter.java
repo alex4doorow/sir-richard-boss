@@ -41,25 +41,22 @@ public class OzonProduct4ProductConverter {
     	return ozonStockDto;
     }
     
-    public List<OzonRequestStockDto> convertToStockDtos(List<Product> products) {
-    	final int CDEK_QUANTITY_GREATER = 10;
-    	List<OzonRequestStockDto> result = new ArrayList<OzonRequestStockDto>();
+    public List<OzonRequestStockDto> convertToStockDtos(boolean isOzonEnabled, List<Product> products) {
+
+    	List<OzonRequestStockDto> result = new ArrayList<>();
     	products.stream()
     		.filter((product) -> StringUtils.isNotEmpty(product.getMarket(CrmTypes.OZON).getMarketSku()))
     		.filter((product) -> product.getMarket(CrmTypes.OZON).isMarketSeller())
 	    	.forEach(product -> {
 				int cdekQuantity = 0;
 				int ozonPickupQuantity = 0;
-				int ozonExpressQuantity = 0;				
-				if (product.getQuantity() > CDEK_QUANTITY_GREATER) {
-					cdekQuantity = 2;
-					ozonExpressQuantity = 2;
-					ozonPickupQuantity = product.getQuantity() - cdekQuantity - ozonExpressQuantity;
-				} else {
-					ozonPickupQuantity = product.getQuantity();				
+				int ozonExpressQuantity = 0;
+
+				if (isOzonEnabled) {
+					ozonPickupQuantity = product.getQuantity();
 				}
-				ozonPickupQuantity = ozonPickupQuantity < 0 ? 0 : ozonPickupQuantity;  
-	    		
+				ozonPickupQuantity = ozonPickupQuantity < 0 ? 0 : ozonPickupQuantity;
+
 				OzonRequestStockDto cdekOzonStockDto = convertToStockDto(product, Long.valueOf(environment.getProperty("ozon.market.cdek.warehouse")));
 				cdekOzonStockDto.setStock(cdekQuantity);
 	    		result.add(cdekOzonStockDto);
@@ -75,9 +72,9 @@ public class OzonProduct4ProductConverter {
     	return result;
     }
     
-    public OzonRequestStocksDto convertToStocksDto(List<Product> products) {    	
+    public OzonRequestStocksDto convertToStocksDto(boolean isOzonEnabled, List<Product> products) {
 
-    	List<OzonRequestStockDto> ozonStockDtos = convertToStockDtos(products);
+    	List<OzonRequestStockDto> ozonStockDtos = convertToStockDtos(isOzonEnabled, products);
     	OzonRequestStocksDto ozonStocksDto = new OzonRequestStocksDto();
     	ozonStocksDto.setOzonRequestStockDtos(ozonStockDtos);
     	return ozonStocksDto;    	

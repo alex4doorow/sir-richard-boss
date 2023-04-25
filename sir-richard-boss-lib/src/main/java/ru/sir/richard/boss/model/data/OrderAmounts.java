@@ -13,7 +13,7 @@ public class OrderAmounts implements Cloneable {
 	
 	public OrderAmounts() {
 		super();
-		this.amounts = new HashMap<OrderAmountTypes, BigDecimal>();		
+		this.amounts = new HashMap<>();
 	}
 	
 	public OrderAmounts(Order order) {

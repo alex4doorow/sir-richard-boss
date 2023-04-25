@@ -29,8 +29,8 @@ import java.util.Properties;
         "ru.sir.richard.boss.repository", "ru.sir.richard.boss.dao", "ru.sir.richard.boss.crm", "ru.sir.richard.boss.api",
         "ru.sir.richard.boss.converter"})
 @PropertySource(value = "classpath:application.properties", encoding = "UTF-8")
-//@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
-@PropertySource(value = "classpath:application-test.properties", encoding = "UTF-8")
+@PropertySource(value="classpath:application-production.properties", encoding="UTF-8")
+//@PropertySource(value = "classpath:application-test.properties", encoding = "UTF-8")
 @ImportResource({"${app.beans-xml-path}"})
 public class MvcWebConfig implements WebMvcConfigurer {
 
@@ -67,7 +67,7 @@ public class MvcWebConfig implements WebMvcConfigurer {
         return rb;
     }
 
-    @Bean
+	@Bean
     public SessionLocaleResolver localeResolver() {
         SessionLocaleResolver slr = new SessionLocaleResolver();
         slr.setDefaultLocale(new Locale("ru_RU"));

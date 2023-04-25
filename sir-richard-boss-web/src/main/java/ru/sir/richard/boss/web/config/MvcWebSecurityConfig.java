@@ -119,6 +119,7 @@ public class MvcWebSecurityConfig {
     }
     
     private AuthenticationSuccessHandler successHandler() {
+    	/*
 		AuthenticationSuccessHandler handler = new AuthenticationSuccessHandler() {
 			@Override
 			public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -130,7 +131,8 @@ public class MvcWebSecurityConfig {
 			}
 		};
 		return handler;
-        //return new SimpleUrlAuthenticationSuccessHandler();
+		*/
+        return new SimpleUrlAuthenticationSuccessHandler();
     	//return new RefererRedirectionAuthenticationSuccessHandler();
     }
 }

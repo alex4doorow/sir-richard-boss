@@ -74,7 +74,7 @@ public class CdekApiService {
             //log.debug("result: {}", result);
             return result;
         } catch (Exception e) {
-            log.error("result: {}", e);
+            log.error("result:", e);
         }
         return null;
     }
@@ -97,7 +97,7 @@ public class CdekApiService {
             log.debug("result: {}", result);
             return result;
         } catch (Exception e) {
-            log.error("result: {}", e);
+            log.error("result:", e);
         }
         return null;
     }
@@ -137,7 +137,7 @@ public class CdekApiService {
             log.debug("result: {}", result);
             return result;
         } catch (Exception e) {
-            log.error("result: {}", e);
+            log.error("result:", e);
         }
         // 401
         return null;
@@ -166,7 +166,7 @@ public class CdekApiService {
             log.debug("result: {}", result);
             return result;
         } catch (Exception e) {
-            log.error("result: {}", e);
+            log.error("result:", e);
         }
         return null;
     }
@@ -190,7 +190,7 @@ public class CdekApiService {
             log.debug("result: {}", result);
             return result;
         } catch (Exception e) {
-            log.error("result: {}", e);
+            log.error("result:", e);
         }
         return null;
     }
@@ -217,7 +217,7 @@ public class CdekApiService {
             log.debug("result: {}", result);
             return result;
         } catch (Exception e) {
-            log.error("result: {}", e);
+            log.error("result:", e);
         }
         return null;
     }

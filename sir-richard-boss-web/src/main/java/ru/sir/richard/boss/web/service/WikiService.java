@@ -17,6 +17,7 @@ import ru.sir.richard.boss.dao.WikiDao;
 import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.data.conditions.ProductConditions;
 import ru.sir.richard.boss.model.types.CrmTypes;
+import ru.sir.richard.boss.repository.AppUserRepository;
 import ru.sir.richard.boss.utils.NumberUtils;
 
 @Service
@@ -30,6 +31,9 @@ public class WikiService {
 	
 	@Autowired
 	private Environment environment;
+
+	@Autowired
+	AppUserRepository wsUserRepository;
 	
 	@Autowired
 	private OzonMarketApiService ozonMarketApiService;
@@ -109,9 +113,11 @@ public class WikiService {
 		
 		String resultMessage = "";					
 		Boolean isEnabled = Boolean.valueOf(getConfig().getConfig().get("ozon_enabled"));
+		/*
 		if (!isEnabled) {
 			return resultMessage;
-		}		
+		}
+		*/
 		ProductConditions productConditions;
 		if (isConditions) {
 			productConditions = getConfig().loadOzonProductConditions(userId);
@@ -126,7 +132,7 @@ public class WikiService {
 		for (int key : portionProductsMap.keySet()) {
 			List<Product> portionProducts = portionProductsMap.get(key);
 			ozonMarketApiService.offerPrices(portionProducts);
-			ozonMarketApiService.offerWarehouseStocks(portionProducts);
+			ozonMarketApiService.offerWarehouseStocks(isEnabled, portionProducts);
 		}			
 		return resultMessage;		
 	}
@@ -153,7 +159,7 @@ public class WikiService {
 		Map<Integer, List<Product>> portionProductsMap = createPortionProductsMap(products);
 		for (int key : portionProductsMap.keySet()) {
 			List<Product> portionProducts = portionProductsMap.get(key);
-			ozonMarketApiService.offerWarehouseStocks(portionProducts);
+			ozonMarketApiService.offerWarehouseStocks(false, portionProducts);
 		}
 		return resultMessage;		
 	}

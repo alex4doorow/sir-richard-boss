@@ -224,7 +224,8 @@ update oc_manufacturer set country_origin = 'Турция' where manufacturer_id
  * MPN
  * 		104 - цена по запросу
  * 
- */ 
+ */
+
 /* новые поля для таблицы oc_product */
 ALTER TABLE oc_product
 	ADD category_group_id SMALLINT NULL DEFAULT 0; /* ниши товаров */

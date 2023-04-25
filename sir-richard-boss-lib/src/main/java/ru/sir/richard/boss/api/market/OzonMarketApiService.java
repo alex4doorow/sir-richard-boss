@@ -174,10 +174,10 @@ public class OzonMarketApiService {
         return result;	
 	}
 	
-	public OzonResult offerWarehouseStocks(List<Product> products) {
+	public OzonResult offerWarehouseStocks(boolean isOzonEnabled, List<Product> products) {
 
 		OzonResult ozonResult = new OzonResult();
-		OzonRequestStocksDto inputOzonStocksDto = ozonProduct4ProductConverter.convertToStocksDto(products);
+		OzonRequestStocksDto inputOzonStocksDto = ozonProduct4ProductConverter.convertToStocksDto(isOzonEnabled, products);
 		final String url = environment.getProperty("ozon.market.url") + "/v2/products/stocks";	
 		try {
 			OzonResponseStocksDto resultResponse = webClient.post()
