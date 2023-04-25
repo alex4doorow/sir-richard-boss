@@ -43,9 +43,6 @@ public class CdekEntityOrderDto {
 	private CdekEntityOrderLocationDto toLocation;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private List<CdekEntityServiceOrderDto> services;
-	private List<CdekEntityOrderPackageDto> packages;
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private List<CdekEntityOrderStatusDto> statuses;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonProperty("delivery_mode")
 	private String deliveryMode;
@@ -57,7 +54,10 @@ public class CdekEntityOrderDto {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonProperty("delivery_detail")
 	private CdekEntityOrderDeliveryDetailDto deliveryDetail;
-	
+	private List<CdekEntityOrderPackageDto> packages;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private List<CdekEntityOrderStatusDto> statuses;
+
 	public int getNo() {
 		if (StringUtils.isEmpty(this.getNumber())) {
 			return 0;
@@ -65,3 +65,23 @@ public class CdekEntityOrderDto {
 		return Integer.valueOf(TextUtils.numberDigit(this.getNumber()));
 	}
 }
+/*
+requests": [
+		{
+		"request_uuid": "d05b8281-ce3c-4ab8-a0bc-494b19f762e4",
+		"type": "CREATE",
+		"date_time": "2023-04-25T11:41:16+0000",
+		"state": "INVALID",
+		"errors": [
+		{
+		"code": "error_validate_package_height_negatierror_validate_or_more_1500",
+		"message": "Высота должна принадлежать диапазону от 1 см до 1500 см"
+		},
+		{
+		"code": "error_validate_package_length_negatierror_validate_or_more_1500",
+		"message": "Длина должна принадлежать диапазону от 1 см до 1500 см"
+		}
+		]
+		}
+
+ */

@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,7 +148,7 @@ public class CdekApiServiceTest {
 		CdekOrderDto cdekOrder = cdekConverter.convertOrderToCdekOrderDto(testing4CdekOrder, deliveryService.calcTotalWeightG(testing4CdekOrder));
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.writeValue(new File("c:\\src\\sir-richard-boss\\--save\\cdek_order_1.json"), cdekOrder.getEntity());
+		mapper.writeValue(new File("c:\\src\\sir-richard-boss\\--1-save\\cdek_order_1.json"), cdekOrder.getEntity());
 
 		// 4) customer, pvz - courier, postpaiment
 		// 5) customer, pvz - pvz, prepaiment
@@ -179,7 +180,7 @@ public class CdekApiServiceTest {
 		CdekOrderDto cdekOrder = cdekConverter.convertOrderToCdekOrderDto(testing4CdekOrder, deliveryService.calcTotalWeightG(testing4CdekOrder));
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.writeValue(new File("c:\\src\\sir-richard-boss\\--save\\cdek_order_2.json"), cdekOrder.getEntity());
+		mapper.writeValue(new File("c:\\src\\sir-richard-boss\\--1-save\\cdek_order_2.json"), cdekOrder.getEntity());
 	}
 
 	@Test
@@ -199,13 +200,16 @@ public class CdekApiServiceTest {
 		CdekOrderDto cdekOrder = cdekConverter.convertOrderToCdekOrderDto(testing4CdekOrder, deliveryService.calcTotalWeightG(testing4CdekOrder));
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.writeValue(new File("c:\\src\\sir-richard-boss\\--save\\cdek_order_3.json"), cdekOrder.getEntity());
+		mapper.writeValue(new File("c:\\src\\sir-richard-boss\\--1-save\\cdek_order_3.json"), cdekOrder.getEntity());
 	}
 
 	@Test
 	public void testAddOrder() throws CloneNotSupportedException {
 		ProductCategory categoryOne = WikiTestHelper.createProductCategory(102, wikiDao) ;
 		Product productOne = WikiTestHelper.createProduct(32, categoryOne, wikiDao);
+		productOne.getStore().setHeight(0);
+		productOne.getStore().setLength(0);
+		productOne.getStore().setWeight(BigDecimal.valueOf(0));
 
 		int sourceOrderId = 9835;
 		Order sourceOrder = orderDao.findById(sourceOrderId);
@@ -215,17 +219,21 @@ public class CdekApiServiceTest {
 		testing4CdekOrder.setProductCategory(categoryOne);
 		testing4CdekOrder.getItems().get(0).setProduct(productOne);
 
+		testing4CdekOrder.getDelivery().setDeliveryType(DeliveryTypes.CDEK_PVZ_TYPICAL);
+		testing4CdekOrder.getDelivery().getAddress().getCarrierInfo().setCityId(877);
+		testing4CdekOrder.getDelivery().getAddress().getCarrierInfo().setPvz("BRK61");
+		testing4CdekOrder.getDelivery().getAddress().setAddress("г. Братск, ул. Мира, 37А");
+
 		// company, pvz - pvz
 		int testing4CdekOrderId = orderDao.addOrder(testing4CdekOrder);
 		testing4CdekOrder = orderDao.findById(testing4CdekOrderId);
-		CdekAccessDto access = cdekApiService.authorization();
-		CdekResponseOrderDto result = cdekApiService.addOrder(testing4CdekOrder, deliveryService.calcTotalWeightG(testing4CdekOrder),
-				access);
+		CdekResponseOrderDto result = cdekApiService.addOrder(testing4CdekOrder,
+				deliveryService.calcTotalWeightG(testing4CdekOrder),
+				null);
 		log.debug("result:{}", result);
-		if (result != null) {
-			Order order = cdekApiService.getOrderByUUID(result.getEntity().getUuid(), access);
-			log.debug("order:{}", order);
-		}
+		Order orderByUUID = cdekApiService.getOrderByUUIDTryingTen(result.getEntity().getUuid());
+		log.info("orderByUUID: {}", orderByUUID);
+		assertNotNull(orderByUUID.getDelivery().getTrackCode());
 	}
 
 	@Test
@@ -249,12 +257,6 @@ public class CdekApiServiceTest {
 				sourceOrder.getDelivery().getAddress().getCarrierInfo().getCityId(),
 				true,
 				false);
-
-//15.01.2023 14:37:39:889 [http-nio-9998-exec-7] DEBUG r.s.r.boss.api.cdek.CdekApiService - calculate(): weightOfG=10500, totalAmount=39334, tariffId=136, receiverCityId=252, isPostpay=true, isPaySeller=false
-//15.01.2023 14:37:40:143 [http-nio-9998-exec-7] DEBUG r.s.r.boss.api.cdek.CdekApiService - result: CdekResponseTariffDto(deliverySum=575.0, periodMin=3, periodMax=4, calendarMin=3, calendarMax=4, weightCalc=10500, services=[CdekEntityServiceOrderDto(code=INSURANCE, parameter=null, sum=0.00)], totalSum=575.0, currency=RUB)
 		assertThat(new BigDecimal("390"), Matchers.comparesEqualTo(calculatedData.getDeliverySellerSummary()));
-
-		// customer, tumen, courier, postpay
-		//assertThat(new BigDecimal("530"), Matchers.comparesEqualTo(calculatedData.getDeliverySellerSummary()));
 	}
 }

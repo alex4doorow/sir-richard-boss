@@ -1,5 +1,8 @@
 package ru.sir.richard.boss.api.cdek;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ import ru.sir.richard.boss.model.data.crm.DeliveryServiceResult;
 import ru.sir.richard.boss.model.dto.*;
 
 import javax.annotation.PostConstruct;
+import javax.print.DocFlavor;
+import java.io.File;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.ArrayList;
@@ -36,6 +41,7 @@ public class CdekApiService {
     private CdekConverter cdekConverter;
 
     private WebClient webClient;
+    private ObjectMapper mapper;
 
     @PostConstruct
     private void init() {
@@ -50,6 +56,9 @@ public class CdekApiService {
                 .defaultHeader(HttpHeaders.CONNECTION, "keep-alive")
                 .defaultHeader(HttpHeaders.USER_AGENT, "PostmanRuntime/7.29.2")
                 .build();
+
+        mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public CdekAccessDto authorization() {
@@ -79,11 +88,21 @@ public class CdekApiService {
         return null;
     }
 
-    public CdekResponseOrderDto addOrder(Order order, int weightOfG, CdekAccessDto access) {
+    public CdekResponseOrderDto addOrder(Order order, int weightOfG, CdekAccessDto inputAccess) {
         log.debug("addOrder(): {}", order);
         CdekOrderDto cdekOrder = cdekConverter.convertOrderToCdekOrderDto(order, weightOfG);
+/*
+        try {
+            String json = mapper.writeValueAsString(cdekOrder.getEntity());
+            log.info(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+ */
         final String url = "https://api.cdek.ru/v2/orders";
         try {
+            CdekAccessDto access = inputAccess == null ? authorization() : inputAccess;
             CdekResponseOrderDto result = webClient.post()
                     .uri(new URI(url))
                     .header(HttpHeaders.AUTHORIZATION, access.getSecret())
@@ -93,7 +112,6 @@ public class CdekApiService {
                     .bodyToMono(CdekResponseOrderDto.class)
                     .log()
                     .block();
-
             log.debug("result: {}", result);
             return result;
         } catch (Exception e) {
@@ -171,6 +189,30 @@ public class CdekApiService {
         return null;
     }
 
+    public Order getOrderByUUIDTryingTen(String uuId) {
+        Order orderByUUID = null;
+        String trackCode = "";
+        if (uuId != null) {
+            int repeatedIndex = 0;
+            while (StringUtils.isEmpty(trackCode)) {
+                if (repeatedIndex > 10) {
+                    log.debug("order.trackCode not load. uid:{}", uuId);
+                    break;
+                }
+                orderByUUID = getOrderByUUID(uuId, null);
+                if (orderByUUID == null) {
+                    break;
+                }
+                trackCode = orderByUUID.getDelivery().getTrackCode();
+                repeatedIndex++;
+            }
+        }
+        if (StringUtils.isNotEmpty(trackCode)) {
+            log.debug("order.trackCode:{}", trackCode);
+        }
+        return orderByUUID;
+    }
+
     public Order getOrderByUUID(String uuId, CdekAccessDto inputAccess) {
         log.debug("getOrder(): {}", uuId);
 
@@ -185,7 +227,13 @@ public class CdekApiService {
                     .bodyToMono(CdekOrderDto.class)
                     .log()
                     .block();
-            log.debug("result: {}", cdekOrderDto);
+            List<CdekEntityOrderStatusDto> statuses = cdekOrderDto.getEntity().getStatuses();
+            log.debug("result.requests: {}", cdekOrderDto.getRequests());
+            log.debug("result.statuses: {}", statuses);
+            if (statuses != null && statuses.size() > 0 && "INVALID".equals(statuses.get(0).getCode())) {
+                log.debug("result.statuses.error: {}", statuses.get(0).getCode());
+                return null;
+            }
             Order result = cdekConverter.convertCdekOrderDtoToOrder(cdekOrderDto);
             log.debug("result: {}", result);
             return result;

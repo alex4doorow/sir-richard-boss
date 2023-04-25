@@ -12,6 +12,7 @@ import ru.sir.richard.boss.utils.DateTimeUtils;
 @Data
 public class CdekEntityOrderStatusDto {	
 	private String code;
+	private String name;
 	@JsonProperty("date_time")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DateTimeUtils.DATE_FORMAT_CDEK)	
 	private Date dateTime;

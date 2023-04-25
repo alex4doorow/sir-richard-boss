@@ -88,19 +88,8 @@ public class DeliveryService extends AnyDaoImpl {
 			CdekAccessDto access = cdekApiService.authorization();
 			CdekResponseOrderDto addResult = cdekApiService.addOrder(order, calcTotalWeightG(order), access);
 			if (!addResult.isHaveErrors()) {
-				int repeatedIndex = 0;
-				while (StringUtils.isEmpty(trackCode)) {
-					Order orderByUUID = cdekApiService.getOrderByUUID(addResult.getEntity().getUuid(), access);
-					trackCode = orderByUUID.getDelivery().getTrackCode();
-					if (repeatedIndex > 10) {
-						break;
-					}
-					repeatedIndex++;
-				}
-				log.info("i:{}", repeatedIndex);
-				if (StringUtils.isEmpty(trackCode)) {
-					trackCode = addResult.getEntity().getUuid();
-				}
+				Order orderByUUID = cdekApiService.getOrderByUUIDTryingTen(addResult.getEntity().getUuid());
+				trackCode = orderByUUID.getDelivery().getTrackCode();trackCode = orderByUUID.getDelivery().getTrackCode();
 				if (StringUtils.isNoneEmpty(trackCode)) {
 					orderDao.changeStatusOrder(order.getId(), order.getStatus(), order.getAnnotation(), trackCode, null);
 				}

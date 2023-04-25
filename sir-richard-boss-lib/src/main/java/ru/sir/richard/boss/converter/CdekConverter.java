@@ -176,7 +176,11 @@ public class CdekConverter {
         CdekEntityOrderPackageDto orderPackage = new CdekEntityOrderPackageDto();
         orderPackage.setNumber("1");
         orderPackage.setComment(order.getProductCategory().getName());
-        orderPackage.setWeight(weightOfG);
+        if (weightOfG > 0) {
+            orderPackage.setWeight(weightOfG);
+        } else {
+            orderPackage.setWeight(100);
+        }
         List<CdekEntityPackageItemDto> items = new ArrayList<>();
         order.getItems().forEach(orderItem -> {
             CdekEntityPackageItemDto item = new CdekEntityPackageItemDto();
@@ -220,9 +224,21 @@ public class CdekConverter {
             items.add(item);
 
             if (items.size() == 1) {
-                orderPackage.setLength(orderItem.getProduct().getStore().getLength());
-                orderPackage.setHeight(orderItem.getProduct().getStore().getHeight());
-                orderPackage.setWidth(orderItem.getProduct().getStore().getWidth());
+                if (orderItem.getProduct().getStore().getLength() > 0) {
+                    orderPackage.setLength(orderItem.getProduct().getStore().getLength());
+                } else {
+                    orderPackage.setLength(10);
+                }
+                if (orderItem.getProduct().getStore().getHeight() > 0) {
+                    orderPackage.setHeight(orderItem.getProduct().getStore().getHeight());
+                } else {
+                    orderPackage.setHeight(10);
+                }
+                if (orderItem.getProduct().getStore().getWidth() > 0) {
+                    orderPackage.setWidth(orderItem.getProduct().getStore().getWidth());
+                } else {
+                    orderPackage.setWidth(10);
+                }
             }
         });
         orderPackage.setItems(items);
