@@ -262,7 +262,7 @@ public class OzomMarketApiServiceTest {
 		product.getMarket(CrmTypes.OZON).setMarketSku("323061675");
 		product.getMarket(CrmTypes.OZON).setMarketSeller(true);		
 		products = Collections.singletonList(product);		
-		ozonStocksDto = ozonProduct4ProductConverter.convertToStocksDto(products);
+		ozonStocksDto = ozonProduct4ProductConverter.convertToStocksDto(true, products);
 		log.debug("ozonStocksDto: {}", ozonStocksDto);
 		assertFalse(ozonStocksDto == null);		
 		assertEquals(3, ozonStocksDto.getOzonRequestStockDtos().size());	
@@ -282,7 +282,7 @@ public class OzomMarketApiServiceTest {
 		product.getMarket(CrmTypes.OZON).setMarketSku("323061675");
 		product.getMarket(CrmTypes.OZON).setMarketSeller(true);		
 		products = Collections.singletonList(product);		
-		ozonStocksDto = ozonProduct4ProductConverter.convertToStocksDto(products);
+		ozonStocksDto = ozonProduct4ProductConverter.convertToStocksDto(true, products);
 		log.debug("ozonStocksDto: {}", ozonStocksDto);
 		assertFalse(ozonStocksDto == null);
 		assertEquals(3, ozonStocksDto.getOzonRequestStockDtos().size());	
@@ -306,7 +306,7 @@ public class OzomMarketApiServiceTest {
 		product.getMarket(CrmTypes.OZON).setMarketSku("323061675");
 		product.getMarket(CrmTypes.OZON).setMarketSeller(true);		
 		List<Product> products = Collections.singletonList(product);	
-		OzonResult ozonResult = ozonMarketApiService.offerWarehouseStocks(products);
+		OzonResult ozonResult = ozonMarketApiService.offerWarehouseStocks(true, products);
 		log.debug("ozon result: {}", ozonResult);
 	}
 	

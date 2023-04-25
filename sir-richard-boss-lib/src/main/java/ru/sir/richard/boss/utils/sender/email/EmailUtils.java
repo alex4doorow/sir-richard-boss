@@ -85,7 +85,7 @@ public class EmailUtils {
 	        result = true;
 			
 		} catch (Exception e) {
-			logger.error("email:{} {}", "fail", e);
+			logger.error("email:{}", "fail", e);
 			result = false;
 		}
 		return result;
@@ -98,7 +98,7 @@ public class EmailUtils {
 	
 	public List<String> loadMessagesFromEmail(StoreTypes shopStore, Date executorDate, String folderName) {
 				
-		List<String> result = new ArrayList<String>();		
+		List<String> result = new ArrayList<>();
 		String host = environment.getProperty("mail.imap.host");
 	    String mailStoreType = "imaps";	    
 	    String username = shopStore.getEmail();

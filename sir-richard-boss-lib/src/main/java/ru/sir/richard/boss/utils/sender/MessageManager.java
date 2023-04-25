@@ -9,14 +9,13 @@ import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.types.OrderAdvertTypes;
 import ru.sir.richard.boss.model.types.OrderEmailStatuses;
 import ru.sir.richard.boss.utils.sender.email.EmailSender;
-import ru.sir.richard.boss.utils.sender.sms.SmsSender;
 
 public class MessageManager {
 	
 	private List<AnySender> senders = new ArrayList<AnySender>();
 	
 	public MessageManager(PropertyResolver environment) {
-		senders.add(new SmsSender(environment));		
+		//senders.add(new SmsSender(environment));
 		senders.add(new EmailSender(environment));
 	}
 	
