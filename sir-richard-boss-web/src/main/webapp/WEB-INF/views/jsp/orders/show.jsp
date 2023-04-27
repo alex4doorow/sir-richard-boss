@@ -59,8 +59,6 @@
 <div class="tab-content" id="orderTabContent">
 	<div class="tab-pane fade show active" id="order" role="tabpanel"
 		aria-labelledby="order-tab">
-
-
 		<div class="container-fluid">
 			<br />
 			<div class="row">
@@ -208,16 +206,11 @@
 					<table class="table table-striped table-sm">
 						<thead>
 							<tr>
-								<th scope="col"><fmt:message
-										key="order.show.statuses.table.headers.no" /></th>
-								<th scope="col"><fmt:message
-										key="order.show.statuses.table.headers.status" /></th>
-								<th scope="col"><fmt:message
-										key="order.show.statuses.table.headers.crmStatus" /></th>
-								<th scope="col"><fmt:message
-										key="order.show.statuses.table.headers.crmSubStatus" /></th>
-								<th scope="col"><fmt:message
-										key="order.show.statuses.table.headers.addedDate" /></th>
+								<th scope="col"><fmt:message key="order.show.statuses.table.headers.no" /></th>
+								<th scope="col"><fmt:message key="order.show.statuses.table.headers.status" /></th>
+								<th scope="col"><fmt:message key="order.show.statuses.table.headers.crmStatus" /></th>
+								<th scope="col"><fmt:message key="order.show.statuses.table.headers.crmSubStatus" /></th>
+								<th scope="col"><fmt:message key="order.show.statuses.table.headers.addedDate" /></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -235,17 +228,15 @@
 				</div>
 			</div>
 			<br>
-			<h6><fmt:message key="order.show.crm.header" /></h6>
+			<h6><fmt:message key="order.show.crm.header"/></h6>
 			<div class="row">
 				<div class="col-sm-5">
 					<table class="table table-striped table-sm">
 						<thead>
 							<tr>
-								
 								<th scope="col"><fmt:message key="order.show.crm.table.headers.crm" /></th>
 								<th scope="col"><fmt:message key="order.show.crm.table.headers.parentId" /></th>
 								<th scope="col"><fmt:message key="order.show.crm.table.headers.parentCode" /></th>
-								
 							</tr>
 						</thead>
 						<tbody>
@@ -254,7 +245,6 @@
 								<td>${orderExternalCrm.crm.annotation}</td>
 								<td>${orderExternalCrm.parentId}</td>
 								<td>${orderExternalCrm.parentCode}</td>
-																
 							</tr>
 						</c:forEach>
 						</tbody>
