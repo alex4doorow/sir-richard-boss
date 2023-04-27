@@ -4,7 +4,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import ru.sir.richard.boss.model.types.AddressTypes;
 import ru.sir.richard.boss.model.types.Countries;
-import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.model.utils.TextUtils;
 
 public class Address extends AnyId {
 

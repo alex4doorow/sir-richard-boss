@@ -9,8 +9,8 @@ import java.util.Set;
 import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.types.OrderTypes;
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.TextUtils;
 
 public class OrderConditions extends AnyConditions {
 		

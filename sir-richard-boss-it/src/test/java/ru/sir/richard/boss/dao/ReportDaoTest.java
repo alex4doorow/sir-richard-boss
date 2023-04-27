@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import ru.sir.richard.boss.model.data.report.AggregateProductSalesReportBean;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.Pair;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.Pair;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

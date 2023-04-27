@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.utils;
+package ru.sir.richard.boss.model.utils;
 
 import java.util.Iterator;
 import java.util.List;

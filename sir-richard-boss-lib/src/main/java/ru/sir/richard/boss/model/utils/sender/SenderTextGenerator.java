@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.utils.sender;
+package ru.sir.richard.boss.model.utils.sender;
 
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.types.OrderEmailStatuses;

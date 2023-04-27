@@ -33,8 +33,8 @@ import ru.sir.richard.boss.model.dto.OzonRequestStocksDto;
 import ru.sir.richard.boss.model.types.CrmStatuses;
 import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.Pair;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.Pair;
 
 @Slf4j
 @SpringBootTest

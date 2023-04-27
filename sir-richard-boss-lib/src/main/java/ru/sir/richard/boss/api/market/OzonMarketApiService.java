@@ -31,8 +31,8 @@ import ru.sir.richard.boss.model.dto.OzonResponseStocksDto;
 import ru.sir.richard.boss.model.types.CrmStatuses;
 import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.Pair;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.Pair;
 
 /**
  * Сервис интеграции с OZON

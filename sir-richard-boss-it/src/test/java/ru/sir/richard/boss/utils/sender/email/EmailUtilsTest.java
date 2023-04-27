@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import ru.sir.richard.boss.model.types.StoreTypes;
+import ru.sir.richard.boss.model.utils.sender.email.EmailUtils;
 
 @SpringBootTest
 @PropertySource(value="classpath:application-it.properties", encoding="UTF-8")

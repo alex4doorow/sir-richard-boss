@@ -20,7 +20,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import ru.sir.richard.boss.model.data.HhVacanciesPage;
 import ru.sir.richard.boss.model.data.HhVacancy;
-import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
 
 @Slf4j
 public class HhApi {

@@ -46,7 +46,7 @@ import ru.sir.richard.boss.model.data.OrderExternalCrm;
 import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
-import ru.sir.richard.boss.utils.NumberUtils;
+import ru.sir.richard.boss.model.utils.NumberUtils;
 
 /**
  * doc https://yandex.ru/dev/market/partner-marketplace-cd/doc/dg/reference/put-campaigns-id-orders-id-status.html 

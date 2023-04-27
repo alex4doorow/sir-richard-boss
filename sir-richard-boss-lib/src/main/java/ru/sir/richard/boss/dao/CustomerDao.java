@@ -13,7 +13,7 @@ import ru.sir.richard.boss.model.types.AddressTypes;
 import ru.sir.richard.boss.model.types.Countries;
 import ru.sir.richard.boss.model.types.CustomerStatuses;
 import ru.sir.richard.boss.model.types.CustomerTypes;
-import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.model.utils.TextUtils;
 
 import java.sql.*;
 import java.util.List;

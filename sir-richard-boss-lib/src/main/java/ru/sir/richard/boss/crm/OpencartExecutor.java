@@ -47,8 +47,8 @@ import ru.sir.richard.boss.model.types.OrderTypes;
 import ru.sir.richard.boss.model.types.PaymentDeliveryTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
 import ru.sir.richard.boss.model.types.StoreTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.TextUtils;
 
 @Service
 @Slf4j

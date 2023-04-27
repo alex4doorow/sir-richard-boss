@@ -8,7 +8,7 @@ import ru.sir.richard.boss.integration.msg.ENResult;
 import ru.sir.richard.boss.integration.msg.ENFormat;
 import ru.sir.richard.boss.integration.msg.Msg;
 import ru.sir.richard.boss.integration.msg.Payload;
-import ru.sir.richard.boss.utils.IntegrationUtils;
+import ru.sir.richard.boss.model.utils.IntegrationUtils;
 import ru.sir.richard.boss.integration.impl.model.ErrorResponse;
 import ru.sir.richard.boss.integration.impl.model.ReportListRequestModel;
 

@@ -34,10 +34,10 @@ import ru.sir.richard.boss.model.data.conditions.OrderConditions;
 import ru.sir.richard.boss.model.types.OrderAmountTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.NumberUtils;
-import ru.sir.richard.boss.utils.Pair;
-import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.NumberUtils;
+import ru.sir.richard.boss.model.utils.Pair;
+import ru.sir.richard.boss.model.utils.TextUtils;
 import ru.sir.richard.boss.web.service.OrderService;
 import ru.sir.richard.boss.web.validator.OrderConditionsFormValidator;
 

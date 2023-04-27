@@ -25,9 +25,9 @@ import ru.sir.richard.boss.model.types.OrderSourceTypes;
 import ru.sir.richard.boss.model.types.OrderTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
 import ru.sir.richard.boss.model.types.StoreTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.TextUtils;
-import ru.sir.richard.boss.utils.sender.email.EmailUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.TextUtils;
+import ru.sir.richard.boss.model.utils.sender.email.EmailUtils;
 
 @Service
 @Slf4j

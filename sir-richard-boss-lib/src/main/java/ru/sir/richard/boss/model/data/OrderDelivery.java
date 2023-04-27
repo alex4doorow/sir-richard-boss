@@ -11,7 +11,7 @@ import ru.sir.richard.boss.model.types.DeliveryPrices;
 import ru.sir.richard.boss.model.types.DeliveryTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.PaymentDeliveryTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
 
 public class OrderDelivery extends AnyId {
 	

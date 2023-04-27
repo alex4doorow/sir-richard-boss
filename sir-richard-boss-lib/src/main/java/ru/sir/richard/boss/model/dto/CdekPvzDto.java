@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
-import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.model.utils.TextUtils;
 @Data
 public class CdekPvzDto {
 	private String code;

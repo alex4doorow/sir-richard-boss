@@ -28,7 +28,7 @@ import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.data.raw.ProductDataRaw;
 import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.SupplierTypes;
-import ru.sir.richard.boss.utils.PricerUtils;
+import ru.sir.richard.boss.model.utils.PricerUtils;
 
 @Service
 @Slf4j

@@ -18,7 +18,7 @@ import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.data.conditions.ProductConditions;
 import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.repository.AppUserRepository;
-import ru.sir.richard.boss.utils.NumberUtils;
+import ru.sir.richard.boss.model.utils.NumberUtils;
 
 @Service
 public class WikiService {

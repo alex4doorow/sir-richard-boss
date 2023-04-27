@@ -17,7 +17,7 @@ import ru.sir.richard.boss.model.dto.OzonRequestPricesDto;
 import ru.sir.richard.boss.model.dto.OzonRequestStockDto;
 import ru.sir.richard.boss.model.dto.OzonRequestStocksDto;
 import ru.sir.richard.boss.model.types.CrmTypes;
-import ru.sir.richard.boss.utils.NumberUtils;
+import ru.sir.richard.boss.model.utils.NumberUtils;
 
 @Component
 public class OzonProduct4ProductConverter {

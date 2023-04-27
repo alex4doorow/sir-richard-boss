@@ -3,7 +3,7 @@ package ru.sir.richard.boss.model.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
 
 import java.util.Date;
 import java.util.List;

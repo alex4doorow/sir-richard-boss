@@ -10,8 +10,8 @@ import ru.sir.richard.boss.model.data.conditions.OrderConditions;
 import ru.sir.richard.boss.model.data.conditions.ProductConditions;
 import ru.sir.richard.boss.model.data.conditions.ProductSalesReportConditions;
 import ru.sir.richard.boss.model.types.*;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.TextUtils;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;

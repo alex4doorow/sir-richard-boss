@@ -20,9 +20,9 @@ import ru.sir.richard.boss.model.data.OrderAmounts;
 import ru.sir.richard.boss.model.data.conditions.CustomerConditions;
 import ru.sir.richard.boss.model.factories.OrderTotalAmountsCalculatorFactory;
 import ru.sir.richard.boss.model.types.OrderEmailStatuses;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.sender.MessageManager;
-import ru.sir.richard.boss.utils.sender.email.EmailSenderTextGenerator;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.sender.MessageManager;
+import ru.sir.richard.boss.model.utils.sender.email.EmailSenderTextGenerator;
 import ru.sir.richard.boss.web.data.FormCustomer;
 
 @Service

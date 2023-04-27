@@ -19,9 +19,9 @@ import ru.sir.richard.boss.model.data.conditions.CustomerConditions;
 import ru.sir.richard.boss.model.data.conditions.OrderConditions;
 import ru.sir.richard.boss.model.factories.CustomersFactory;
 import ru.sir.richard.boss.model.types.*;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.Pair;
-import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.Pair;
+import ru.sir.richard.boss.model.utils.TextUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

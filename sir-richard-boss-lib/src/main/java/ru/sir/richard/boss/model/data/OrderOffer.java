@@ -5,7 +5,7 @@ import java.util.Date;
 import lombok.Data;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.OrderTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
 
 /**
  * Контрольный срок исполнения заявки или КП

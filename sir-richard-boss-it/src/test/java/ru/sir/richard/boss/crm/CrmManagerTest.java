@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
-import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
 
 @SpringBootTest
 @PropertySource(value="classpath:application-it.properties", encoding="UTF-8")

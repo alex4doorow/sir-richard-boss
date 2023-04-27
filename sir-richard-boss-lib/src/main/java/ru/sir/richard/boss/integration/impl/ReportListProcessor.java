@@ -7,7 +7,7 @@ import ru.sir.richard.boss.integration.impl.model.ReportListResponseModel;
 import ru.sir.richard.boss.integration.msg.ENFormat;
 import ru.sir.richard.boss.integration.msg.Msg;
 import ru.sir.richard.boss.integration.msg.Payload;
-import ru.sir.richard.boss.utils.IntegrationUtils;
+import ru.sir.richard.boss.model.utils.IntegrationUtils;
 
 @Slf4j
 public class ReportListProcessor implements Processor {

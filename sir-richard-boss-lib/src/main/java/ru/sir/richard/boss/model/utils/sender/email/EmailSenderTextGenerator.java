@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.utils.sender.email;
+package ru.sir.richard.boss.model.utils.sender.email;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,10 +11,10 @@ import ru.sir.richard.boss.model.types.OrderEmailStatuses;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 import ru.sir.richard.boss.model.types.OrderTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.NumberUtils;
-import ru.sir.richard.boss.utils.sender.Message;
-import ru.sir.richard.boss.utils.sender.SenderTextGenerator;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.sender.Message;
+import ru.sir.richard.boss.model.utils.sender.SenderTextGenerator;
+import ru.sir.richard.boss.model.utils.NumberUtils;
 
 public class EmailSenderTextGenerator extends SenderTextGenerator {
 

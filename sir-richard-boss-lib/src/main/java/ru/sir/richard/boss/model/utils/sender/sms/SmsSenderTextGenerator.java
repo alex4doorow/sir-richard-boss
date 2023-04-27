@@ -1,4 +1,4 @@
-package ru.sir.richard.boss.utils.sender.sms;
+package ru.sir.richard.boss.model.utils.sender.sms;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -9,10 +9,10 @@ import ru.sir.richard.boss.model.types.OrderEmailStatuses;
 import ru.sir.richard.boss.model.types.OrderStatuses;
 
 import ru.sir.richard.boss.model.types.PaymentTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.NumberUtils;
-import ru.sir.richard.boss.utils.sender.Message;
-import ru.sir.richard.boss.utils.sender.SenderTextGenerator;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.NumberUtils;
+import ru.sir.richard.boss.model.utils.sender.Message;
+import ru.sir.richard.boss.model.utils.sender.SenderTextGenerator;
 
 public class SmsSenderTextGenerator extends SenderTextGenerator {
 

@@ -5,7 +5,7 @@ import java.util.Date;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.sir.richard.boss.utils.Pair;
+import ru.sir.richard.boss.model.utils.Pair;
 
 /**
  * Не помю что, но используется в контейнере продукта для фронта

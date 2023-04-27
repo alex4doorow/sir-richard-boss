@@ -3,7 +3,7 @@ package ru.sir.richard.boss.model.data.report;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import ru.sir.richard.boss.utils.Pair;
+import ru.sir.richard.boss.model.utils.Pair;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

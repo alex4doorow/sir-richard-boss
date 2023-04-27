@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ru.sir.richard.boss.model.types.CustomerTypes;
-import ru.sir.richard.boss.utils.TextUtils;
 
 public class TextUtilsTest {
 

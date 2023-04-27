@@ -13,8 +13,8 @@ import ru.sir.richard.boss.dao.WikiDao;
 import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.data.conditions.ProductConditions;
 import ru.sir.richard.boss.repository.AppUserRepository;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.SingleExecutor;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.SingleExecutor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

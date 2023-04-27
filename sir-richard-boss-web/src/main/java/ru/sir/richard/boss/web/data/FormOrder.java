@@ -12,8 +12,8 @@ import ru.sir.richard.boss.model.types.OrderSourceTypes;
 import ru.sir.richard.boss.model.types.OrderTypes;
 import ru.sir.richard.boss.model.types.PaymentDeliveryTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.NumberUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.NumberUtils;
 
 public class FormOrder extends Order {
 	

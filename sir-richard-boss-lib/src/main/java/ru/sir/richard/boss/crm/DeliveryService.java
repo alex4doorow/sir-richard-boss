@@ -60,11 +60,11 @@ import ru.sir.richard.boss.model.types.PaymentDeliveryMethods;
 import ru.sir.richard.boss.model.types.PaymentDeliveryTypes;
 import ru.sir.richard.boss.model.types.PaymentTypes;
 import ru.sir.richard.boss.model.types.ReportPeriodTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.MathUtils;
-import ru.sir.richard.boss.utils.Pair;
-import ru.sir.richard.boss.utils.SingleExecutor;
-import ru.sir.richard.boss.utils.sender.MessageManager;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.MathUtils;
+import ru.sir.richard.boss.model.utils.Pair;
+import ru.sir.richard.boss.model.utils.SingleExecutor;
+import ru.sir.richard.boss.model.utils.sender.MessageManager;
 
 @Service
 @Slf4j

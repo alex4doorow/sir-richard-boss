@@ -13,7 +13,7 @@ import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.data.crm.DeliveryServiceResult;
 import ru.sir.richard.boss.model.dto.*;
 import ru.sir.richard.boss.model.types.*;
-import ru.sir.richard.boss.utils.MathUtils;
+import ru.sir.richard.boss.model.utils.MathUtils;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

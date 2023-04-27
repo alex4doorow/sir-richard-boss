@@ -36,8 +36,8 @@ import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.types.DeliveryTypes;
 import ru.sir.richard.boss.model.types.OrderAdvertTypes;
 import ru.sir.richard.boss.model.types.OrderStatuses;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.Pair;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.Pair;
 
 @Service
 @Slf4j

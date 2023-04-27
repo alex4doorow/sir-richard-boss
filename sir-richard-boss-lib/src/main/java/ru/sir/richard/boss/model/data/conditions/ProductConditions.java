@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import ru.sir.richard.boss.model.types.SupplierTypes;
-import ru.sir.richard.boss.utils.TextUtils;
+import ru.sir.richard.boss.model.utils.TextUtils;
 
 public class ProductConditions extends AnyConditions {
 	

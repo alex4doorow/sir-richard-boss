@@ -20,8 +20,8 @@ import ru.sir.richard.boss.model.data.report.ProductSalesReportBean;
 import ru.sir.richard.boss.model.data.report.SalesFunnelReportBean;
 import ru.sir.richard.boss.model.data.report.TempProductSalesReportBean;
 import ru.sir.richard.boss.model.types.*;
-import ru.sir.richard.boss.utils.DateTimeUtils;
-import ru.sir.richard.boss.utils.Pair;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.Pair;
 
 import java.io.IOException;
 import java.io.OutputStream;

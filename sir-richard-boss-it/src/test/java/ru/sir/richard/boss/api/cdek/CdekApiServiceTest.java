@@ -9,7 +9,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +26,10 @@ import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.data.ProductCategory;
 import ru.sir.richard.boss.model.data.crm.DeliveryServiceResult;
-import ru.sir.richard.boss.model.dto.CdekAccessDto;
 import ru.sir.richard.boss.model.dto.CdekOrderDto;
 import ru.sir.richard.boss.model.dto.CdekResponseOrderDto;
 import ru.sir.richard.boss.model.types.DeliveryTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.utils.WikiTestHelper;
 
 import static org.junit.jupiter.api.Assertions.*;

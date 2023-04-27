@@ -22,9 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import ru.sir.richard.boss.integration.msg.ENFormat;
 import ru.sir.richard.boss.integration.msg.ENResult;
 import ru.sir.richard.boss.integration.msg.Msg;
-import ru.sir.richard.boss.utils.IntegrationUtils;
+import ru.sir.richard.boss.model.utils.IntegrationUtils;
 
-import static ru.sir.richard.boss.utils.IntegrationUtils.NOT_THROWS;
+import static ru.sir.richard.boss.model.utils.IntegrationUtils.NOT_THROWS;
 
 @Slf4j
 @RestController

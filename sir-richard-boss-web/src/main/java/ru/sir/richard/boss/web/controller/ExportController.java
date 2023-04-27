@@ -18,7 +18,7 @@ import net.sf.jasperreports.engine.JRException;
 import ru.sir.richard.boss.crm.DeliveryService;
 import ru.sir.richard.boss.model.data.Order;
 import ru.sir.richard.boss.model.types.CrmTypes;
-import ru.sir.richard.boss.utils.DateTimeUtils;
+import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.web.service.OrderService;
 import ru.sir.richard.boss.web.service.WikiService;
 
