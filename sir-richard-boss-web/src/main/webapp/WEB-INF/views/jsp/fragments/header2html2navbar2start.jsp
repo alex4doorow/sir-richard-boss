@@ -86,13 +86,13 @@
             </ul>
             
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span><fmt:message key="main.menus.left.integration" /></span>              
+              <span><fmt:message key="main.menus.left.integration"/></span>
             </h6>
             <ul class="nav flex-column mb-2">
              <li class="nav-item">
                 <a id="nav-link-ym-products" class="nav-menus-item nav-link" href="${urlHome}wiki/products/ym">
                   <i class="bi bi-cart-check text-dark"></i>
-                  <fmt:message key="main.menus.left.ymProducts" />
+                  <fmt:message key="main.menus.left.ymProducts"/>
                 </a>
               </li>
               

@@ -391,7 +391,7 @@ public class OrderDao extends AnyDaoImpl {
 		return results;
 	}
 	
-	private  Map<OrderAmountTypes, BigDecimal> calcTotalOrdersPostpayAmountByConditions() {
+	private Map<OrderAmountTypes, BigDecimal> calcTotalOrdersPostpayAmountByConditions() {
 	
 		final String sqlSelectMinOrderDate = "SELECT MIN(order_date) MIN_ORDER_DATE FROM sr_order "
 				+ "WHERE amount_postpay > 0 "

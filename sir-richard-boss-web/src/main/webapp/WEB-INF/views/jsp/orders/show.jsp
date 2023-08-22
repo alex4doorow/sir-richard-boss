@@ -216,7 +216,7 @@
 						<tbody>
 						<c:forEach var="orderStatusItem" items="${order.statuses}">
 							<tr>
-								<th scope="row">${orderStatusItem.no}</th>
+								<td>${orderStatusItem.no}</td>
 								<td>${orderStatusItem.status.annotation}</td>
 								<td>${orderStatusItem.crmStatus}</td>
 								<td>${orderStatusItem.crmSubStatus}</td>								

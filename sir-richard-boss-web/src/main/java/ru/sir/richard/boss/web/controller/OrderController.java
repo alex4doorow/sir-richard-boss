@@ -355,7 +355,7 @@ public class OrderController extends AnyController {
 	@ExceptionHandler(EmptyResultDataAccessException.class)
 	public ModelAndView handleEmptyData(HttpServletRequest req, Exception ex) {
 		log.debug("handleEmptyData()");
-		log.error("Request:{}, error:{}", req.getRequestURL(), ex);
+		log.error("Request:{}, error:", req.getRequestURL(), ex);
 		ModelAndView model = new ModelAndView();
 		model.setViewName("order/show");
 		model.addObject("msg", "order not found");

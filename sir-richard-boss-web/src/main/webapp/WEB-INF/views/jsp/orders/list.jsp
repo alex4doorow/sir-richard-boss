@@ -144,7 +144,7 @@
 			</thead>
 			<tbody>
 				<c:forEach var="order" items="${orders}">			
-				<tr class="table-${order.viewStatus.union}">				
+				<tr class="table-${order.viewStatus.union}">
 		 				<td class="table-${order.viewStatus.orderId}"><input data-delivery-code="${order.delivery.deliveryType}" data-delivery-category="${order.delivery.deliveryType.category}" id="checkbox-${order.id}" type="checkbox" data-no="${order.no}"></td>
 						<td id="td-id-${order.id}" class="td-id table-${order.viewStatus.orderNo}" scope="row" data-id="${order.id}"><a href="${urlOrders}/${order.id}/${listType}">${order.no}</a></td>							
 						
@@ -164,9 +164,7 @@
 								data-container="body" data-toggle="tooltip" data-placement="bottom" title="">				
 						  <fmt:formatNumber type = "currency" value = "${order.amounts.getValue(OrderAmountTypes.TOTAL_WITH_DELIVERY)}" />					
 						<td id="td-trackcode-${order.id}" class="text-center">${order.delivery.trackCode}</td>
-						
-							
-				</tr>			
+				</tr>
 				</c:forEach>
 	         </tbody>
 	         </table>

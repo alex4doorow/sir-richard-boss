@@ -92,6 +92,7 @@ public class OzonMarketApiService {
 		String sinceEnd = DateTimeUtils.formatDate(period.getEnd(), DateTimeUtils.DATE_FORMAT_OZON);		
 				
 		final String url = environment.getProperty("ozon.market.url") + "/v3/posting/fbs/list";
+		log.debug("ozon: {}", url);
 		String inputJson = "{"
 				+ "\"dir\": \"asc\",\r\n"
 				+ "\"filter\": {\"delivery_method_id\": ["				
@@ -146,6 +147,7 @@ public class OzonMarketApiService {
 		
 		Order result;
 		OzonOrderDto ozonOrderDto;
+		log.debug("ozon: {}", url);
 		try {
 			ozonOrderDto = webClient.post()
 			        .uri(new URI(url))
@@ -179,6 +181,7 @@ public class OzonMarketApiService {
 		OzonResult ozonResult = new OzonResult();
 		OzonRequestStocksDto inputOzonStocksDto = ozonProduct4ProductConverter.convertToStocksDto(isOzonEnabled, products);
 		final String url = environment.getProperty("ozon.market.url") + "/v2/products/stocks";	
+		log.debug("ozon: {}", url);
 		try {
 			OzonResponseStocksDto resultResponse = webClient.post()
 			        .uri(new URI(url))
@@ -188,9 +191,7 @@ public class OzonMarketApiService {
 			        .contentType(MediaType.APPLICATION_JSON)
 			        .bodyValue(inputOzonStocksDto)
 			        .retrieve()
-			        .onStatus(
-			        	    HttpStatus.NOT_FOUND::equals,
-			        	    response -> response.bodyToMono(String.class).map(Exception::new))
+			        .onStatus(HttpStatus.NOT_FOUND::equals, response -> response.bodyToMono(String.class).map(Exception::new))
 			        .bodyToMono(OzonResponseStocksDto.class)
 			        .retry(3)
 			        .log()
@@ -210,7 +211,8 @@ public class OzonMarketApiService {
 		if (products == null || products.size() == 0) {
 			return ozonResult;
 		}
-		final String url = environment.getProperty("ozon.market.url") + "/v1/product/import/prices";		
+		final String url = environment.getProperty("ozon.market.url") + "/v1/product/import/prices";
+		log.debug("ozon: {}", url);
 		OzonRequestPricesDto inputOzonPricesDto = ozonProduct4ProductConverter.convertToPricesDto(products);		
 		try {
 			OzonResponsePricesDto resultResponse = webClient.post()

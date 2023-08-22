@@ -39,7 +39,7 @@
 					  	<div class="col-md form-group">		  
 					    	<label for="input-login-password" class="form-label">Password</label>
 					    	<input type="password" class="form-control" id="input-login-password" name="password" placeholder="Введите пароль">
-					    	<small id="input-login-name-help" class="text-muted form-text">
+					    	<small id="input-login-password-help" class="text-muted form-text">
 						  		Ваш пароль должен состоять из 8-20 символов, содержать буквы и цифры<br> и не должен содержать пробелов, специальных символов или эмодзи.
 							</small>
 					  	</div>
