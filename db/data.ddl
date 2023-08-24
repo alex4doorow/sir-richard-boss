@@ -964,9 +964,11 @@ CREATE TABLE sr_marketpace_offer(
 			marketplace_seller INT(11) DEFAULT 0 NOT NULL, /* продажи на площадке (1- разрешено, 0- блокировано) */
             marketplace_type INT(11) NOT NULL, /* 4- yandex.market,  5- ozon */ 
             special_price DECIMAL(15,4) NULL, /* цена на маркетплейсе (может отличаться от РРЦ) */
+            cheater_rate DECIMAL(15,4) NULL, /* ставка, на которую уменьшаем при чите */
             cheater_type TINYINT DEFAULT 0 NOT NULL, /* 0- нет, 1- специальная цена по шедалеру читера */
-            cheater_price_etalon DECIMAL(15,4) NULL, /* цена до чита */
+            cheater_price DECIMAL(15,4) NULL, /* цена чита */
             cheater_price_delta DECIMAL(15,4) NULL, /* цена, которую нужно уменьшить при чите */
+            etalon_price DECIMAL(15,4) NULL, /* цена маркетплейса без чита */
             CONSTRAINT oc_marketpace_offers_uq UNIQUE (product_id, marketplace_type),
 			PRIMARY KEY (id));  
                       

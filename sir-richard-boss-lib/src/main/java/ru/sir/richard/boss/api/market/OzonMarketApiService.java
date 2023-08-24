@@ -166,9 +166,9 @@ public class OzonMarketApiService {
 			        .block();
 			log.debug("ozonOrderDto: {}", ozonOrderDto);        
 	        result = ozonOrder4OrderConverter.convertToEntity(ozonOrderDto);
-	        log.debug("order: {}", result);        
+	        log.debug("order: {}", result);
 		} catch (Exception e) {
-			log.error("getOrder ozonOrderId: {}, {}", ozonOrderId, e);
+			log.error("getOrder ozonOrderId: {}", ozonOrderId, e);
 			result = new Order();
 			result.setStatus(OrderStatuses.UNKNOWN);			
 			result.setExternalCrms(Collections.singletonList(new OrderExternalCrm(CrmTypes.OZON, CrmStatuses.FAIL, 0L, ozonOrderId)));
@@ -196,7 +196,10 @@ public class OzonMarketApiService {
 			        .retry(3)
 			        .log()
 			        .block(); 
-			log.debug("result: {}", resultResponse);			
+			log.debug("result: {}", resultResponse);
+			if (!resultResponse.getErrors().isEmpty()) {
+				log.debug("errors: {}", resultResponse.getErrors());
+			}
 			ozonResult.setDirtyResponce(resultResponse);
     	    ozonResult.setResponseSuccess(true);
 		} catch (Exception e) {			
@@ -208,7 +211,7 @@ public class OzonMarketApiService {
 	
 	public OzonResult offerPrices(List<Product> products) {
 		OzonResult ozonResult = new OzonResult();		
-		if (products == null || products.size() == 0) {
+		if (products == null || products.isEmpty()) {
 			return ozonResult;
 		}
 		final String url = environment.getProperty("ozon.market.url") + "/v1/product/import/prices";
@@ -230,7 +233,10 @@ public class OzonMarketApiService {
 			        .retry(3)
 			        .log()
 			        .block(); 
-			log.debug("result: {}", resultResponse);			
+			log.debug("result: {}", resultResponse);
+			if (!resultResponse.getErrors().isEmpty()) {
+				log.debug("errors: {}", resultResponse.getErrors());
+			}
 			ozonResult.setDirtyResponce(resultResponse);
     	    ozonResult.setResponseSuccess(true);
 		} catch (Exception e) {			

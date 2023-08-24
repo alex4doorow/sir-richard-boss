@@ -292,10 +292,12 @@ public class OrderListController extends AnyController {
 	public String ordersStatusesReload(Model model, final RedirectAttributes redirectAttributes) {
 		log.debug("ordersStatusesReload(): start");
 		String resultDelivery = deliveryService.ordersStatusesReload();
-		String resultEmail = orderService.ordersSendFeedback(DateTimeUtils.sysDate());
+		//String resultEmail = orderService.ordersSendFeedback(DateTimeUtils.sysDate());
+		String resultEmail = "";
 		resultDelivery += "<br/>" + resultEmail;
 
-		String resultExpired = orderService.bidExpiredSendMessages();
+		//String resultExpired = orderService.bidExpiredSendMessages();
+		String resultExpired = "";
 		resultDelivery += "<br/>" + resultExpired;
 
 		redirectAttributes.addFlashAttribute("css", "success");

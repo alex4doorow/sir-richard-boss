@@ -6,12 +6,14 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import ru.sir.richard.boss.api.market.OzonMarketApiService;
 import ru.sir.richard.boss.api.market.YandexMarketApi;
 import ru.sir.richard.boss.crm.CrmManager;
 import ru.sir.richard.boss.crm.DeliveryService;
 import ru.sir.richard.boss.dao.WikiDao;
 import ru.sir.richard.boss.model.data.Product;
 import ru.sir.richard.boss.model.data.conditions.ProductConditions;
+import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.repository.AppUserRepository;
 import ru.sir.richard.boss.model.utils.DateTimeUtils;
 import ru.sir.richard.boss.model.utils.SingleExecutor;
@@ -26,24 +28,20 @@ public class ScheduledService {
 
     @Autowired
     private WikiDao wikiDao;
-
     @Autowired
     private CrmManager crmManager;
-
     @Autowired
     private DeliveryService deliveryService;
-
     @Autowired
     private WikiService wikiService;
-
     @Autowired
     private PricerService pricerService;
-
     @Autowired
     AppUserRepository wsUserRepository;
-
     @Autowired
     private Environment environment;
+    @Autowired
+    private OzonMarketApiService ozonMarketApiService;
 
     /**
      * 1) главный шедулер: грузит товары, обновляет прайсы, устанавливает
@@ -120,39 +118,35 @@ public class ScheduledService {
     @Scheduled(fixedDelay = 5 * 60 * 1000, initialDelay = 1 * 60 * 1000)
     public void scheduleMarketplacesCheater() {
 
+        final boolean cheaterSwitchOn = Boolean.parseBoolean(environment.getProperty("cheater.switch.on"));
+        if (!cheaterSwitchOn) {
+            return;
+        }
+
+        final int cheaterPeriodFrom = Integer.parseInt(environment.getProperty("cheater.period.from"));
+        final int cheaterPeriodTo = Integer.parseInt(environment.getProperty("cheater.period.to"));
+        final int cheaterPeriodClear = Integer.parseInt(environment.getProperty("cheater.period.clear"));
+
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH");
         LocalDateTime now = LocalDateTime.now();
 
         int hh = Integer.parseInt(dtf.format(now));
-        if ((hh >= 13 && hh < 14) && !SingleExecutor.MARKETPLACES_CHEATER_STATUS_SET) {
+        if ((hh >= cheaterPeriodFrom && hh < cheaterPeriodTo)) {
             // set in
             log.debug("scheduleMarketplacesCheater {}: set in", Thread.currentThread().getName());
-            SingleExecutor.MARKETPLACES_CHEATER_STATUS_SET = true;
-      		/*
-    		List<Product> cheaterProducts = wikiDao.updateCheaterProductsStart();    		
-    		YandexMarketApi yandexMarketApi = new YandexMarketApi(this.environment);
-    		yandexMarketApi.offerPricesUpdatesByAllWarehouses(cheaterProducts);    		
-    		OzonMarketApi ozonMarketApi = new OzonMarketApi(this.environment);
-    		ozonMarketApi.offerPrices(cheaterProducts);
-    		*/
+
+    		List<Product> cheaterProducts = wikiDao.updateCheaterProductsStart(CrmTypes.OZON);
+    		ozonMarketApiService.offerPrices(cheaterProducts);
         }
-        if ((hh >= 14) && !SingleExecutor.MARKETPLACES_CHEATER_STATUS_ROLLBACK) {
+        if ((hh >= cheaterPeriodTo)) {
             // set of
             log.debug("scheduleMarketplacesCheater {}: rollback", Thread.currentThread().getName());
-            SingleExecutor.MARKETPLACES_CHEATER_STATUS_ROLLBACK = true;
- 		
-    		/*
-    		List<Product> cheaterProducts = wikiDao.updateCheaterProductsRollback();    		
-    		YandexMarketApi yandexMarketApi = new YandexMarketApi(this.environment);
-    		yandexMarketApi.offerPricesUpdatesByAllWarehouses(cheaterProducts);    		
-    		OzonMarketApi ozonMarketApi = new OzonMarketApi(this.environment);
-    		ozonMarketApi.offerPrices(cheaterProducts);
-    		*/
+
+    		List<Product> cheaterProducts = wikiDao.updateCheaterProductsRollback(CrmTypes.OZON);
+    		ozonMarketApiService.offerPrices(cheaterProducts);
         }
-        if (hh >= 23) {
+        if (hh >= cheaterPeriodClear) {
             log.debug("scheduleMarketplacesCheater {}: clear", Thread.currentThread().getName());
-            SingleExecutor.MARKETPLACES_CHEATER_STATUS_SET = false;
-            SingleExecutor.MARKETPLACES_CHEATER_STATUS_ROLLBACK = false;
         }
     }
 

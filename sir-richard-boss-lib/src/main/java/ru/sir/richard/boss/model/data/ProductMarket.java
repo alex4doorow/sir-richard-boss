@@ -14,7 +14,10 @@ public class ProductMarket implements Cloneable {
 	private boolean marketSeller; /* продажи на marketplace (1- разрешены, 0- блокированы) */
 	private String marketSku; /* маркетовый sku */
 	private CrmTypes marketType;
-	private BigDecimal specialPrice; 
+	private BigDecimal specialPrice;
+	private BigDecimal cheaterPrice;
+	private BigDecimal cheaterPriceDelta;
+	private BigDecimal etalonPrice;
 
 	public ProductMarket(CrmTypes crmType) {
 		this();

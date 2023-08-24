@@ -716,84 +716,92 @@ public class WikiDao extends AnyDaoImpl {
 		}		
 	}
 	
-	public List<Product> updateCheaterProductsRollback() {
+	public List<Product> updateCheaterProductsRollback(CrmTypes crmTypes) {
 		
-		final String sqlSelectCheaterMarketplaceOffers = "SELECT distinct product_id FROM sr_marketpace_offer WHERE (cheater_type = 1)";
+		final String sqlSelectCheaterMarketplaceOffers = "SELECT distinct product_id, cheater_price, cheater_price_delta, etalon_price, cheater_rate" +
+				" FROM sr_marketpace_offer " +
+				" WHERE (marketplace_seller = 1 and marketplace_type = ? and cheater_type = 1 and etalon_price is not null)";
 		
 		JdbcTemplate jdbcTemplateSlave = new JdbcTemplate(dataSource);
 		List<Product> cheaterProducts = jdbcTemplateSlave.query(sqlSelectCheaterMarketplaceOffers,
-				new Object[]{ },
-				new int[] { }, 
+				new Object[] {crmTypes.getId()},
+				new int[] {Types.INTEGER},
 				new RowMapper<Product>() {
 					@Override
 					public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Product marketpaceOfferProduct = getProductById(rs.getInt("PRODUCT_ID"));
+						marketpaceOfferProduct.getMarket(crmTypes).setCheaterPrice(rs.getBigDecimal("CHEATER_PRICE"));
+						marketpaceOfferProduct.getMarket(crmTypes).setCheaterPriceDelta(rs.getBigDecimal("CHEATER_PRICE_DELTA"));
+						marketpaceOfferProduct.getMarket(crmTypes).setEtalonPrice(rs.getBigDecimal("ETALON_PRICE"));
 						return marketpaceOfferProduct;
 					}
-				});	
-				
-		final String sqlSelectMarketplaceOffers = "SELECT * FROM sr_marketpace_offer WHERE (product_id = ?)";		
-		for (Product cheaterProduct: cheaterProducts) {		
-			
-			jdbcTemplateSlave = new JdbcTemplate(dataSource);
-			List<Product> marketpaceOfferProducts = jdbcTemplateSlave.query(sqlSelectMarketplaceOffers,
-					new Object[]{ cheaterProduct.getId() },
-					new int[] { Types.INTEGER }, 
-					new RowMapper<Product>() {
-						@Override
-						public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
-							Product marketpaceOfferProduct = new Product(cheaterProduct.getId(), cheaterProduct.getName());
-							BigDecimal etalonPrice = rs.getBigDecimal("CHEATER_PRICE_ETALON");
-							marketpaceOfferProduct.setPrice(etalonPrice);							
-							return marketpaceOfferProduct;
-						}
-					});
-			
-			for (Product marketpaceOfferProduct: marketpaceOfferProducts) {
-				cheaterProduct.setPrice(marketpaceOfferProduct.getPrice());
-				updateDbProductPrice(marketpaceOfferProduct.getId(), marketpaceOfferProduct.getPrice());				
-			}			
-		}	
+				});
+
+		final String sqlUpdateCheaterOffer = "update sr_marketpace_offer" +
+				" set cheater_price = null, etalon_price = null, cheater_price_delta = null"
+				+ "  where product_id = ? and marketplace_type = ?";
+		for (Product cheaterProduct: cheaterProducts) {
+				updateDbProductPrice(cheaterProduct.getId(), cheaterProduct.getMarket(crmTypes).getEtalonPrice());
+
+				cheaterProduct.setPrice(cheaterProduct.getMarket(crmTypes).getEtalonPrice());
+				cheaterProduct.setPriceWithDiscount(cheaterProduct.getMarket(crmTypes).getEtalonPrice());
+				cheaterProduct.setPriceWithoutDiscount(cheaterProduct.getMarket(crmTypes).getEtalonPrice());
+				this.jdbcTemplate.update(sqlUpdateCheaterOffer, new Object[] {
+						cheaterProduct.getId(),
+						crmTypes.getId()});
+		}
 		return cheaterProducts;
 	}
 	
-	public List<Product> updateCheaterProductsStart() {
+	public List<Product> updateCheaterProductsStart(CrmTypes crmTypes) {
 		
-		final String sqlSelectCheaterMarketplaceOffers = "SELECT distinct product_id, cheater_price_etalon FROM sr_marketpace_offer WHERE (cheater_type = 1)";
+		final String sqlSelectCheaterMarketplaceOffers = "SELECT distinct product_id, cheater_price, cheater_price_delta, etalon_price, cheater_rate" +
+				" FROM sr_marketpace_offer " +
+				" WHERE (marketplace_seller = 1 and marketplace_type = ? and cheater_type = 1 and etalon_price is null)";
 		
 		JdbcTemplate jdbcTemplateSlave = new JdbcTemplate(dataSource);
 		List<Product> cheaterProducts = jdbcTemplateSlave.query(sqlSelectCheaterMarketplaceOffers,
-				new Object[] { },
-				new int[] { }, 
+				new Object[] {crmTypes.getId()},
+				new int[] {Types.INTEGER},
 				new RowMapper<Product>() {
 					@Override
 					public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
+
 						Product marketpaceOfferProduct = getProductById(rs.getInt("PRODUCT_ID"));
-						BigDecimal cheaterPriceEtalon = rs.getBigDecimal("CHEATER_PRICE_ETALON");						
-						if (cheaterPriceEtalon != null && cheaterPriceEtalon.compareTo(BigDecimal.ZERO) > 0) {
-							marketpaceOfferProduct.setPrice(cheaterPriceEtalon);
+						BigDecimal rawCheaterRate = rs.getBigDecimal("CHEATER_RATE");
+						if (rawCheaterRate == null) {
+							rawCheaterRate = BigDecimal.valueOf(5);
 						}
+						BigDecimal cheaterRate = rawCheaterRate.divide(BigDecimal.valueOf(100), 2, RoundingMode.CEILING);
+
+						BigDecimal etalonPrice = marketpaceOfferProduct.getPrice();
+						BigDecimal cheaterPriceDelta = etalonPrice.multiply(cheaterRate).add(BigDecimal.ONE);
+						cheaterPriceDelta = cheaterPriceDelta.setScale(0, RoundingMode.HALF_UP);
+
+						BigDecimal cheaterPrice = etalonPrice.subtract(cheaterPriceDelta);
+						marketpaceOfferProduct.setPrice(cheaterPrice);
+						marketpaceOfferProduct.setPriceWithDiscount(cheaterPrice);
+						marketpaceOfferProduct.setPriceWithoutDiscount(etalonPrice);
+
+						marketpaceOfferProduct.getMarket(crmTypes).setCheaterPrice(cheaterPrice);
+						marketpaceOfferProduct.getMarket(crmTypes).setCheaterPriceDelta(cheaterPriceDelta);
+						marketpaceOfferProduct.getMarket(crmTypes).setEtalonPrice(etalonPrice);
 						return marketpaceOfferProduct;
 					}
 				});	
 		
-		final String sqlUpdateCheaterOffer = "update sr_marketpace_offer set cheater_price_etalon = ?"
+		final String sqlUpdateCheaterOffer = "update sr_marketpace_offer" +
+				" set cheater_price = ?, cheater_price_delta = ?, etalon_price = ?"
 				+ "  where product_id = ? and marketplace_type = ?";
 		
-		for (Product cheaterProduct : cheaterProducts) {			
-			BigDecimal cheaterPrice = cheaterProduct.getPrice().subtract(BigDecimal.valueOf(100));
-			
+		for (Product cheaterProduct : cheaterProducts) {
 			this.jdbcTemplate.update(sqlUpdateCheaterOffer, new Object[] {
-					cheaterProduct.getPrice(),
+					cheaterProduct.getMarket(crmTypes).getCheaterPrice(),
+					cheaterProduct.getMarket(crmTypes).getCheaterPriceDelta(),
+					cheaterProduct.getMarket(crmTypes).getEtalonPrice(),
 					cheaterProduct.getId(),					
-					CrmTypes.YANDEX_MARKET.getId()});		
-			this.jdbcTemplate.update(sqlUpdateCheaterOffer, new Object[] {
-					cheaterProduct.getPrice(),
-					cheaterProduct.getId(),					
-					CrmTypes.OZON.getId()});
-			
-			updateDbProductPrice(cheaterProduct.getId(), cheaterPrice);
-			cheaterProduct.setPrice(cheaterPrice);
+					crmTypes.getId()});
+			updateDbProductPrice(cheaterProduct.getId(), cheaterProduct.getMarket(crmTypes).getCheaterPrice());
 		}
 		return cheaterProducts;
 	}
@@ -1338,7 +1346,7 @@ public class WikiDao extends AnyDaoImpl {
 					public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Product item = getProductById(rs.getInt("PRODUCT_ID"));
 						if (item != null) {
-							item.getMarket(CrmTypes.YANDEX_MARKET).setMarketSku("MARKET_SKU");						
+							item.getMarket(CrmTypes.YANDEX_MARKET).setMarketSku(rs.getString("market_sku"));
 							if (rs.getInt("SUPPLIER_STOCK") == 1) {
 								item.getMarket(CrmTypes.YANDEX_MARKET).setSupplierStock(true);
 							}
@@ -1365,7 +1373,7 @@ public class WikiDao extends AnyDaoImpl {
 					public Product mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Product item = getProductById(rs.getInt("PRODUCT_ID"));
 						if (item != null) {
-							item.getMarket(CrmTypes.OZON).setMarketSku("market_sku");						
+							item.getMarket(CrmTypes.OZON).setMarketSku(rs.getString("market_sku"));
 							if (rs.getInt("SUPPLIER_STOCK") == 1) {
 								item.getMarket(CrmTypes.OZON).setSupplierStock(true);
 							}

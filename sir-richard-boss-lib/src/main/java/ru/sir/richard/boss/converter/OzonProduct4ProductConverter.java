@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import ru.sir.richard.boss.model.dto.OzonRequestStocksDto;
 import ru.sir.richard.boss.model.types.CrmTypes;
 import ru.sir.richard.boss.model.utils.NumberUtils;
 
+@Slf4j
 @Component
 public class OzonProduct4ProductConverter {
 	
@@ -83,19 +85,24 @@ public class OzonProduct4ProductConverter {
     public OzonRequestPriceDto convertToPriceDto(Product product) {
     	OzonRequestPriceDto ozonPriceDto = modelMapper.map(product, OzonRequestPriceDto.class);
     	ozonPriceDto.setOfferId(product.getSku());
-    	ozonPriceDto.setProductId(Long.valueOf(product.getMarket(CrmTypes.OZON).getMarketSku()));
+		try {
+			ozonPriceDto.setProductId(Long.valueOf(product.getMarket(CrmTypes.OZON).getMarketSku()));
+		} catch (Exception e) {
+			ozonPriceDto.setProductId(Long.valueOf(product.getId()));
+			log.error("id={}, sku={}", product.getId(), product.getMarket(CrmTypes.OZON).getMarketSku(), e);
+		}
     	
     	String stringOldPrice = "0";			
 		String stringPrice;
     	if (product.getMarket(CrmTypes.OZON).getSpecialPrice() == null || product.getMarket(CrmTypes.OZON).getSpecialPrice().equals(BigDecimal.ZERO)) {
 			if (product.getPriceWithoutDiscount().compareTo(product.getPrice()) > 0) {
-				stringPrice = NumberUtils.localeFormatNumber(product.getPriceWithDiscount(), new Locale("en", "UK"), '.', "#########.00");
-				stringOldPrice = NumberUtils.localeFormatNumber(product.getPriceWithoutDiscount(), new Locale("en", "UK"), '.', "#########.00");				
+				stringPrice = toOZONPrice(product.getPriceWithDiscount());
+				stringOldPrice = toOZONPrice(product.getPriceWithoutDiscount());
 			} else {
-				stringPrice = NumberUtils.localeFormatNumber(product.getPrice(), new Locale("en", "UK"), '.', "#########.00");
+				stringPrice = toOZONPrice(product.getPrice());
 			}
 		} else {
-			stringPrice = NumberUtils.localeFormatNumber(product.getMarket(CrmTypes.OZON).getSpecialPrice(), new Locale("en", "UK"), '.', "#########.00");
+			stringPrice = toOZONPrice(product.getMarket(CrmTypes.OZON).getSpecialPrice());
 		}
     	ozonPriceDto.setPrice(stringPrice);
     	ozonPriceDto.setOldPrice(stringOldPrice);
@@ -122,4 +129,8 @@ public class OzonProduct4ProductConverter {
     	ozonRequestPricesDto.setOzonRequestPriceDtos(ozonStockDtos);
     	return ozonRequestPricesDto;    	
     }
+
+	private String toOZONPrice(BigDecimal price) {
+		return NumberUtils.localeFormatNumber(price, Locale.US, '.', "#########.00");
+	}
 }
