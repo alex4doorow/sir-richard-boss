@@ -106,7 +106,7 @@ public class PricerService {
 	}
 	
 	private List<Product> saveToDbSititek(List<ProductDataRaw> productRaws) {
-		List<Product> results = new ArrayList<Product>();
+		List<Product> results = new ArrayList<>();
 		if (productRaws == null) {
 			return results;
 		}
@@ -119,8 +119,8 @@ public class PricerService {
 			if (currentProduct == null || currentProduct.getId() <= 0) {
 				continue;
 			}						
-			int quantity = 0;
-			if (currentProduct.getMarket(CrmTypes.YANDEX_MARKET).isMarketSeller()) {
+			int quantity;
+			if (currentProduct.isMarketSeller()) {
 				quantity = currentProduct.getStockQuantity();
 			} else {
 				quantity = product.getQuantity() + currentProduct.getStockQuantity();

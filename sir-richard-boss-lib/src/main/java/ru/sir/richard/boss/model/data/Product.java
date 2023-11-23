@@ -105,6 +105,13 @@ public class Product extends AnyCatalog {
 		return StringUtils.upperCase(result);
 	}
 
+	public boolean isMarketSeller() {
+		if (getMarkets() == null) {
+			return false;
+		}
+		return (getMarket(CrmTypes.YANDEX_MARKET).isMarketSeller() || getMarket(CrmTypes.OZON).isMarketSeller());
+	}
+
 	public ProductTypes getType() {
 		return type;
 	}
