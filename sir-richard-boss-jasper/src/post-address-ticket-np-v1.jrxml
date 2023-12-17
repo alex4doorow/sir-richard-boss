@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="post-address-ticket" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="69331614-e2e3-46c8-878b-ebafac2811ad">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="ru.sir.richard.boss.model.utils.TextUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.NumberUtils"/>
+	<parameter name="COMPANY_F_NAME" class="java.lang.String"/>
+	<parameter name="COMPANY_F_ADDRESS_TEXT" class="java.lang.String"/>
+	<parameter name="COMPANY_F_ADDRESS_INDEX" class="java.lang.String"/>
+	<field name="customer.viewLongName" class="java.lang.String"/>
+	<field name="amounts.postpay" class="java.math.BigDecimal"/>
+	<field name="delivery.address.postAddressText" class="java.lang.String"/>
+	<field name="delivery.address.postCode" class="java.lang.String"/>
+	<field name="customer.phoneNumber" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="427" splitType="Stretch">
+			<image scaleImage="RetainShape">
+				<reportElement mode="Transparent" x="0" y="0" width="555" height="421" uuid="68bbd3f5-82de-4309-83df-bf034ef9deb2"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-web\\x-resources\\jasperreports\\blanks\\blank-post-address-ticket-v2.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="7" y="132" width="260" height="10" uuid="f2292118-c76f-4a32-b880-0dd2f56889e5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COMPANY_F_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="172" width="260" height="10" uuid="9d76ca77-2adb-48e3-abfc-b5989e90a153"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COMPANY_F_ADDRESS_TEXT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="654" y="148" width="100" height="20" uuid="4536af26-82be-4dcb-8bf1-46c930edebb3"/>
+				<textFieldExpression><![CDATA[$F{amounts.postpay}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="284" y="222" width="265" height="10" uuid="cd24523f-2b89-4495-8a2d-de7757d97705"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customer.viewLongName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="284" y="259" width="265" height="40" uuid="8259e3aa-1fe1-4ce4-8e70-e3d107fa8f77"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="8"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="3.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{delivery.address.postAddressText}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="436" y="333" width="10" height="20" uuid="d2f0012c-7fb4-4249-8d29-1cf8b92aa606"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{delivery.address.postCode}.charAt(0)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="284" y="112" width="268" height="20" uuid="9a87e22b-80e2-400d-a224-f7e3804d4aea"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberUtils.formatNumber($F{amounts.postpay}, "##0=") + "\n (" + TextUtils.roublesToPhrase($F{amounts.postpay}) + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="160" y="245" width="10" height="20" uuid="2966b616-2aac-4c56-91c1-46034ca7a4fb"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COMPANY_F_ADDRESS_INDEX}.charAt(0)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="179" y="245" width="10" height="20" uuid="5e541cdb-5e7b-40be-84ac-d09f6af00805"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COMPANY_F_ADDRESS_INDEX}.charAt(1)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="260" y="245" width="10" height="20" uuid="e59e29c7-7fc1-4d82-9c7b-f7ef600986b0"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COMPANY_F_ADDRESS_INDEX}.charAt(5)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="199" y="245" width="10" height="20" uuid="782da138-c6ea-498c-a8a0-76154e3434e1"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COMPANY_F_ADDRESS_INDEX}.charAt(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="219" y="245" width="10" height="20" uuid="9dee7898-7347-4130-91fb-67d64223beba"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COMPANY_F_ADDRESS_INDEX}.charAt(3)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="240" y="245" width="10" height="20" uuid="99b6bdbf-e22c-433f-8389-d9be7c0d2e7e"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COMPANY_F_ADDRESS_INDEX}.charAt(4)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="457" y="333" width="10" height="20" uuid="91ae08ee-d8d8-49be-b2c7-9b8b5dffd8fd"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{delivery.address.postCode}.charAt(1)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="478" y="333" width="10" height="20" uuid="7e232b7f-a561-49e8-b25e-365c9dbc091b"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{delivery.address.postCode}.charAt(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="498" y="333" width="10" height="20" uuid="38779c81-7d78-4710-8928-6191c69a2495"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{delivery.address.postCode}.charAt(3)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="518" y="333" width="10" height="20" uuid="da6d1d70-240b-464b-ac73-d83abd158a68"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{delivery.address.postCode}.charAt(4)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="539" y="333" width="10" height="20" uuid="93676b43-00cf-4e68-b2f1-3b0c6d049d74"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="14" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{delivery.address.postCode}.charAt(5)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="299" y="330" width="10" height="17" uuid="264b4bbe-d97d-41a4-b050-a39d848540eb"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TextUtils.phoneNumberDigit($F{customer.phoneNumber}).charAt(0)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="413" y="330" width="10" height="17" uuid="5525203b-b68b-4e8a-84ee-0284ca329a32"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TextUtils.phoneNumberDigit($F{customer.phoneNumber}).charAt(9)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="284" y="152" width="268" height="20" uuid="c2641f52-97b1-4dcf-a4eb-8a628b4cd8a3"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[NumberUtils.formatNumber($F{amounts.postpay}, "##0=") + "\n (" + TextUtils.roublesToPhrase($F{amounts.postpay}) + ")"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="330" width="10" height="17" uuid="f8c05c07-d3a3-40ac-869d-734cec108960"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TextUtils.phoneNumberDigit($F{customer.phoneNumber}).charAt(8)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="387" y="330" width="10" height="17" uuid="fc811fa2-994a-4016-9b95-cb0c65c2cf46"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TextUtils.phoneNumberDigit($F{customer.phoneNumber}).charAt(7)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="374" y="330" width="10" height="17" uuid="b51dc9e6-9c2e-4dad-8ab9-74e2e06d53fe"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TextUtils.phoneNumberDigit($F{customer.phoneNumber}).charAt(6)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="361" y="330" width="10" height="17" uuid="a3b75fcd-ab09-4c45-a307-7846effa4a36"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TextUtils.phoneNumberDigit($F{customer.phoneNumber}).charAt(5)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="349" y="330" width="10" height="17" uuid="c685957f-92e7-4925-9e53-409d6aa90cb6"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TextUtils.phoneNumberDigit($F{customer.phoneNumber}).charAt(4)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="336" y="330" width="10" height="17" uuid="98220b83-1832-4b74-93cb-f7bfd6dddbda"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TextUtils.phoneNumberDigit($F{customer.phoneNumber}).charAt(3)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="323" y="330" width="10" height="17" uuid="8c04c371-fdfc-46b8-9b7b-46be0cac2f99"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TextUtils.phoneNumberDigit($F{customer.phoneNumber}).charAt(2)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="311" y="330" width="10" height="17" uuid="45063123-a49c-4170-ac0d-f7ee257bde95"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Monospaced" size="12" isBold="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[TextUtils.phoneNumberDigit($F{customer.phoneNumber}).charAt(1)]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

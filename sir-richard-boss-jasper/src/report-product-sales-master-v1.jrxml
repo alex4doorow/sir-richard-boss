@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-product-sales-master" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="84852346-69f1-43bd-944d-f75e229caf2e">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="ru.sir.richard.boss.model.utils.TextUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.DateTimeUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.NumberUtils"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["c:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\template\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_J_NAME" class="java.lang.String"/>
+	<parameter name="COMPANY_J_INN" class="java.lang.String"/>
+	<parameter name="COMPANY_SHOP_ADDRESS" class="java.lang.String"/>
+	<parameter name="PERIOD_START" class="java.util.Date"/>
+	<parameter name="PERIOD_END" class="java.util.Date"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="34" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="34" uuid="3b14a753-0fd6-4276-9118-221c07c66828"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Отчет по продажам\nза период с " + DateTimeUtils.defaultFormatDate($P{PERIOD_START}) + " по " + DateTimeUtils.defaultFormatDate($P{PERIOD_END})]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<subreport>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="20" isRemoveLineWhenBlank="true" backcolor="#99CCFF" uuid="34ba6c6e-a700-498d-8249-9332bce5c0e0"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "report-product-sales-slave-v1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="1" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="1" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="21" splitType="Stretch"/>
+	</summary>
+</jasperReport>

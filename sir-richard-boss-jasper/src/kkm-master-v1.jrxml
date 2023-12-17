@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="kkm-master" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="84852346-69f1-43bd-944d-f75e229caf2e">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="ru.sir.richard.boss.model.utils.TextUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.DateTimeUtils"/>
+	<import value="ru.sir.richard.boss.model.data.CourierInfo"/>
+	<import value="ru.sir.richard.boss.model.utils.NumberUtils"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["c:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\template\\"]]></defaultValueExpression>
+	</parameter>
+	<field name="id" class="java.lang.Number"/>
+	<field name="no" class="java.lang.Integer"/>
+	<field name="viewNo" class="java.lang.String"/>
+	<field name="orderDate" class="java.util.Date"/>
+	<field name="customer.viewShortName" class="java.lang.String"/>
+	<field name="items" class="java.util.List"/>
+	<field name="amounts.totalWithDelivery" class="java.math.BigDecimal"/>
+	<field name="delivery.price" class="java.math.BigDecimal"/>
+	<field name="delivery.address.address" class="java.lang.String"/>
+	<field name="delivery.address.postCode" class="java.lang.String"/>
+	<field name="customer.viewPhoneNumber" class="java.lang.String"/>
+	<field name="delivery.customerPrice" class="java.math.BigDecimal"/>
+	<field name="delivery.annotation" class="java.lang.String"/>
+	<field name="delivery.deliveryType.annotation" class="java.lang.String"/>
+	<field name="delivery.courierInfo" class="java.lang.Object"/>
+	<field name="customer.viewLongName" class="java.lang.String"/>
+	<group name="Detail 2">
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="1" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<subreport>
+				<reportElement positionType="Float" x="0" y="0" width="595" height="18" isRemoveLineWhenBlank="true" backcolor="#99CCFF" uuid="34ba6c6e-a700-498d-8249-9332bce5c0e0"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
+                  ($F{items})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "kkm-slave-v1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

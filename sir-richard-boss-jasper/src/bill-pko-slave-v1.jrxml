@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bill-cdek-slave" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="0b06072f-2264-4b6a-b32b-24d5481e2406">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="ru.sir.richard.boss.model.utils.TextUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.DateTimeUtils"/>
+	<import value="ru.sir.richard.boss.model.data.CourierInfo"/>
+	<import value="ru.sir.richard.boss.model.utils.NumberUtils"/>
+	<parameter name="COMPANY_J_NAME" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="COMPANY_J_INN" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_SHOP_ADDRESS" class="java.lang.String"/>
+	<parameter name="COMPANY_SHOP_NAME_SHORT" class="java.lang.String"/>
+	<field name="id" class="java.lang.Number"/>
+	<field name="no" class="java.lang.Integer"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="product.name" class="java.lang.String"/>
+	<field name="quantity" class="java.lang.Integer"/>
+	<field name="price" class="java.math.BigDecimal"/>
+	<field name="discountRate" class="java.math.BigDecimal"/>
+	<field name="parent.id" class="java.lang.Integer"/>
+	<field name="parent.no" class="java.lang.Integer"/>
+	<field name="parent.viewNo" class="java.lang.Object"/>
+	<field name="parent.orderDate" class="java.util.Date"/>
+	<field name="parent.barcodeNumber" class="java.lang.Integer"/>
+	<field name="parent.annotation" class="java.lang.String"/>
+	<field name="parent.customer.viewShortName" class="java.lang.String"/>
+	<field name="parent.customer.viewPhoneNumber" class="java.lang.String"/>
+	<field name="parent.customer.viewLongName" class="java.lang.String"/>
+	<field name="parent.paymentType.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.address.address" class="java.lang.String"/>
+	<field name="parent.delivery.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.deliveryType.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.courierInfo" class="java.lang.Object"/>
+	<field name="parent.delivery.courierInfo.deliveryDate" class="java.util.Date"/>
+	<field name="parent.delivery.price" class="java.math.BigDecimal"/>
+	<field name="parent.delivery.customerPrice" class="java.math.BigDecimal"/>
+	<field name="parent.amounts.totalWithDelivery" class="java.math.BigDecimal"/>
+	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<group name="Header">
+		<groupHeader>
+			<band height="21"/>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="1" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="9" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="458" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Left">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="423" uuid="39353d81-33c2-465e-9d64-8d4eed0039a3"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\blanks\\blank-pko-v3.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="0" y="224" width="361" height="43" uuid="dc413eab-6757-434e-ac35-e3f8a4445a26"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Принято от: " + $F{parent.customer.viewLongName} + "\r\n" + "Основание: оплата за товар и доставку"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="385" y="121" width="170" height="103" uuid="81dc8dd5-1fb5-43c9-9a6c-c8fe1ca074f3"/>
+				<box topPadding="2"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Принято от: " + $F{parent.customer.viewLongName} + "\r\n" + "Основание: оплата за товар и доставку" + "\r\n\r\n" + "Сумма: " + NumberUtils.defaultFormatNumber($F{parent.amounts.totalWithDelivery}) + " руб.\r\n" + TextUtils.roublesToPhrase($F{parent.amounts.totalWithDelivery}) + "\r\n\r\n" + "без налога (НДС)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="530" y="64" width="25" height="9" uuid="79d5d387-a243-4a12-99ef-c7bb3148d0b6"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parent.no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="385" y="73" width="170" height="13" uuid="8491c7cc-d537-4e4f-85d3-bf041d1a274c"/>
+				<box topPadding="2"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["от " + DateTimeUtils.formatDate($F{parent.orderDate}, "dd.MMMM.yyyy") + " г."]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="149" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

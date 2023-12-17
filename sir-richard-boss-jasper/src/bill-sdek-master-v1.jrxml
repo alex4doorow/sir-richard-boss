@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bill-sdek-master" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="84852346-69f1-43bd-944d-f75e229caf2e">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="46"/>
+	<import value="ru.sir.richard.boss.model.utils.TextUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.DateTimeUtils"/>
+	<import value="ru.sir.richard.boss.model.data.CourierInfo"/>
+	<import value="ru.sir.richard.boss.model.utils.NumberUtils"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["c:\\src\\sir-richard-boss\\x-resources\\jasperreports\\template\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_J_NAME" class="java.lang.String"/>
+	<parameter name="COMPANY_J_INN" class="java.lang.String"/>
+	<parameter name="COMPANY_SHOP_ADDRESS" class="java.lang.String"/>
+	<field name="id" class="java.lang.Number"/>
+	<field name="no" class="java.lang.Integer"/>
+	<field name="viewNo" class="java.lang.String"/>
+	<field name="orderDate" class="java.util.Date"/>
+	<field name="customer.viewShortName" class="java.lang.String"/>
+	<field name="items" class="java.util.List"/>
+	<field name="amounts.totalWithDelivery" class="java.math.BigDecimal"/>
+	<field name="delivery.price" class="java.math.BigDecimal"/>
+	<field name="delivery.address.address" class="java.lang.String"/>
+	<field name="delivery.address.postCode" class="java.lang.String"/>
+	<field name="customer.viewPhoneNumber" class="java.lang.String"/>
+	<field name="delivery.customerPrice" class="java.math.BigDecimal"/>
+	<field name="delivery.annotation" class="java.lang.String"/>
+	<field name="delivery.deliveryType.annotation" class="java.lang.String"/>
+	<field name="delivery.courierInfo" class="java.lang.Object"/>
+	<field name="customer.viewLongName" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="1" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="218" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="555" height="200" uuid="3d24c14b-7b7e-4d2e-9fc9-9942c6b62ade"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-header-ticket-v2.jpg"]]></imageExpression>
+			</image>
+			<subreport>
+				<reportElement positionType="Float" x="63" y="200" width="485" height="18" isRemoveLineWhenBlank="true" backcolor="#99CCFF" uuid="34ba6c6e-a700-498d-8249-9332bce5c0e0"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
+                  ($F{items})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bill-sdek-slave-v1.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="90" y="130" width="178" height="10" uuid="9a19166c-8c8b-4c47-989c-54a337ab15ed"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customer.viewLongName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="112" y="142" width="156" height="10" uuid="4aace515-6e65-4256-856f-0fda700b822b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{customer.viewPhoneNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="151" width="167" height="23" uuid="4f9a5e7f-f457-4b52-9083-8c93305c7f29"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{delivery.address.address}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="279" y="86" width="156" height="20" uuid="dc048bf1-d5f3-4042-a1a6-dd504224c5f5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Накладная к заказу № " + $F{viewNo} + " от " + DateTimeUtils.defaultFormatDate($F{orderDate}) + " г."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="306" y="106" width="32" height="10" uuid="c9b5d69a-6026-4f9a-8ccb-1b1246b72c7a"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["1 шт."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="302" y="116" width="37" height="10" uuid="48a0b140-e48d-4944-b577-6a16ba1e5a40"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["0,5 кг."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="335" y="126" width="15" height="10" uuid="3c734d94-0a68-440d-8da9-1e9d619085e0"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["1"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="350" y="154" width="200" height="20" uuid="fa869758-5d0b-4f45-97e1-5d47ce0acbe2"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["курьер " + ((CourierInfo) $F{delivery.courierInfo}).timeInterval() + " " + $F{delivery.annotation} + ", " + $F{delivery.address.address}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="0" y="60" width="60" height="138" uuid="369467a4-966d-486c-97c5-9d0063608563"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-left-ticket-p1-v1.jpg"]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="0" y="200" width="60" height="18" uuid="8aa0ce13-0519-47ab-9437-a832f373d1b9"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-left-ticket-p2-v1.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="204" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="1" width="555" height="135" uuid="ed340e05-b966-46c5-9b94-233eed3cab0d"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-footer-ticket-v1.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="">
+				<reportElement x="373" y="1" width="175" height="10" uuid="2b377624-25ab-408b-a9a7-e609456d55c9"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Стоимость доставки: " + NumberUtils.defaultFormatNumber($F{delivery.customerPrice})]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="309" y="11" width="239" height="20" uuid="039e9f17-0d7b-413f-9e5b-d9b1907c9b58"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Итого к оплате при вручении с учетом доставки: " + NumberUtils.defaultFormatNumber($F{amounts.totalWithDelivery}) + " руб."]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement x="0" y="0" width="60" height="31" uuid="26cdf6cc-fa72-4c34-a717-cc92c05c17a5"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-left-ticket-p3-v1.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</summary>
+</jasperReport>

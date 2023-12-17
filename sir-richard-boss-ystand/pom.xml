@@ -1,0 +1,225 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>sir-richard-boss-ystand</artifactId>
+	<packaging>jar</packaging>
+	<name>sir-richard-boss-ystand</name>
+	<description>SIR-RICHARD.RU BOSS standalone (pricer, jasperreport's tests ets)</description>
+	<url>http://maven.apache.org</url>
+
+	<parent>
+		<groupId>ru.sir.richard.boss</groupId>
+		<artifactId>sir-richard-boss</artifactId>
+		<version>3.0.5-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<sir-richard-boss.version>${parent.version}</sir-richard-boss.version>
+		<java.version>1.8</java.version>
+		<jstl.version>1.2</jstl.version>
+		<servletapi.version>3.1.0</servletapi.version>
+		<spring-framework.version>2.0.1.RELEASE</spring-framework.version>
+		<spring.version>5.0.5.RELEASE</spring.version>
+		<jackson.version>2.9.5</jackson.version>
+		<logback.version>1.2.3</logback.version>
+		<jcl.slf4j.version>1.7.20</jcl.slf4j.version>
+		<jasperreports.version>6.1.0</jasperreports.version>
+		<jasperreports-fonts.version>6.0.0</jasperreports-fonts.version>
+		<!--  <apache.commons-text.version>1.3</apache.commons-text.version> -->
+		<org.apache.commons.version>3.8</org.apache.commons.version>
+		<org.apache.poi.version>3.17</org.apache.poi.version>		
+		<icu4j.version>61.1</icu4j.version>
+		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+	</properties>
+		
+	<dependencyManagement>
+        <!--all spring dependencies -->
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${spring-framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+	<dependencies>	
+		<dependency>
+			<groupId>ru.sir.richard.boss</groupId>
+			<artifactId>sir-richard-boss-lib</artifactId>
+			<version>${sir-richard-boss.version}</version>
+		</dependency>
+		    
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>${org.apache.commons.version}</version>
+		</dependency>
+		<!-- 		
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-text</artifactId>
+		    <version>${apache.commons-text.version}</version>
+		</dependency>
+		 -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>${org.apache.poi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${org.apache.poi.version}</version>
+		</dependency>
+	
+		<!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
+		<dependency>
+		    <groupId>net.sf.jasperreports</groupId>
+		    <artifactId>jasperreports</artifactId>
+		    <version>${jasperreports.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>net.sf.jasperreports</groupId>
+		    <artifactId>jasperreports-fonts</artifactId>
+		    <version>${jasperreports-fonts.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>xerces</groupId>
+		    <artifactId>xercesImpl</artifactId>
+		    <version>2.12.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>net.sf.barcode4j</groupId>
+		    <artifactId>barcode4j</artifactId>
+		    <version>2.1</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>commons-net</groupId>
+		    <artifactId>commons-net</artifactId>
+		    <version>3.6</version>
+		</dependency>
+
+
+
+
+				
+		<!-- 		
+		<dependency>
+		    <groupId>org.jdom</groupId>
+		    <artifactId>jdom2</artifactId>
+		</dependency>
+						
+		<dependency>
+		    <groupId>xalan</groupId>
+		    <artifactId>xalan</artifactId>
+		    <version>2.7.2</version>
+		</dependency>		
+				
+		<dependency>
+		    <groupId>avalon-framework</groupId>
+		    <artifactId>avalon-framework</artifactId>
+		    <version>4.1.5</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>xml-apis</groupId>
+		    <artifactId>xml-apis</artifactId>
+		    <version>2.0.2</version>
+		</dependency>
+						
+		<dependency>
+		    <groupId>batik</groupId>
+		    <artifactId>batik</artifactId>
+		    <version>1.5</version>
+		</dependency>		
+		<dependency>
+		    <groupId>batik</groupId>
+		    <artifactId>batik-bridge</artifactId>
+		    <version>1.6-1</version>
+		</dependency>				
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-css</artifactId>
+		    <version>1.7</version>
+		</dependency>		
+		<dependency>
+		    <groupId>org.apache.xmlgraphics</groupId>
+		    <artifactId>batik-anim</artifactId>
+		    <version>1.10</version>
+		</dependency>		
+		<dependency>
+		    <groupId>batik</groupId>
+		    <artifactId>batik-awt-util</artifactId>
+		    <version>1.6-1</version>
+		</dependency>			
+		
+		<dependency>
+		    <groupId>net.sf.saxon</groupId>
+		    <artifactId>saxon</artifactId>
+		    <version>8.7</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>net.sf.saxon</groupId>
+		    <artifactId>saxon-dom</artifactId>
+		    <version>8.7</version>
+		</dependency>				
+
+ -->		
+		
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.jsoup</groupId>
+		    <artifactId>jsoup</artifactId>
+		    <version>1.13.1</version>
+		</dependency>
+
+		
+		
+		
+	</dependencies>
+	<build>
+	
+		<plugins>
+            <!-- Package as an executable jar/war -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <version>${maven-compiler-plugin.version}</version>			     		    
+			    <configuration>
+			        <release>8</release>
+			        <verbose>true</verbose>
+			    </configuration>			   
+			</plugin>
+        </plugins>
+	
+	</build>
+</project>

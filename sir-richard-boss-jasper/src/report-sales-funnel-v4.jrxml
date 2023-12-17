@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-sales-funnel" pageWidth="595" pageHeight="843" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="84852346-69f1-43bd-944d-f75e229caf2e">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="ru.sir.richard.boss.model.utils.TextUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.DateTimeUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.NumberUtils"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["c:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\template\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_J_NAME" class="java.lang.String"/>
+	<parameter name="COMPANY_J_INN" class="java.lang.String"/>
+	<parameter name="COMPANY_SHOP_ADDRESS" class="java.lang.String"/>
+	<parameter name="PERIOD_START" class="java.util.Date"/>
+	<parameter name="PERIOD_END" class="java.util.Date"/>
+	<parameter name="PERIOD_TYPE" class="java.lang.Integer"/>
+	<parameter name="PERIOD_MONTH" class="java.lang.Integer"/>
+	<parameter name="PERIOD_QUARTER" class="java.lang.Integer"/>
+	<parameter name="PERIOD_HALF_YEAR" class="java.lang.Integer"/>
+	<parameter name="PERIOD_YEAR" class="java.lang.Integer"/>
+	<field name="advertBudget" class="java.math.BigDecimal"/>
+	<field name="visits" class="java.lang.Integer"/>
+	<field name="visitCost" class="java.math.BigDecimal"/>
+	<field name="uniqueVisitors" class="java.lang.Integer"/>
+	<field name="newVisitors" class="java.lang.Integer"/>
+	<field name="repeatedVisitors" class="java.lang.Integer"/>
+	<field name="visitorCost" class="java.math.BigDecimal"/>
+	<field name="newVisitorsRate" class="java.math.BigDecimal"/>
+	<field name="repeatedVisitorsRate" class="java.math.BigDecimal"/>
+	<field name="uniqueVisitorsByVisitConversionRate" class="java.math.BigDecimal"/>
+	<field name="totalLeads" class="java.lang.Integer"/>
+	<field name="leadByVisitorsConversionRate" class="java.math.BigDecimal"/>
+	<field name="leadByVisitsConversionRate" class="java.math.BigDecimal"/>
+	<field name="leadCost" class="java.math.BigDecimal"/>
+	<field name="averageBill" class="java.math.BigDecimal"/>
+	<field name="totalMarginAmount" class="java.math.BigDecimal"/>
+	<field name="averageMargin" class="java.math.BigDecimal"/>
+	<field name="siteSourceLeads" class="java.lang.Integer"/>
+	<field name="emailSourceLeads" class="java.lang.Integer"/>
+	<field name="callSourceLeads" class="java.lang.Integer"/>
+	<field name="chatSourceLeads" class="java.lang.Integer"/>
+	<field name="othersSourceLeads" class="java.lang.Integer"/>
+	<field name="totalOrders" class="java.lang.Integer"/>
+	<field name="ordersByLeadsConversionRate" class="java.math.BigDecimal"/>
+	<field name="totalAmount" class="java.math.BigDecimal"/>
+	<field name="orderTypeLeads" class="java.lang.Integer"/>
+	<field name="billTypeLeads" class="java.lang.Integer"/>
+	<field name="kpTypeLeads" class="java.lang.Integer"/>
+	<field name="consultationTypeLeads" class="java.lang.Integer"/>
+	<field name="refundTypeLeads" class="java.lang.Integer"/>
+	<field name="othersTypeLeads" class="java.lang.Integer"/>
+	<field name="paidChannelLeads" class="java.lang.Integer"/>
+	<field name="organicChannelLeads" class="java.lang.Integer"/>
+	<field name="socialNetworkChannelLeads" class="java.lang.Integer"/>
+	<field name="directChannelLeads" class="java.lang.Integer"/>
+	<field name="yandexMarketChannelLeads" class="java.lang.Integer"/>
+	<field name="ozonMarketChannelLeads" class="java.lang.Integer"/>
+	<field name="othersChannelLeads" class="java.lang.Integer"/>
+	<field name="newLeads" class="java.lang.Integer"/>
+	<field name="repeatLeads" class="java.lang.Integer"/>
+	<field name="repeatedLeadsRate" class="java.math.BigDecimal"/>
+	<field name="newLeadsRate" class="java.math.BigDecimal"/>
+	<field name="personLeads" class="java.lang.Integer"/>
+	<field name="companyLeads" class="java.lang.Integer"/>
+	<field name="myselfDeliveryOrders" class="java.lang.Integer"/>
+	<field name="cdekDeliveryOrders" class="java.lang.Integer"/>
+	<field name="dellinDeliveryOrders" class="java.lang.Integer"/>
+	<field name="courierServiceDeliveryOrders" class="java.lang.Integer"/>
+	<field name="postServiceDeliveryOrders" class="java.lang.Integer"/>
+	<field name="myselfDeliveryOrdersAmount" class="java.math.BigDecimal"/>
+	<field name="courierServiceDeliveryOrdersAmount" class="java.math.BigDecimal"/>
+	<field name="postServiceDeliveryOrdersAmount" class="java.math.BigDecimal"/>
+	<field name="courierServiceDeliveryOrdersCost" class="java.math.BigDecimal"/>
+	<field name="postServiceDeliveryOrdersCost" class="java.math.BigDecimal"/>
+	<field name="totalSupplierAmount" class="java.math.BigDecimal"/>
+	<field name="grossProfit" class="java.math.BigDecimal"/>
+	<field name="roi" class="java.math.BigDecimal"/>
+	<field name="orderCost" class="java.math.BigDecimal"/>
+	<field name="personTotalOrders" class="java.lang.Integer"/>
+	<field name="companyTotalOrders" class="java.lang.Integer"/>
+	<field name="personOrdersAmount" class="java.math.BigDecimal"/>
+	<field name="companyOrdersAmount" class="java.math.BigDecimal"/>
+	<field name="personMarginAmount" class="java.math.BigDecimal"/>
+	<field name="companyMarginAmount" class="java.math.BigDecimal"/>
+	<field name="stockAmount" class="java.math.BigDecimal"/>
+	<field name="postpayAmount" class="java.math.BigDecimal"/>
+	<field name="personAverageBill" class="java.math.BigDecimal"/>
+	<field name="companyAverageBill" class="java.math.BigDecimal"/>
+	<field name="personAverageMargin" class="java.math.BigDecimal"/>
+	<field name="companyAverageMargin" class="java.math.BigDecimal"/>
+	<field name="fairRate" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="26" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="26" uuid="3c7b78e4-1f51-416b-8d9c-9cee63d8ef12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{PERIOD_TYPE} == 4 || $P{PERIOD_TYPE} == 102 || $P{PERIOD_TYPE} == 103 || $P{PERIOD_TYPE} == 5) ? "<style size=\"11\" isBold='true'>ВОРОНКА ПРОДАЖ ЗА </style><style size=\"9\" isUnderline='true'>" + DateTimeUtils.getTextPeriodByReportPeriodType($P{PERIOD_TYPE}, $P{PERIOD_MONTH}, $P{PERIOD_QUARTER}, $P{PERIOD_HALF_YEAR}, $P{PERIOD_YEAR}) + "</style><style size=\"11\" isBold='true'> ГОДА</style>" : ($P{PERIOD_TYPE} == 104 ? "<style size=\"11\" isBold='true'>ВОРОНКА ПРОДАЖ ЗА </style><style size=\"9\" isUnderline='true'>" + DateTimeUtils.getTextPeriodByReportPeriodType($P{PERIOD_TYPE}, $P{PERIOD_MONTH}, $P{PERIOD_QUARTER}, $P{PERIOD_HALF_YEAR}, $P{PERIOD_YEAR}) + "</style><style size=\"11\" isBold='true'> ГОД</style>" : "<style size=\"11\" isBold='true'>ВОРОНКА ПРОДАЖ ЗА ПЕРИОД</style><style size=\"9\" isUnderline='true'>с " + DateTimeUtils.defaultFormatDate($P{PERIOD_START}) + " по " + DateTimeUtils.defaultFormatDate($P{PERIOD_END}) + "</style><style size=\"11\" isBold='true'> ГОДА</style>")]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="1" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="671" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="123" width="555" height="35" uuid="384dff67-f33d-47c0-adc1-c0ca3bf8a202"/>
+				<box topPadding="0" bottomPadding="0" rightPadding="0"/>
+				<frame>
+					<reportElement x="0" y="0" width="275" height="35" uuid="b5fedb78-390d-4975-b7fb-dabc768ae7c2"/>
+					<textField>
+						<reportElement x="0" y="0" width="275" height="33" uuid="ee84320a-d479-442d-9fcf-63687b571389"/>
+						<box topPadding="3" rightPadding="0"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["цена посетителя: " + NumberUtils.formatRoubles($F{visitorCost}) + "руб."]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="275" y="0" width="280" height="35" uuid="311e015b-3103-4290-b406-063438aa495f"/>
+					<staticText>
+						<reportElement x="95" y="0" width="185" height="13" uuid="a999f849-0182-4c13-bc92-6a4b01ed8d1e"/>
+						<box topPadding="2"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7" isBold="true"/>
+						</textElement>
+						<text><![CDATA[посетители]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="95" y="12" width="185" height="21" uuid="324ade3d-105a-4e4c-97ec-1417b1530952"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["новые: " + $F{newVisitors} + " (" + NumberUtils.formatRate($F{newVisitorsRate}) + "\nвернулись: " + $F{repeatedVisitors} + " (" + NumberUtils.formatRate($F{repeatedVisitorsRate}) + ")"]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<frame>
+				<reportElement x="0" y="158" width="555" height="29" uuid="708351ac-4597-4601-bede-31e7cc4ab1cf"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textField pattern="">
+					<reportElement x="0" y="0" width="555" height="29" uuid="2e879eff-8293-4f1d-b574-a3171b7cf44a"/>
+					<box bottomPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom" markup="styled">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA["<style size=\"8\">ЛИДЫ </style><style size=\"22\">" + $F{totalLeads} + "</style><style size=\"8\"> (" + NumberUtils.formatRate($F{leadByVisitorsConversionRate}) + ")</style>"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="29" uuid="1995556c-3ba5-451e-8886-9aa8b71b0674"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textField>
+					<reportElement x="0" y="0" width="555" height="29" uuid="97d3e53d-c248-413a-a1f4-9196346554ee"/>
+					<box bottomPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom" markup="styled">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA["<style size=\"8\">СЕАНСЫ </style><style size=\"22\">" + $F{visits} + "</style><style size=\"8\"> (100,00%)</style>"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="29" width="555" height="65" uuid="696e7655-49ba-4b93-8db9-51f8715c1a8f"/>
+				<frame>
+					<reportElement x="275" y="0" width="280" height="65" uuid="deb2671a-2d76-427b-afd3-22b2de1573fe"/>
+					<box topPadding="2"/>
+					<staticText>
+						<reportElement x="95" y="0" width="185" height="13" uuid="36c1e9c7-2a25-4d83-bc10-450ef70161d1"/>
+						<box topPadding="2"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7" isBold="true"/>
+						</textElement>
+						<text><![CDATA[источник]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="95" y="13" width="185" height="50" uuid="433a7ba8-1972-4d62-b931-baabc3c864a4"/>
+						<box topPadding="2"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["поиск: \n"+"платный трафик: \n"+"социальные сети: \n"+"прямые переходы: \n"+"прочие: "]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="0" y="0" width="275" height="65" uuid="2b9ce0f5-96e7-4773-86b8-3d7b7ea74c7b"/>
+					<box topPadding="0" bottomPadding="0" rightPadding="0"/>
+					<textField>
+						<reportElement x="0" y="0" width="275" height="65" uuid="5ade8a32-763c-4e99-b696-be3b3a5e00bc"/>
+						<box topPadding="3" rightPadding="0"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["цена сеанса: " + NumberUtils.formatRoubles($F{visitCost}) + "руб."]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<frame>
+				<reportElement x="0" y="94" width="555" height="29" uuid="9e879667-72e2-4caf-b1d5-ce11df43478c"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="0" y="0" width="555" height="29" uuid="e819ceac-59d9-418f-8b8e-23caf445dfaf"/>
+					<box bottomPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom" markup="styled">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA["<style size=\"8\">ПОСЕТИТЕЛИ </style><style size=\"22\">" + $F{uniqueVisitors} + "</style><style size=\"8\"> (" + NumberUtils.formatRate($F{uniqueVisitorsByVisitConversionRate}) + ")</style>"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="187" width="555" height="158" uuid="27ba7641-a1c1-4de3-80ea-e337d657d1ca"/>
+				<frame>
+					<reportElement x="0" y="0" width="289" height="35" uuid="1053320a-ffba-4c26-ae4d-dc080ce9c980"/>
+					<textField>
+						<reportElement x="0" y="0" width="275" height="35" uuid="25c2e999-531b-434a-88df-d0fcc5b0130d"/>
+						<box topPadding="3"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["цена лида: " + NumberUtils.formatRoubles($F{leadCost}) + "руб.\nконверсия к сеансам: " + NumberUtils.formatRate($F{leadByVisitsConversionRate}) + "\nконверсия к посетителям: " + NumberUtils.formatRate($F{leadByVisitorsConversionRate})]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="0" y="35" width="185" height="109" uuid="ce52ba47-0a46-4aa3-a175-050bbeb7c143"/>
+					<staticText>
+						<reportElement x="0" y="0" width="185" height="13" uuid="5e032c18-8e7a-4f87-9339-6e8a680aa0b7"/>
+						<box topPadding="2"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7" isBold="true"/>
+						</textElement>
+						<text><![CDATA[тип]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="0" y="12" width="185" height="62" uuid="fe16eaf6-69ec-4f1d-9ebd-9fbb4681c96c"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["заказы: " + $F{orderTypeLeads} + "\nсчета: " + $F{billTypeLeads} + "\nкоммерческие предложения: " + $F{kpTypeLeads} + "\nконсультации: " + $F{consultationTypeLeads} + "\nвозвраты: " + $F{refundTypeLeads} + "\nпрочие: " + $F{othersTypeLeads}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="0" y="75" width="185" height="13" uuid="781bd8f1-d832-4335-9f47-b1d401790b16"/>
+						<box topPadding="2"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7" isBold="true"/>
+						</textElement>
+						<text><![CDATA[посещения]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="0" y="88" width="185" height="21" uuid="76f286ec-abc4-473d-b474-bc68c9e18816"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["новые: " + $F{newLeads} + " (" + NumberUtils.formatRate($F{newLeadsRate}) + ")\nповторные обращения: " + $F{repeatLeads} + " (" + NumberUtils.formatRate($F{repeatedLeadsRate})+ ")"]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="185" y="35" width="185" height="109" uuid="b3ec2cf0-8c2c-4f6e-8e85-00a111dd3d58"/>
+					<staticText>
+						<reportElement x="0" y="0" width="185" height="13" uuid="d733c0e7-a6b3-432f-9d0d-bc7a5f9068a3"/>
+						<box topPadding="2"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7" isBold="true"/>
+						</textElement>
+						<text><![CDATA[источник]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="0" y="12" width="185" height="62" uuid="10552480-2f81-4bd5-982d-85c53b6a1d44"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["заявки с сайта: " + $F{siteSourceLeads} + "\nписьма: " + $F{emailSourceLeads} + "\nзвонки: " + $F{callSourceLeads} + "\nчат: " + $F{chatSourceLeads} + "\nпрочие: " + $F{othersSourceLeads}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="0" y="74" width="185" height="13" uuid="1b71f500-c400-4c14-ab72-bc96babc3322"/>
+						<box topPadding="2"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7" isBold="true"/>
+						</textElement>
+						<text><![CDATA[клиенты]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="0" y="88" width="185" height="21" uuid="aa58bc4a-c57d-4337-abe6-9fc9f87d01b7"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["физические лица: " + $F{personLeads} + "\nюридические лица: " + $F{companyLeads}]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="370" y="35" width="185" height="109" uuid="b0a6ed7c-a330-44a0-be9d-400b888c92ab"/>
+					<staticText>
+						<reportElement x="0" y="0" width="185" height="13" uuid="c4b6a96b-246d-455a-98b3-cf4c4b6d8ecd"/>
+						<box topPadding="2"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7" isBold="true"/>
+						</textElement>
+						<text><![CDATA[канал]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="0" y="12" width="185" height="62" uuid="323758a9-1002-4a19-adb1-ee227be03f7b"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["реклама: " + $F{paidChannelLeads} + "\nпоиск: " + $F{organicChannelLeads} + "\nсоциальные сети: " + $F{socialNetworkChannelLeads} + "\nповторные обращения: " + $F{directChannelLeads} + "\nяндекс.маркет: " + $F{yandexMarketChannelLeads} + "\nозон: " + $F{ozonMarketChannelLeads} + "\nпрочие: " + $F{othersChannelLeads}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<frame>
+				<reportElement x="0" y="345" width="555" height="29" uuid="86017ec7-b9ac-493d-8c68-9f80db2d6ae3"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textField>
+					<reportElement x="0" y="0" width="555" height="29" uuid="52dc04c4-9196-429b-822b-d68212e57fec"/>
+					<box bottomPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom" markup="styled">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA["<style size=\"8\">ЗАКАЗЫ </style><style size=\"22\">" + $F{totalOrders} + "</style><style size=\"8\"> (" + NumberUtils.formatRate($F{ordersByLeadsConversionRate}) + ")</style>"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="374" width="555" height="146" uuid="6a358568-c7fe-4779-9990-a675a2e1aea0"/>
+				<frame>
+					<reportElement x="0" y="0" width="555" height="146" uuid="840b2c11-7b35-4b80-8dad-b65aed0a7719"/>
+					<textField>
+						<reportElement x="0" y="113" width="555" height="33" uuid="f1fd00b5-603f-4814-a266-6a85cc7923ff"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["самостоятельно: " + $F{myselfDeliveryOrders} + ", доход: " + NumberUtils.formatRoubles($F{myselfDeliveryOrdersAmount}) + "руб.\nтранспортные компании: " + $F{courierServiceDeliveryOrders} + ", доход: " + NumberUtils.formatRoubles($F{courierServiceDeliveryOrdersAmount})+ "руб., услуги: " + NumberUtils.formatRoubles($F{courierServiceDeliveryOrdersCost}) + "руб.\nпочта России: " + $F{postServiceDeliveryOrders} + ", доход: " + NumberUtils.formatRoubles($F{postServiceDeliveryOrdersAmount}) + "руб., услуги: " + NumberUtils.formatRoubles($F{postServiceDeliveryOrdersCost})+ "руб."]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="0" y="0" width="275" height="25" uuid="abd6c8f4-e0df-4935-8813-3943237ba1ff"/>
+						<box topPadding="3"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["цена заказа: " + NumberUtils.formatRoubles($F{orderCost}) +"руб."]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="0" y="60" width="503" height="13" uuid="2a5a7009-4ff5-487d-a372-12c4c85fd6d6"/>
+						<box topPadding="2"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7" isBold="true"/>
+						</textElement>
+						<text><![CDATA[доставка]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="0" y="25" width="503" height="13" uuid="1ab9baa3-5f71-48cd-90c6-46baca4e4889"/>
+						<box topPadding="2"/>
+						<textElement verticalAlignment="Top">
+							<font fontName="DejaVu Sans" size="7" isBold="true"/>
+						</textElement>
+						<text><![CDATA[клиенты]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="0" y="38" width="555" height="22" uuid="61b01e90-b33c-4d3e-860f-5ae3c64e9798"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["физические лица: " + $F{personTotalOrders}+ ", доход: " + NumberUtils.formatRoubles($F{personOrdersAmount})+ "руб., прибыль: " + NumberUtils.formatRoubles($F{personMarginAmount}) + "руб., средний чек: " + NumberUtils.formatRoubles($F{personAverageBill}) + "руб., средняя прибыль: " + NumberUtils.formatRoubles($F{personAverageMargin}) + "руб.\nюридические лица: " + $F{companyTotalOrders}+ ", доход: " + NumberUtils.formatRoubles($F{companyOrdersAmount})+ "руб., прибыль: " + NumberUtils.formatRoubles($F{companyMarginAmount}) + "руб., средний чек: " + NumberUtils.formatRoubles($F{companyAverageBill}) + "руб., средняя прибыль: " + NumberUtils.formatRoubles($F{companyAverageMargin}) + "руб."]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="0" y="73" width="185" height="40" uuid="c1875570-43cd-42ce-aa69-e2ce2cc8dcd6"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["самостоятельно: " + $F{myselfDeliveryOrders} + "\nсдэк: " + $F{cdekDeliveryOrders} + "\nделовые линии: " + $F{dellinDeliveryOrders}  + "\nпочта России: " + $F{postServiceDeliveryOrders}]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<frame>
+				<reportElement x="0" y="520" width="555" height="29" uuid="c4d0e8d0-520e-40d5-b4e9-64fddee26d34"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textField>
+					<reportElement x="0" y="0" width="555" height="29" uuid="ce11d3dd-0278-468d-a542-4a83c5277d5a"/>
+					<box bottomPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom" markup="styled">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA["<style size=\"8\">ДЕНЬГИ </style><style size=\"22\">" + NumberUtils.formatRoubles($F{totalMarginAmount}) + "руб.</style>"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="549" width="555" height="51" uuid="77bc29bc-042c-4a89-a91c-9250bc3653c9"/>
+				<staticText>
+					<reportElement x="0" y="0" width="555" height="13" uuid="53e5b0ba-c122-4644-b5df-4b1d40d695d2"/>
+					<box topPadding="2"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<frame>
+					<reportElement x="0" y="13" width="185" height="38" uuid="d925f5bf-e6b4-455d-b3bb-a65e167a14ab"/>
+					<textField>
+						<reportElement x="0" y="0" width="185" height="35" uuid="b6bc5727-18e7-4b22-b3fb-1a00e1a7fbef"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["доход: " + NumberUtils.formatRoubles($F{totalAmount})+ "руб." + "\nсредний чек: " + NumberUtils.formatRoubles($F{averageBill}) + "руб." + "\nсправедливая ставка: " + NumberUtils.formatRoubles($F{fairRate}) + "руб."]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="185" y="13" width="185" height="38" uuid="d45c8726-cfb7-4f92-abd3-43e784109e68"/>
+					<textField>
+						<reportElement x="0" y="0" width="185" height="35" uuid="27c3d33f-564f-4934-8725-f0ed725b5bd2"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["закуплено: " + NumberUtils.formatRoubles($F{totalSupplierAmount}) + "руб.\nрекламный бюджет: " + NumberUtils.formatRoubles($F{advertBudget}) + "руб."]]></textFieldExpression>
+					</textField>
+				</frame>
+				<frame>
+					<reportElement x="370" y="13" width="185" height="38" uuid="a00a08e3-ee57-4550-af6d-65743fa922bb"/>
+					<textField>
+						<reportElement x="0" y="0" width="185" height="35" uuid="d8893d19-b8ab-44c8-8a7e-4ca9ebdb3ba6"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["валовая прибыль: " + NumberUtils.formatRoubles($F{grossProfit})+ "руб." + "\nфактическая прибыль: " + NumberUtils.formatRoubles($F{totalMarginAmount})+ "руб." + "\nфактическая средняя прибыль: " + NumberUtils.formatRoubles($F{averageMargin})+ "руб."]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+			<frame>
+				<reportElement x="0" y="600" width="555" height="29" uuid="d1f78179-67fa-4e6b-9509-4a42190a786d"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textField>
+					<reportElement x="0" y="0" width="555" height="29" uuid="dc1ac57a-03dc-45eb-acaa-4462e3c9e8bd"/>
+					<box bottomPadding="2"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom" markup="styled">
+						<font fontName="DejaVu Sans"/>
+					</textElement>
+					<textFieldExpression><![CDATA["<style size=\"8\">ROI </style><style size=\"22\">" + NumberUtils.formatRate($F{roi}) + "</style>"]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="630" width="555" height="35" uuid="63f7c578-72b6-41bf-813d-c766408bbf56"/>
+				<textField>
+					<reportElement x="0" y="0" width="555" height="13" uuid="4dfd0fd2-3cc2-4496-ae6e-0519312ff31a"/>
+					<box topPadding="2"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["остатки на дату: " + DateTimeUtils.defaultFormatDate(DateTimeUtils.sysDate())]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement x="0" y="13" width="185" height="21" uuid="375544c0-ad24-437d-90af-3efd8db476c5"/>
+					<textField>
+						<reportElement x="0" y="0" width="185" height="21" uuid="42c01c71-4736-4843-8bc8-b75c5e317b71"/>
+						<box topPadding="2"/>
+						<textElement>
+							<font fontName="DejaVu Sans" size="7"/>
+						</textElement>
+						<textFieldExpression><![CDATA["склад: " + NumberUtils.formatRoubles($F{stockAmount})+ "руб." + "\nпостоплата: " + NumberUtils.formatRoubles($F{postpayAmount}) + "руб."]]></textFieldExpression>
+					</textField>
+				</frame>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="56" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="185" height="44" uuid="a01f90a7-fca0-47f2-a8f6-18e8168faf6f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PERIOD_TYPE: " + $P{PERIOD_TYPE} + "\nPERIOD_MONTH: " +$P{PERIOD_MONTH} + "\nPERIOD_QUARTER: " + $P{PERIOD_QUARTER} + "\nPERIOD_HALF_YEAR: " + $P{PERIOD_HALF_YEAR} + "\nPERIOD_YEAR:" + $P{PERIOD_YEAR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch"/>
+	</summary>
+</jasperReport>

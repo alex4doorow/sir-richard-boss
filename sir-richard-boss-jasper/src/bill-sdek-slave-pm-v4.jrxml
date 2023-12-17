@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bill-cdek-slave" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="0b06072f-2264-4b6a-b32b-24d5481e2406">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="ru.sir.richard.boss.model.utils.TextUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.DateTimeUtils"/>
+	<import value="ru.sir.richard.boss.model.data.CourierInfo"/>
+	<import value="ru.sir.richard.boss.model.utils.NumberUtils"/>
+	<parameter name="COMPANY_J_NAME" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="COMPANY_J_INN" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_SHOP_ADDRESS" class="java.lang.String"/>
+	<parameter name="COMPANY_SHOP_NAME_SHORT" class="java.lang.String"/>
+	<field name="id" class="java.lang.Number"/>
+	<field name="no" class="java.lang.Integer"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="product.name" class="java.lang.String"/>
+	<field name="quantity" class="java.lang.Integer"/>
+	<field name="price" class="java.math.BigDecimal"/>
+	<field name="discountRate" class="java.math.BigDecimal"/>
+	<field name="parent.id" class="java.lang.Integer"/>
+	<field name="parent.no" class="java.lang.Integer"/>
+	<field name="parent.viewNo" class="java.lang.Object"/>
+	<field name="parent.orderDate" class="java.util.Date"/>
+	<field name="parent.barcodeNumber" class="java.lang.String"/>
+	<field name="parent.annotation" class="java.lang.String"/>
+	<field name="parent.customer.viewShortName" class="java.lang.String"/>
+	<field name="parent.customer.viewPhoneNumber" class="java.lang.String"/>
+	<field name="parent.customer.viewLongName" class="java.lang.String"/>
+	<field name="parent.paymentType.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.address.address" class="java.lang.String"/>
+	<field name="parent.delivery.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.deliveryType.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.courierInfo" class="java.lang.Object"/>
+	<field name="parent.delivery.courierInfo.deliveryDate" class="java.util.Date"/>
+	<field name="parent.delivery.price" class="java.math.BigDecimal"/>
+	<field name="parent.delivery.customerPrice" class="java.math.BigDecimal"/>
+	<field name="parent.amounts.totalWithDelivery" class="java.math.BigDecimal"/>
+	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<group name="Header">
+		<groupHeader>
+			<band height="21">
+				<staticText>
+					<reportElement mode="Transparent" x="60" y="0" width="21" height="20" backcolor="#DDDDDD" uuid="1dc96f6f-1afa-4900-ac15-b2f5e0fd1102"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="5" isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[№]]></text>
+				</staticText>
+				<image scaleImage="FillFrame">
+					<reportElement x="0" y="0" width="60" height="20" uuid="a9c00b8c-8475-4e3a-8361-ef2cb0e1359e"/>
+					<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-left-ticket-p3-v1.jpg"]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement mode="Transparent" x="81" y="0" width="267" height="20" backcolor="#DDDDDD" uuid="a1e74bcb-4f6a-4907-9963-bff2830baff3"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="5" isBold="true" isStrikeThrough="false"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Наименование товара]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="348" y="0" width="60" height="20" backcolor="#DDDDDD" uuid="e6e63460-878d-4560-b033-b3770a94ee84"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="DejaVu Sans" size="5" isBold="true"/>
+						<paragraph lineSpacing="Single" leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Стоимость за единицу, руб.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="408" y="0" width="37" height="20" backcolor="#DDDDDD" uuid="69298604-4154-483e-adb3-1c1ff4d7f236"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="DejaVu Sans" size="5" isBold="true"/>
+						<paragraph lineSpacing="Single" leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[К оплате за едицу, руб.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="445" y="0" width="40" height="20" backcolor="#DDDDDD" uuid="1e535b54-8a21-485a-b615-3831df8f290a"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="5" isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Кол-во]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="485" y="0" width="68" height="20" backcolor="#DDDDDD" uuid="27c5fafc-d1e2-4288-b4e2-eb58069cc1ab"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.25"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="DejaVu Sans" size="5" isBold="true" isUnderline="false"/>
+						<paragraph lineSpacing="Single" leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Итого к оплате, с учетом НДС]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="1" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="9" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="198" splitType="Stretch">
+			<image scaleImage="FillFrame" hAlign="Left">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="195" uuid="39353d81-33c2-465e-9d64-8d4eed0039a3"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-pm-v4-header.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="89" y="131" width="181" height="10" uuid="07f433e3-b899-4e6b-8fa3-49e97069edcc"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parent.customer.viewLongName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="88" width="153" height="19" uuid="0122902d-7850-4467-8013-886eeeaa3811"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Накладная к заказу № " + $F{parent.viewNo} + " от " + DateTimeUtils.defaultFormatDate($F{parent.orderDate}) + " г."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="141" width="163" height="10" uuid="76adf4f2-ecdb-4fd5-9f4c-dfa6f52bd220"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parent.customer.viewPhoneNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="94" y="151" width="176" height="44" uuid="79de4ed8-473f-41f7-aa58-a98f5c470c1c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parent.delivery.address.address}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="154" width="273" height="41" uuid="9c2c3a18-c699-4f69-a3e4-a0f120d9d2df"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["курьер " + DateTimeUtils.formatDate($F{parent.delivery.courierInfo.deliveryDate}, "dd.MM.yyyy, EEE") + ", " + ((CourierInfo) $F{parent.delivery.courierInfo}).timeInterval() + ", " + $F{parent.delivery.annotation} + " " + $F{parent.annotation}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement x="0" y="66" width="60" height="129" uuid="7b854e34-1316-4995-ba0a-0b2e72e7b777"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-left-ticket-p1-v1.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="114" y="87" width="156" height="17" uuid="76667fe3-4d40-4233-af6c-7cceb6752480"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ИНН " + "771872248140" + " " + "ИП Федоров Алексей Анатольевич" + ", г. Москва"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="371" y="108" width="62" height="10" uuid="8881ced0-2222-400d-942b-71115779f926"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parent.delivery.deliveryType.annotation}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="282" y="108" width="96" height="11" uuid="5a2f2f47-592a-4ee9-a985-c07a625a0b8a"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Способ доставки:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="282" y="119" width="75" height="11" uuid="cfea0db0-38f0-44e2-9352-ed85f7198565"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Способ оплаты:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="363" y="119" width="70" height="10" uuid="1fbcf032-f99d-455e-ba79-7253b49c356f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parent.paymentType.annotation}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="106" width="156" height="10" uuid="72ea95e9-dbbf-439e-94d7-ab07d90ba698"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["https://pribormaster.ru"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="225" y="46" width="170" height="20" uuid="677f8de1-f620-4cc0-a58f-fc57beea84b7"/>
+				<textElement>
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parent.barcodeNumber}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="445" y="0" width="40" height="10" uuid="1a9d2486-4f22-457a-a60e-87a26be49faa"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="348" y="0" width="60" height="10" uuid="a16c109b-d2fb-4c09-97fc-0571f9738208"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{price}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="60" y="0" width="21" height="10" uuid="ec8eca7c-4e50-4f35-8231-8e6c9c8e5d84"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="485" y="0" width="68" height="10" uuid="f72946a6-161b-455d-bf2f-4ebc588c8f7a"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="81" y="0" width="267" height="10" uuid="2607d0ac-aa4c-40f2-a445-e0294e555897"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6" isUnderline="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{product.name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="408" y="0" width="37" height="10" uuid="3efa2730-a6cc-4a49-91ce-dd4124f89191"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{discountRate}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement x="0" y="0" width="60" height="10" uuid="daf37322-1bc2-4aaa-ac8d-3cc64537510c"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-left-ticket-p3-v1.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="149" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="12" width="555" height="135" uuid="fbce523e-1f45-4caf-9d70-68b40c4c00c7"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-v3-footer.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0.00">
+				<reportElement x="485" y="0" width="68" height="10" uuid="d8be0532-08a2-4e8c-8c68-a2d33d249cfe"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalAmount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="314" y="24" width="241" height="20" uuid="6b32aa33-d8a5-4797-85d2-67f40fc01cc4"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Итого к оплате при вручении с учетом доставки: " + NumberUtils.defaultFormatNumber($F{parent.amounts.totalWithDelivery}) + " руб."]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="378" y="12" width="175" height="10" uuid="b33af0b9-231b-43ce-bf11-969d5d55f9d8"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Стоимость доставки: " + NumberUtils.defaultFormatNumber($F{parent.delivery.customerPrice})]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement x="0" y="0" width="60" height="55" uuid="66e99642-ed13-4a5f-8ff3-56a91a69f25d"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\blanks\\blank-bill-sdek-left-ticket-p3-v1.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

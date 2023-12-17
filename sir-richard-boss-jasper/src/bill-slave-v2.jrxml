@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bill-slave" pageWidth="555" pageHeight="842" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0b06072f-2264-4b6a-b32b-24d5481e2406">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="no" class="java.lang.Integer"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="product.name" class="java.lang.String"/>
+	<field name="quantity" class="java.lang.Integer"/>
+	<field name="price" class="java.math.BigDecimal"/>
+	<field name="discountRate" class="java.math.BigDecimal"/>
+	<field name="product.viewName" class="java.lang.String"/>
+	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="1" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="1" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="21" height="20" uuid="1dc96f6f-1afa-4900-ac15-b2f5e0fd1102"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[№]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="21" y="0" width="329" height="20" uuid="a1e74bcb-4f6a-4907-9963-bff2830baff3"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isStrikeThrough="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Наименование]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="487" y="0" width="68" height="20" uuid="27c5fafc-d1e2-4288-b4e2-eb58069cc1ab"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isUnderline="false"/>
+					<paragraph lineSpacing="Single" leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Сумма]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="447" y="0" width="40" height="20" uuid="69298604-4154-483e-adb3-1c1ff4d7f236"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					<paragraph lineSpacing="Single" leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Скидка]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="350" y="0" width="60" height="20" uuid="e6e63460-878d-4560-b033-b3770a94ee84"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					<paragraph lineSpacing="Single" leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Цена]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="0" width="37" height="20" uuid="51038a5d-a41c-4200-a251-7c18ec93fdb5"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Кол-во]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="410" y="0" width="37" height="20" uuid="1a9d2486-4f22-457a-a60e-87a26be49faa"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="350" y="0" width="60" height="20" uuid="a16c109b-d2fb-4c09-97fc-0571f9738208"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{price}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="21" height="20" uuid="ec8eca7c-4e50-4f35-8231-8e6c9c8e5d84"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{no}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="487" y="0" width="68" height="20" uuid="f72946a6-161b-455d-bf2f-4ebc588c8f7a"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="21" y="0" width="329" height="20" uuid="2607d0ac-aa4c-40f2-a445-e0294e555897"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8" isUnderline="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{product.viewName}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="447" y="0" width="40" height="20" uuid="3efa2730-a6cc-4a49-91ce-dd4124f89191"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{discountRate}.multiply(BigDecimal.valueOf($F{quantity})).multiply($F{price}).multiply(BigDecimal.valueOf(0.01))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="11" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="487" y="1" width="68" height="10" uuid="d8be0532-08a2-4e8c-8c68-a2d33d249cfe"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalAmount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="1" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="1" splitType="Stretch"/>
+	</summary>
+</jasperReport>

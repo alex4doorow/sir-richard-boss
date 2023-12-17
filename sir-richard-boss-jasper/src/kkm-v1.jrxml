@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="kkm" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="69331614-e2e3-46c8-878b-ebafac2811ad">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="COMPANY_F_NAME" class="java.lang.String"/>
+	<parameter name="COMPANY_F_ADDRESS_TEXT" class="java.lang.String"/>
+	<parameter name="COMPANY_F_ADDRESS_INDEX" class="java.lang.String"/>
+	<field name="customer.viewLongName" class="java.lang.String"/>
+	<field name="amounts.postpay" class="java.math.BigDecimal"/>
+	<field name="delivery.address.postAddressText" class="java.lang.String"/>
+	<field name="delivery.address.postCode" class="java.lang.String"/>
+	<field name="customer.phoneNumber" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="427" splitType="Stretch">
+			<image scaleImage="RetainShape">
+				<reportElement mode="Transparent" x="0" y="0" width="156" height="238" uuid="68bbd3f5-82de-4309-83df-bf034ef9deb2"/>
+				<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\x-resources\\jasperreports\\blanks\\blank-kkm-v3.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

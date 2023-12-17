@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="kkm-slave" pageWidth="170" pageHeight="842" columnWidth="140" leftMargin="10" rightMargin="20" topMargin="0" bottomMargin="0" uuid="0b06072f-2264-4b6a-b32b-24d5481e2406">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="ru.sir.richard.boss.model.utils.TextUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.DateTimeUtils"/>
+	<import value="ru.sir.richard.boss.model.data.CourierInfo"/>
+	<import value="ru.sir.richard.boss.model.utils.NumberUtils"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1" uuid="98250825-e711-48b4-a873-6c1e36512a6d"/>
+	<parameter name="COMPANY_J_NAME" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="COMPANY_J_INN" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_SHOP_ADDRESS" class="java.lang.String"/>
+	<parameter name="COMPANY_SHOP_NAME_SHORT" class="java.lang.String"/>
+	<field name="id" class="java.lang.Number"/>
+	<field name="no" class="java.lang.Integer"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="product.name" class="java.lang.String"/>
+	<field name="quantity" class="java.lang.Integer"/>
+	<field name="price" class="java.math.BigDecimal"/>
+	<field name="discountRate" class="java.math.BigDecimal"/>
+	<field name="parent.id" class="java.lang.Integer"/>
+	<field name="parent.no" class="java.lang.Integer"/>
+	<field name="parent.viewNo" class="java.lang.Object"/>
+	<field name="parent.orderDate" class="java.util.Date"/>
+	<field name="parent.barcodeNumber" class="java.lang.Integer"/>
+	<field name="parent.annotation" class="java.lang.String"/>
+	<field name="parent.customer.viewShortName" class="java.lang.String"/>
+	<field name="parent.customer.viewPhoneNumber" class="java.lang.String"/>
+	<field name="parent.customer.viewLongName" class="java.lang.String"/>
+	<field name="parent.paymentType.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.address.address" class="java.lang.String"/>
+	<field name="parent.delivery.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.deliveryType.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.courierInfo" class="java.lang.Object"/>
+	<field name="parent.delivery.courierInfo.deliveryDate" class="java.util.Date"/>
+	<field name="parent.delivery.price" class="java.math.BigDecimal"/>
+	<field name="parent.delivery.customerPrice" class="java.math.BigDecimal"/>
+	<field name="parent.amounts.totalWithDelivery" class="java.math.BigDecimal"/>
+	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="2" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="1" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="207" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="14" width="140" height="7" uuid="39bdc26c-d831-4459-9d3f-507123a0edd2"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="6" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["001 ТОВАР"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="140" height="14" uuid="fdb78e35-471f-4fa1-bf64-a115fd0f6f68"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[КАССОВЫЙ ЧЕК]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="0" y="21" width="70" height="51" uuid="320cc061-6617-44e0-9130-891dcc7f1e8e"/>
+				<staticText>
+					<reportElement x="0" y="0" width="70" height="7" uuid="7c78af7f-d3f2-4a6c-a8f1-73e69ae2aae3"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="5"/>
+					</textElement>
+					<text><![CDATA[01]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="14" width="70" height="10" uuid="46958adf-f135-4415-ba7d-b47c5fbb033d"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ИТОГ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="24" width="70" height="14" uuid="bcbcccf3-ca20-4cc1-a3ad-c69feabaa810"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="5" isBold="false"/>
+					</textElement>
+					<text><![CDATA[F:Сумма без НДС
+НАЛИЧНЫМИ
+ПОЛУЧЕНО
+Пользователь:]]></text>
+				</staticText>
+			</frame>
+			<frame>
+				<reportElement x="70" y="21" width="70" height="51" uuid="0bb6a2cd-c062-44e3-abd4-4fd0759d774f"/>
+				<textField>
+					<reportElement x="0" y="0" width="70" height="7" uuid="0c16cc7b-c851-4398-b950-5136dad2e573"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[NumberUtils.defaultFormatNumber($F{parent.amounts.totalWithDelivery}) + "*1,000=" + NumberUtils.defaultFormatNumber($F{parent.amounts.totalWithDelivery})+ " F"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="7" width="70" height="7" uuid="e39eb028-d92b-4a39-b0b5-3aefc687be07"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="5"/>
+					</textElement>
+					<text><![CDATA[ПОЛНЫЙ РАСЧЕТ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="14" width="70" height="10" uuid="d4265a8d-55b4-4489-8b4c-2f2c7cbc1993"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["=" + NumberUtils.defaultFormatNumber($F{parent.amounts.totalWithDelivery})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="24" width="70" height="27" uuid="5ef44eab-9f85-4675-82fb-d6b56fd63a9e"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA["=" + NumberUtils.defaultFormatNumber($F{parent.amounts.totalWithDelivery}) + "\n" + "=" + NumberUtils.defaultFormatNumber($F{parent.amounts.totalWithDelivery}) + "\n" + "=" + NumberUtils.defaultFormatNumber($F{parent.amounts.totalWithDelivery}) + "\n" + "ИП Трунов А.В."]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement x="0" y="72" width="140" height="13" uuid="4a63481e-104f-4e37-bc9a-559ebc849318"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<text><![CDATA[Адрес:77-г.Москва, 110071, ул.Бирюсинка д.21
+Место расчетов: интернет-магазин dalaver.ru]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="0" y="85" width="70" height="95" uuid="669037ef-8cef-46f0-866d-f5634f4c008c"/>
+				<staticText>
+					<reportElement x="0" y="0" width="70" height="90" uuid="be9865c3-b94b-4ab1-ad8c-d2310ac12a70"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="5" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Кассир:
+ОФД:
+Сайт ФНС:
+ЗН ККТ:00107202310861000
+РН ККТ:00000546619062662
+ФН №9281000000089898
+ФД:№00000002438
+ФП:27963243079
+Смена № 00176
+Чек №
+
+ПРИХОД
+СНО: УСН доход-расход]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="0" y="70" width="70" height="6" uuid="bf9bd5b0-74d8-450a-a4fb-9f7cf5d83319"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[DateTimeUtils.formatDate(new Date(), "dd.MM.yyyy HH:mm")]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="70" y="85" width="70" height="95" uuid="e04ced4e-bdcf-40e2-a34b-ea1521eec97e"/>
+				<staticText>
+					<reportElement x="0" y="0" width="70" height="26" uuid="96031d92-ec37-4e37-8389-ce83acaa485b"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="5" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Петров А.С.
+АО «ЭСК»
+nalog.ru
+ИНН:771872248743]]></text>
+				</staticText>
+				<image>
+					<reportElement x="5" y="29" width="60" height="60" uuid="3af83c4f-021a-4f66-bce8-2e570e534bca"/>
+					<imageExpression><![CDATA["C:\\src\\sir-richard-boss\\sir-richard-boss-web\\x-resources\\jasperreports\\blanks\\blank-kkm-footer-v1.jpg"]]></imageExpression>
+				</image>
+			</frame>
+			<textField>
+				<reportElement x="18" y="149" width="52" height="6" uuid="9e169dcc-66e1-4ea4-a521-7a0c1b0388f5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parent.no}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="180" width="140" height="25" uuid="20b0a46d-9e13-48d8-8042-4c230795bdb1"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<text><![CDATA[СПАСИБО
+ЗА ПОКУПКУ!]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="1" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="1" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

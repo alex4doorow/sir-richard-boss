@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bill-cdek-slave" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="0b06072f-2264-4b6a-b32b-24d5481e2406">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="ru.sir.richard.boss.model.utils.TextUtils"/>
+	<import value="ru.sir.richard.boss.model.utils.DateTimeUtils"/>
+	<import value="ru.sir.richard.boss.model.data.CourierInfo"/>
+	<import value="ru.sir.richard.boss.model.utils.NumberUtils"/>
+	<parameter name="COMPANY_J_NAME" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="COMPANY_J_INN" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COMPANY_SHOP_ADDRESS" class="java.lang.String"/>
+	<parameter name="COMPANY_SHOP_NAME_SHORT" class="java.lang.String"/>
+	<field name="id" class="java.lang.Number"/>
+	<field name="no" class="java.lang.Integer"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="product.name" class="java.lang.String"/>
+	<field name="quantity" class="java.lang.Integer"/>
+	<field name="price" class="java.math.BigDecimal"/>
+	<field name="discountRate" class="java.math.BigDecimal"/>
+	<field name="parent.id" class="java.lang.Integer"/>
+	<field name="parent.no" class="java.lang.Integer"/>
+	<field name="parent.viewNo" class="java.lang.Object"/>
+	<field name="parent.orderDate" class="java.util.Date"/>
+	<field name="parent.barcodeNumber" class="java.lang.String"/>
+	<field name="parent.annotation" class="java.lang.String"/>
+	<field name="parent.customer.viewShortName" class="java.lang.String"/>
+	<field name="parent.customer.viewPhoneNumber" class="java.lang.String"/>
+	<field name="parent.customer.viewLongName" class="java.lang.String"/>
+	<field name="parent.paymentType.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.address.address" class="java.lang.String"/>
+	<field name="parent.delivery.annotation" class="java.lang.String"/>
+	<field name="parent.delivery.customerPrice" class="java.math.BigDecimal"/>
+	<field name="parent.amounts.totalWithDelivery" class="java.math.BigDecimal"/>
+	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<group name="Header">
+		<groupHeader>
+			<band height="21">
+				<staticText>
+					<reportElement mode="Transparent" x="0" y="0" width="21" height="20" backcolor="#DDDDDD" uuid="1dc96f6f-1afa-4900-ac15-b2f5e0fd1102"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.25"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="5" isBold="true"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[№]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="21" y="0" width="253" height="20" backcolor="#DDDDDD" uuid="a1e74bcb-4f6a-4907-9963-bff2830baff3"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="5" isBold="true" isStrikeThrough="false"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Наименование товара]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="274" y="0" width="105" height="20" backcolor="#DDDDDD" uuid="e6e63460-878d-4560-b033-b3770a94ee84"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="DejaVu Sans" size="5" isBold="true"/>
+						<paragraph lineSpacing="Single" leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Серийный номер]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="379" y="0" width="174" height="20" backcolor="#DDDDDD" uuid="69298604-4154-483e-adb3-1c1ff4d7f236"/>
+					<box>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="DejaVu Sans" size="5" isBold="true"/>
+						<paragraph lineSpacing="Single" leftIndent="2"/>
+					</textElement>
+					<text><![CDATA[Примечание]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="1" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="9" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="59" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="553" height="20" uuid="1e6518b1-7849-4883-a186-f8bd5d8219c5"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ГАРАНТИЙНЫЙ ТАЛОН]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="22" width="553" height="36" uuid="3515f240-2708-4b48-8697-a60bcb045160"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[ВНИМАНИЕ! Вы приобретаете сложную электронную технику. Сначала внимательно прочтите инструкцию. Обращаем Ваше внимание на то, что при настройке и использовании Товара Вы не должны допускать приложение чрезмерной силы при нажатии на кнопки управления и элементы конструкции - это может привести к поломке и лишит Вас бесплатной гарантии.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="274" y="0" width="105" height="20" uuid="a16c109b-d2fb-4c09-97fc-0571f9738208"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="21" height="20" uuid="ec8eca7c-4e50-4f35-8231-8e6c9c8e5d84"/>
+				<box>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="5" isBold="false"/>
+					<paragraph leftIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="21" y="0" width="253" height="20" uuid="2607d0ac-aa4c-40f2-a445-e0294e555897"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="5" isUnderline="false"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{product.name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement stretchType="RelativeToTallestObject" x="379" y="0" width="174" height="20" uuid="3efa2730-a6cc-4a49-91ce-dd4124f89191"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="DejaVu Sans" size="6"/>
+					<paragraph rightIndent="1"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="339" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="5" width="379" height="119" uuid="cbdfc283-589f-44f4-bdab-3e7ffb3711f2"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[    Компания ИП Федоров Алексей Анатольевич ИНН 771872248140 обеспечивает бесплатный ремонт вышедшего из строя Товара в течении 12 месяцев с момента его продажи. Покупателю, в случае, если причиной этого стали заводские дефекты товара.
+   Причину неисправности (заводской деффект или дефект, возникший по вине Покупателя) устанавливает сервисный центр компании поставщика в срок до 14 суток. В случае заводского брака компания-поставщик бесплатно ремонтирует (при имеющейся возможности) Товар в течении вышеуказанного срока. После чего Покупателю сообщается о готовности товара к возврату.
+    Если товар вышел из строя вследствии непредвиденых причин, Покупатель извещается об этом одновременно с сообщением ему суммы платного ремонта.
+    В случае несогласия Покупателя с результатами исследования причин неисправности, Товар может быть передан в экспертизу в независимый технический центр. Оплату экспертизы осуществляет компания-поставщик, если поломка произошла по вине завода-изготовителя, либо покупатель, если неисправность была вызвана причинами, изложенными ниже (см. пункты отказа в бесплатной гарантии).
+
+
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="124" width="379" height="23" uuid="df3fcd08-6b95-462a-852a-ac454633139c"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[В следующих случаях Покупателю может быть отказано в бесплатной гарантии на приобретенный товар:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="148" width="379" height="121" uuid="7aeabdbd-fa9c-4b02-85fc-001bea4fe1c1"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[- Наличие трещин, сколов, отрыв внутренних блоков или прочих следов, которые могут быть следствием сильных ударов или падений.
+- Наличие насекомых внутри корпуса Товара.
+- Самостоятельном вскрытии корпуса Товара, либо изменении (ремонте) Товара сторонними, по отношению к продавцу организациями.
+- Несоблюдение условий эксплуатации, указанных в инструкции Товара.
+- Использование кабелей и адаптеров питания, не рекомендованных или не указанных в инструкции по эксплуатации Товара.
+- Приложении чрезмерных усилий на органы управления и элементы Товара при его использовании.
+- Попадание влаги или агресивных жидкостей (спирта, кислот, щелочей и органических жидких веществ) внутрь корпуса Товара, если только в назначении прибора не указано то, что попадание влаги кнутрь или на прибор не приводит к его неисправности.
+  При возникновении неисправностей, являвшихся следствием природных катаклизмов: молний, наводнений и т.д., а также вандалистических действий третьих лиц.
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="269" width="555" height="29" uuid="20a01438-afd1-4510-b81b-0dbf8691299d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[*Гарантия не распространяется на элементы питания из комплекта и лампы накаливания, использующиеся в блоках товара.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="298" width="555" height="32" uuid="87184dcd-8098-4a51-93ee-bf1351eed00c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[С правилами гарантии ознакомлен: Покупатель ________________________________________
+                                                                                         подпись Покупателя]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="7" width="163" height="163" uuid="b17034de-5656-4c6f-8123-ae15cf4e7e44"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="5" width="163" height="11" uuid="7269c9b2-1d92-4eba-8f5c-4bbf0468d8cd"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Печать организации-продавца]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="170" width="163" height="69" uuid="dbb75d85-7d4e-4694-8763-68658ce5eab9"/>
+				<box>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="170" width="150" height="69" uuid="2802f84c-c264-42ec-9371-f92a0907cf88"/>
+				<box topPadding="10" leftPadding="5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<text><![CDATA[Дата продажи:
+
+Подпись продавца ______________]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="470" y="181" width="70" height="11" uuid="3bd534eb-e6a3-48ad-8417-18d229c4ab7f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[DateTimeUtils.defaultFormatDate($F{parent.orderDate})]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
