@@ -35,20 +35,6 @@
                   <fmt:message key="main.menus.left.customers" />
                 </a>
               </li>
-              
-              <li class="nav-item">
-                <a id="nav-link-alarm" class="nav-menus-item nav-link" href="${urlHome}alarm/car">                  
-                  <i class="bi bi-alarm text-dark"></i>
-                  <fmt:message key="main.menus.left.alarm" />
-                </a>
-              </li>
-              
-              <li class="nav-item">
-                <a id="nav-link-alarm" class="nav-menus-item nav-link" href="${urlHome}vacancies">                  
-                  <i class="bi bi-person-plus text-dark"></i>
-                  <fmt:message key="main.menus.left.vacancies" />
-                </a>
-              </li>  
                             
             </ul>        
             
